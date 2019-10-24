@@ -34,7 +34,7 @@ public class Car {
     }
     
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE);
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name="IdCar", updatable=false, nullable=false )
     public int getIdCar() { return idCar.get();}
     @Column(name="Vendor")
