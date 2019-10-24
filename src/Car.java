@@ -36,6 +36,13 @@ public class Car {
         licencePlate = new SimpleStringProperty(p);
     }
     
+    public void setVendor(String v) {vendor.set(v);}
+    public void setSeatNumber(int s) {seatNumber.set(s);}
+    public void setLocation(String l) {location.set(l);}
+    public void setKilometers(int k) {kilometers.set(k);}
+    public void setPrice(Double pr) {price.set(pr);}
+    public void setLicencePlate(String p) {licencePlate.set(p);}
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="IdCar", updatable=false, nullable=false )
