@@ -65,7 +65,7 @@ public class Reservation {
 	
 	@Column(name = "LicensePlate")
 	public String getCarLicensePlate() {
-		return fiscalCode;
+		return licensePlate;
 	}
 	
 	public void setId(long id) {
