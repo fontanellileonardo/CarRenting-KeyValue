@@ -1,5 +1,5 @@
 import javafx.beans.property.*;
-import java.util.List;
+import java.util.*;
 import javax.persistence.*;
 
 @Entity 
@@ -14,14 +14,17 @@ public class Car {
     private final SimpleDoubleProperty price;
     private final SimpleStringProperty licencePlate;
     
-    @OneToMany(
-    		mappedBy = "car",
-    		fetch = FetchType.LAZY,
-    		cascade = {}
-    		)
     private List<Reservation> reservation =	new ArrayList<>();
     
-    public Car() {}
+    public Car() {
+    	idCar = new SimpleIntegerProperty(0);
+        vendor = new SimpleStringProperty("");
+        seatNumber = new SimpleIntegerProperty(0);
+        location = new SimpleStringProperty("");
+        kilometers = new SimpleIntegerProperty(0);
+        price = new SimpleDoubleProperty(0.0);
+        licencePlate = new SimpleStringProperty("");
+    }
     
     public Car(int id, String v, int s, String l, int k, Double pr, String p) {
         idCar = new SimpleIntegerProperty(id);
@@ -47,9 +50,14 @@ public class Car {
     public int getKilometers() {return kilometers.get();}
     @Column(name="Price")
     public Double getPrice() {return price.get();}
-    @Column(name="LicencePlate")
+    @Column(name="LicencePlate", unique = true)
     public String getLicencePlate() {return licencePlate.get();}
-    
+    @OneToMany(
+    		mappedBy = "car",
+    		fetch = FetchType.LAZY,
+    		cascade = {}
+    		)
+    public List<Reservation> getReservation() { return reservation; }
     
 }
 

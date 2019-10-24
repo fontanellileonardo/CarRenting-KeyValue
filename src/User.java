@@ -1,45 +1,94 @@
+import java.util.*;
+import javax.persistence.*;
 import javafx.beans.property.*;
 
+@Entity
+@Table(name="User")
 public class User {
+	private final SimpleLongProperty id;
+	private final SimpleStringProperty fiscalCode;
+	private final SimpleStringProperty nickName;
     private final SimpleStringProperty name;
     private final SimpleStringProperty surname;
     private final SimpleBooleanProperty customer;
     private final SimpleStringProperty email;
     private final SimpleStringProperty password;
-    private final SimpleIntegerProperty score;
+    private List<Feedback> feedbacks;
+    private List<Reservation> reservations;
     
     public User() {
+    	id = new SimpleLongProperty(0);
+    	fiscalCode = new SimpleStringProperty("");
+    	nickName = new SimpleStringProperty("");
+    	feedbacks = new ArrayList<>();
+    	reservations = new ArrayList<>();
         name = new SimpleStringProperty("");
         surname = new SimpleStringProperty("");
         customer = new SimpleBooleanProperty(true);
         email = new SimpleStringProperty("");
         password = new SimpleStringProperty("");
-        score = new SimpleIntegerProperty(0); 
     }
     
-    public User(String n, String c, Boolean cust, String e, String pwd, int sco)
+    public User(Long i, String cf, String nm, String n, String c, Boolean cust, String e, String pwd)
     {
+    	id = new SimpleLongProperty(i);
+    	fiscalCode = new SimpleStringProperty(cf);
+    	nickName = new SimpleStringProperty(nm);
+    	feedbacks = new ArrayList<>();
+    	reservations = new ArrayList<>();
         name = new SimpleStringProperty(n);
         surname = new SimpleStringProperty(c);
         customer = new SimpleBooleanProperty(cust);
         email = new SimpleStringProperty(e);
         password = new SimpleStringProperty(pwd);
-        score = new SimpleIntegerProperty(sco);
         
     }
     
+    
+    public void setFiscalCode(String cf) {fiscalCode.set(cf);}
+    public void setNickName(String nm) {nickName.set(nm);}    
     public void setName(String n) { name.set(n); }
     public void setSurname(String s) { surname.set(s); }
     public void setEmail(String e) { email.set(e); } 
     public void setCustomer(boolean c) { customer.set(c); }
     public void setPassword(String p) { password.set(p); }
-    public void setScore(int sc) { score.set(sc); }
     
+    @Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "idUser")
+	public long getId() { return id.get(); }
+    
+    @Column(name = "NickName", unique = true)
+    public String getNickName() { return nickName.get();}  
+    
+    @Column(name = "FiscalCode", unique = true)
+    public String getFiscalCode() { return fiscalCode.get();}
+    
+    @Column(name = "Name")
     public String getName() { return name.get(); }
-    public String getSurname() { return surname.get(); }
-    public String getEmail() { return email.get(); } 
-    public Boolean getCustomer() {return customer.get(); }
-    public String getPassword() { return password.get(); }
-    public int getScore() { return score.get(); }
     
+    @Column(name = "Surname")
+    public String getSurname() { return surname.get(); }
+    
+    @Column(name = "Email")
+    public String getEmail() { return email.get(); } 
+    
+    @Column(name = "Customer")
+    public Boolean getCustomer() {return customer.get(); }
+    
+    @Column(name = "Password")
+    public String getPassword() { return password.get(); }
+        
+    @OneToMany(
+    			mappedBy = "user",
+    			fetch = FetchType.LAZY,
+    			cascade = {}
+    		)
+    public List<Feedback> getFeedbacks() { return feedbacks;}
+    @OneToMany(
+			mappedBy = "user",
+			fetch = FetchType.LAZY,
+			cascade = {}
+		)
+    public List<Reservation> getReservations() { return reservations;}
 }

@@ -17,6 +17,8 @@ public class Reservation {
 	private LocalDate deliveryDate;
 	private User user;
 	private Car car;
+	private String fiscalCode;
+	private String licensePlate;
 	
 	public Reservation() {}
 	
@@ -25,6 +27,8 @@ public class Reservation {
 		this.deliveryDate = deliveryDate;
 		this.user = user;
 		this.car = car;
+		this.fiscalCode = user.getFiscalCode();
+		this.licensePlate = car.getLicencePlate();
 	}
 	
 	@Id
@@ -54,6 +58,16 @@ public class Reservation {
 		return car;
 	}
 	
+	@Column(name = "FiscalCode")
+	public String getUserFiscalCode() {
+		return fiscalCode;
+	}
+	
+	@Column(name = "LicensePlate")
+	public String getCarLicensePlate() {
+		return fiscalCode;
+	}
+	
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -72,5 +86,13 @@ public class Reservation {
 	
 	public void setCar(Car car) {
 		this.car = car;
+	}
+	
+	public void setUserFiscalCode(String cf) {
+		fiscalCode = cf;
+	}
+	
+	public void setCarLicensePlate(String cf) {
+		licensePlate = cf;
 	}
 }
