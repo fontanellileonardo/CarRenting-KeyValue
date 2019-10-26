@@ -1,9 +1,13 @@
+import java.util.List;
+
 import javax.persistence.*;
 import org.hibernate.exception.ConstraintViolationException;
 
 public class JPAHandleDB {
 	private static EntityManagerFactory factory;
 	private static EntityManager entityManager;
+	private static String selectAllCustomers = "SELECT u FROM User u WHERE u.customer = true";
+	private static String selectAllFeedbacks = "SELECT f FROM Feedback f WHERE f.mark <= :minMark";
 	
 	static {
 		factory = Persistence.createEntityManagerFactory("CarRenting");
@@ -78,6 +82,54 @@ public class JPAHandleDB {
 			entityManager.close();
 		}
 		return true;
+	}
+	
+	public static List<User> selectAllCustomers() {
+		List<User> result = null;
+		try {
+			entityManager = factory.createEntityManager();
+			TypedQuery<User> query = entityManager.createQuery(selectAllCustomers, User.class);
+			result = query.getResultList();
+		} catch (Exception ex) {
+			System.err.println("Exception during customers selection: " + ex.getMessage());
+			return null;
+		} finally {
+			entityManager.close();
+		}
+		return result;
+	}
+	
+	public static List<Feedback> selectAllFeedbacks() {
+		List<Feedback> result = null;
+		int maxMark = 5;
+		try {
+			entityManager = factory.createEntityManager();
+			TypedQuery<Feedback> query = entityManager.createQuery(selectAllFeedbacks, Feedback.class);
+			query.setParameter("minMark", maxMark);
+			result = query.getResultList();
+		} catch (Exception ex) {
+			System.err.println("Exception during feedbacks selection: " + ex.getMessage());
+			return null;
+		} finally {
+			entityManager.close();
+		}
+		return result;
+	}
+	
+	public static List<Feedback> selectAllFeedbacks(int minMark) {
+		List<Feedback> result = null;
+		try {
+			entityManager = factory.createEntityManager();
+			TypedQuery<Feedback> query = entityManager.createQuery(selectAllFeedbacks, Feedback.class);
+			query.setParameter("minMark", minMark);
+			result = query.getResultList();
+		} catch (Exception ex) {
+			System.err.println("Exception during feedbacks selection: " + ex.getMessage());
+			return null;
+		} finally {
+			entityManager.close();
+		}
+		return result;
 	}
 	
 	public static void finish() {
