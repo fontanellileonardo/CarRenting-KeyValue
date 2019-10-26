@@ -25,6 +25,7 @@ public class JPAHandleDB {
 					return 1;
 				}
 			}
+			System.err.println("Exception during create: " + ex.getMessage());
 			return 2;
 		} finally {
 			entityManager.close();
