@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name="Car")
 public class Car {
 	
-    private final SimpleIntegerProperty idCar; 
+    private final SimpleLongProperty idCar; 
     private final SimpleStringProperty vendor;
     private final SimpleIntegerProperty seatNumber;
     private final SimpleStringProperty location;
@@ -14,10 +14,10 @@ public class Car {
     private final SimpleDoubleProperty price;
     private final SimpleStringProperty licencePlate;
     
-    private List<Reservation> reservation =	new ArrayList<>();
+    private List<Reservation> reservations =	new ArrayList<>();
     
     public Car() {
-    	idCar = new SimpleIntegerProperty(0);
+    	idCar = new SimpleLongProperty(0);
         vendor = new SimpleStringProperty("");
         seatNumber = new SimpleIntegerProperty(0);
         location = new SimpleStringProperty("");
@@ -27,7 +27,7 @@ public class Car {
     }
     
     public Car(int id, String v, int s, String l, int k, Double pr, String p) {
-        idCar = new SimpleIntegerProperty(id);
+        idCar = new SimpleLongProperty(id);
         vendor = new SimpleStringProperty(v);
         seatNumber = new SimpleIntegerProperty(s);
         location = new SimpleStringProperty(l);
@@ -36,17 +36,19 @@ public class Car {
         licencePlate = new SimpleStringProperty(p);
     }
     
+    public void setIdCar(long i) {idCar.set(i);}
     public void setVendor(String v) {vendor.set(v);}
     public void setSeatNumber(int s) {seatNumber.set(s);}
     public void setLocation(String l) {location.set(l);}
     public void setKilometers(int k) {kilometers.set(k);}
     public void setPrice(Double pr) {price.set(pr);}
     public void setLicencePlate(String p) {licencePlate.set(p);}
+    public void setReservations(List<Reservation> res) {reservations = res;}
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="IdCar", updatable=false, nullable=false )
-    public int getIdCar() { return idCar.get();}
+    public long getIdCar() { return idCar.get();}
     @Column(name="Vendor")
     public String getVendor() { return vendor.get();}
     @Column(name="SeatNumber")
@@ -64,7 +66,7 @@ public class Car {
     		fetch = FetchType.LAZY,
     		cascade = {}
     		)
-    public List<Reservation> getReservation() { return reservation; }
+    public List<Reservation> getReservations() { return reservations; }
     
 }
 

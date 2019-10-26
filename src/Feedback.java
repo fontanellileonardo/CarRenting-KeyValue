@@ -26,6 +26,10 @@ public class Feedback {
 		return id;
 	}
 	
+	public void setId(long id) {
+		this.id = id;
+	}
+	
 	@Column(name = "Mark")
 	public int getMark() {
 		return mark;
@@ -54,10 +58,11 @@ public class Feedback {
 				fetch=FetchType.EAGER,
 				cascade = {}
 				)
-	@Column(name = "User")
+	//@Column(name = "User")
 	public User getUser() {
 		return user;
 	}
+	
 	public void setUser(User user) {
 		this.user = user;
 	}

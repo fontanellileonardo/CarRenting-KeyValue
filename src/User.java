@@ -44,7 +44,7 @@ public class User {
         
     }
     
-    
+    public void setId(long i) {id.set(i);}
     public void setFiscalCode(String cf) {fiscalCode.set(cf);}
     public void setNickName(String nm) {nickName.set(nm);}    
     public void setName(String n) { name.set(n); }
@@ -52,6 +52,8 @@ public class User {
     public void setEmail(String e) { email.set(e); } 
     public void setCustomer(boolean c) { customer.set(c); }
     public void setPassword(String p) { password.set(p); }
+    public void setFeedbacks(List<Feedback> feed) {feedbacks = feed;}
+    public void setReservations(List<Reservation> res) {reservations = res;}
     
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
