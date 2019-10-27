@@ -25,7 +25,7 @@ public class Car {
         licencePlate = new SimpleStringProperty("");
     }
     
-    public Car(int id, String v, int s, String l, int k, Double pr, String p) {
+    public Car(String v, int s, String l, int k, Double pr, String p) {
         vendor = new SimpleStringProperty(v);
         seatNumber = new SimpleIntegerProperty(s);
         location = new SimpleStringProperty(l);

@@ -28,7 +28,7 @@ public class User {
         password = new SimpleStringProperty("");
     }
     
-    public User(Long i, String cf, String nm, String n, String c, Boolean cust, String e, String pwd)
+    public User(String cf, String nm, String n, String c, Boolean cust, String e, String pwd)
     {
     	fiscalCode = new SimpleStringProperty(cf);
     	nickName = new SimpleStringProperty(nm);
