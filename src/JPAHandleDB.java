@@ -29,8 +29,8 @@ public class JPAHandleDB {
 			entityManager.getTransaction().commit();
 			System.out.println("New object added");
 		} catch (Exception ex) {
-			if((ex.getCause() instanceof PersistenceException) && (ex.getCause().getCause() instanceof ConstraintViolationException)) {
-				ConstraintViolationException constraintViolationException = (ConstraintViolationException) ex.getCause().getCause();
+			if((ex instanceof PersistenceException) && (ex.getCause() instanceof ConstraintViolationException)) {
+				ConstraintViolationException constraintViolationException = (ConstraintViolationException) ex.getCause();
 				if(constraintViolationException.getErrorCode() == 1062) { // Object already exists
 					System.err.println("Object already exists");
 					return 1;
