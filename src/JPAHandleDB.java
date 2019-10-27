@@ -107,20 +107,8 @@ public class JPAHandleDB {
 	}
 	
 	public static List<Feedback> selectAllFeedbacks() {
-		List<Feedback> result = null;
 		int maxMark = 5;
-		try {
-			entityManager = factory.createEntityManager();
-			TypedQuery<Feedback> query = entityManager.createQuery(selectAllFeedbacks, Feedback.class);
-			query.setParameter("minMark", maxMark);
-			result = query.getResultList();
-		} catch (Exception ex) {
-			System.err.println("Exception during feedbacks selection: " + ex.getMessage());
-			return null;
-		} finally {
-			entityManager.close();
-		}
-		return result;
+		return selectAllFeedbacks(maxMark);
 	}
 	
 	public static List<Feedback> selectAllFeedbacks(int minMark) {
