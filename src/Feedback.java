@@ -1,21 +1,27 @@
 import java.time.*;
 import javax.persistence.*;
 
+import javafx.beans.property.*;
+
 @Entity
 
 public class Feedback {
 	private long id;
-	private int mark;
-	private String comment;
-	private LocalDate date;
+	private final SimpleIntegerProperty mark;
+	private final SimpleStringProperty comment;
+	private final SimpleObjectProperty<LocalDate> date;
 	private User user;
 	
-	public Feedback() {}
+	public Feedback() {
+		mark = new SimpleIntegerProperty(0);
+		comment = new SimpleStringProperty("");
+		date = new SimpleObjectProperty<LocalDate> ();
+	}
 	
 	public Feedback(int mark, String comment, LocalDate date ,User user) {
-		this.mark = mark;
-		this.comment = comment;
-		this.date = date;
+		this.mark = new SimpleIntegerProperty(mark);
+		this.comment = new SimpleStringProperty(comment);
+		this.date = new SimpleObjectProperty<LocalDate> (date);
 		this.user = user;
 	}
 	
@@ -32,26 +38,26 @@ public class Feedback {
 	
 	@Column(name = "Mark")
 	public int getMark() {
-		return mark;
+		return mark.get();
 	}
 	public void setMark(int mark) {
-		this.mark = mark;
+		this.mark.set(mark);
 	}
 	
 	@Column(name = "Comment")
 	public String getComment() {
-		return comment;
+		return comment.get();
 	}
 	public void setComment(String comment) {
-		this.comment = comment;
+		this.comment.set(comment);
 	}
 	
 	@Column(name = "Date")
 	public LocalDate getDate() {
-		return date;
+		return date.get();
 	}
 	public void setDate(LocalDate date) {
-		this.date = date;
+		this.date.set(date);
 	}
 	
 	@ManyToOne(

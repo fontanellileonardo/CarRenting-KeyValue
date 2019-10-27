@@ -5,7 +5,7 @@ import javafx.beans.property.*;
 @Entity
 @Table(name="User")
 public class User {
-	private final SimpleLongProperty id;
+	private long id;
 	private final SimpleStringProperty fiscalCode;
 	private final SimpleStringProperty nickName;
     private final SimpleStringProperty name;
@@ -17,7 +17,6 @@ public class User {
     private List<Reservation> reservations;
     
     public User() {
-    	id = new SimpleLongProperty(0);
     	fiscalCode = new SimpleStringProperty("");
     	nickName = new SimpleStringProperty("");
     	feedbacks = new ArrayList<>();
@@ -31,7 +30,6 @@ public class User {
     
     public User(Long i, String cf, String nm, String n, String c, Boolean cust, String e, String pwd)
     {
-    	id = new SimpleLongProperty(i);
     	fiscalCode = new SimpleStringProperty(cf);
     	nickName = new SimpleStringProperty(nm);
     	feedbacks = new ArrayList<>();
@@ -44,7 +42,7 @@ public class User {
         
     }
     
-    public void setId(long i) {id.set(i);}
+    public void setId(long i) {id = i;}
     public void setFiscalCode(String cf) {fiscalCode.set(cf);}
     public void setNickName(String nm) {nickName.set(nm);}    
     public void setName(String n) { name.set(n); }
@@ -58,7 +56,7 @@ public class User {
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "idUser")
-	public long getId() { return id.get(); }
+	public long getId() { return id; }
     
     @Column(name = "NickName", unique = true)
     public String getNickName() { return nickName.get();}  
@@ -72,7 +70,7 @@ public class User {
     @Column(name = "Surname")
     public String getSurname() { return surname.get(); }
     
-    @Column(name = "Email")
+    @Column(name = "Email", unique = true)
     public String getEmail() { return email.get(); } 
     
     @Column(name = "Customer")

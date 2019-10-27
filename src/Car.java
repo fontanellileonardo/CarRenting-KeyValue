@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name="Car")
 public class Car {
 	
-    private final SimpleLongProperty idCar; 
+    private long idCar; 
     private final SimpleStringProperty vendor;
     private final SimpleIntegerProperty seatNumber;
     private final SimpleStringProperty location;
@@ -17,7 +17,6 @@ public class Car {
     private List<Reservation> reservations =	new ArrayList<>();
     
     public Car() {
-    	idCar = new SimpleLongProperty(0);
         vendor = new SimpleStringProperty("");
         seatNumber = new SimpleIntegerProperty(0);
         location = new SimpleStringProperty("");
@@ -27,7 +26,6 @@ public class Car {
     }
     
     public Car(int id, String v, int s, String l, int k, Double pr, String p) {
-        idCar = new SimpleLongProperty(id);
         vendor = new SimpleStringProperty(v);
         seatNumber = new SimpleIntegerProperty(s);
         location = new SimpleStringProperty(l);
@@ -36,7 +34,7 @@ public class Car {
         licencePlate = new SimpleStringProperty(p);
     }
     
-    public void setIdCar(long i) {idCar.set(i);}
+    public void setIdCar(long i) {idCar = i;}
     public void setVendor(String v) {vendor.set(v);}
     public void setSeatNumber(int s) {seatNumber.set(s);}
     public void setLocation(String l) {location.set(l);}
@@ -48,7 +46,7 @@ public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="IdCar", updatable=false, nullable=false )
-    public long getIdCar() { return idCar.get();}
+    public long getIdCar() { return idCar;}
     @Column(name="Vendor")
     public String getVendor() { return vendor.get();}
     @Column(name="SeatNumber")
