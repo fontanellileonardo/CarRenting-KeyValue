@@ -1,4 +1,3 @@
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -10,9 +9,9 @@ public class JPAHandleDB {
 	private static EntityManager entityManager;
 	private static String selectAllCustomers = "SELECT u FROM User u WHERE u.customer = true";
 	private static String selectAllFeedbacks = "SELECT f FROM Feedback f WHERE f.mark <= :minMark";
-	private static String selectActiveReservation = "SELECT r FROM Reservation r WHERE r.User = :user AND r.pickUpDate > :pickUpDate";
+	private static String selectActiveReservation = "SELECT r FROM Reservation r WHERE r.user = :user AND r.pickUpDate > :actualDate";
 	private static String findAvailableCars = "SELECT c FROM Car c WHERE c.location = :location AND c.seatNumber = :seatNumber AND c.idCar NOT IN "
-												+ "(SELECT r.Car FROM Reservation r WHERE (r.pickUpDate BETWEEN :pickUpDate AND :deliveryDate) "
+												+ "(SELECT r.car FROM Reservation r WHERE (r.pickUpDate BETWEEN :pickUpDate AND :deliveryDate) "
 												+ "OR (r.deliveryDate BETWEEN :pickUpDate AND :deliveryDate) "
 												+ "OR (pickUpDate < :pickUpDate AND deliveryDate > :deliveryDate))";
 	
@@ -127,24 +126,22 @@ public class JPAHandleDB {
 		return result;
 	}
 	
-	public static List<Car> findAvailableCars(LocalDate arrival, LocalDate departure, String loc, String seats){
+	public static List<Car> findAvailableCars(LocalDate arrival, LocalDate departure, String loc, int seats){
 		List<Car> result = null;
-		Date arr = java.sql.Date.valueOf(arrival);
-		Date dep = java.sql.Date.valueOf(departure);
 		try {
 			entityManager = factory.createEntityManager();
 			TypedQuery<Car> query = entityManager.createQuery(findAvailableCars, Car.class);
 			query.setParameter("location", loc);
 			query.setParameter("seatNumber", seats);
-			query.setParameter("pickUpDate", arr);
-			query.setParameter("deliveryDate", dep);
-			query.setParameter("pickUpDate", arr);
-			query.setParameter("deliveryDate", dep);
-			query.setParameter("pickUpDate", arr);
-			query.setParameter("deliveryDate", dep);
+			query.setParameter("pickUpDate", arrival);
+			query.setParameter("deliveryDate", departure);
+			query.setParameter("pickUpDate", arrival);
+			query.setParameter("deliveryDate", departure);
+			query.setParameter("pickUpDate", arrival);
+			query.setParameter("deliveryDate", departure);
 			result = query.getResultList();
 		} catch (Exception ex) {
-			System.err.println("Exception while searching for available cars");
+			System.err.println("Exception while searching for available cars" + ex.getMessage());
 			return null;
 		}
 		finally {
@@ -155,11 +152,12 @@ public class JPAHandleDB {
 	
 	public static int selectActiveReservation(Reservation r) {
 		List<Reservation> result = null;
+		LocalDate date = LocalDate.now();
 		try {
 			entityManager = factory.createEntityManager();
 			TypedQuery<Reservation> query = entityManager.createQuery(selectActiveReservation, Reservation.class);
 			query.setParameter("user", r.getUser()); 
-			query.setParameter("pickUpDate", r.getPickUpDate());
+			query.setParameter("actualDate", date);
 			result = query.getResultList();
 		}
 		catch (Exception ex){
@@ -169,7 +167,7 @@ public class JPAHandleDB {
 		finally {
 			entityManager.close();
 		}
-		if(result == null)
+		if(result.isEmpty())
 			return 0;
 		else
 			return 1;
@@ -181,11 +179,14 @@ public class JPAHandleDB {
 			System.err.println("It's not permitted to book more than one car at a time");
 			return 1;
 		}
+		else if (reservation == 2){
+			return 2;
+		}
 		int result = create(r);
 		return result;
 	}
 	
-	public static boolean insertNewFeedback(Feedback f) {
+	public static int insertNewFeedback(Feedback f) { //discorso simile come sopra: ho supposto si passasse un oggetto Feedback, ma se si vuole far passare i parametri uno per uno e far costruire l'oggetto classe da questo metodo ci vuole 1 minuto a cambiare
 		int result = create(f);
 		return result;
 	}
@@ -193,4 +194,5 @@ public class JPAHandleDB {
 	public static void finish() {
 		factory.close();
 	}
+	
 }
