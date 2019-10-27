@@ -14,7 +14,8 @@ public class JPAHandleDB {
 												+ "(SELECT r.car FROM Reservation r WHERE (r.pickUpDate BETWEEN :pickUpDate AND :deliveryDate) "
 												+ "OR (r.deliveryDate BETWEEN :pickUpDate AND :deliveryDate) "
 												+ "OR (pickUpDate < :pickUpDate AND deliveryDate > :deliveryDate))";
-	
+	private static String selectReservations = "SELECT r FROM Reservation r WHERE r.car = :car";
+	private static String selectAllCars = "SELECT c FROM Car c";
 	static {
 		factory = Persistence.createEntityManagerFactory("CarRenting");
 	}
@@ -185,6 +186,72 @@ public class JPAHandleDB {
 		int result = create(r);
 		return result;
 	}
+	
+	// Eugenia
+	public static List<Car> selectAllCars() {
+		List<Car> result = null;
+		try {
+			entityManager = factory.createEntityManager();
+			TypedQuery<Car> query = entityManager.createQuery(selectAllCars, Car.class);
+			result = query.getResultList();
+		} catch (Exception ex) {
+			System.err.println("Exception during feedbacks selection: " + ex.getMessage());
+			return null;
+		} finally {
+			entityManager.close();
+		}
+		return result;
+	}
+	
+	//Eugenia
+	// Find all the reservations giving a specific Car
+	public static List <Reservation> selectReservations(Car car) {
+		List <Reservation> reservations = null;
+		try {
+			entityManager = factory.createEntityManager();
+			TypedQuery<Reservation> query = entityManager.createQuery(selectReservations, Reservation.class);
+			query.setParameter("car", car);
+			reservations = query.getResultList();
+		}catch(Exception ex) {
+			System.err.println("Exception during feedbacks selection: " + ex.getMessage());
+			return null;
+		} finally {
+			entityManager.close();
+		}
+		return reservations;
+	}
+	
+	// Eugenia
+	// Eliminazione può fallire perchè: la macchina è prenotata (gestita dal RentHandler), errore nel db
+	public static boolean delete(Car car) {
+		boolean res = true;
+		try {
+			// Select all the reservations related to this car
+			List <Reservation> reservations = selectReservations(car);	
+			if(reservations != null) {
+				System.out.println("Reservations found: " + reservations.size());
+				// Modify the car object in reservation, because the previous car doen't exists anymore
+				
+				// Codice da eliminare
+				List <Car> cars = selectAllCars();
+				// Fine 
+				for(int i = 0; i < reservations.size() && res != false; i++) {
+					System.out.println("Reservation "+reservations.get(i).getId()+" id car before: "+reservations.get(i).getCar().getIdCar());
+					reservations.get(i).setCar(null);
+					res = update(reservations.get(i));
+					System.out.println("Reservation "+reservations.get(i).getId()+" id car after: "+reservations.get(i).getCar().getIdCar());
+				}
+				// la delete va fatta dopo che ho scollegato tutte le reservations da questa car altrimenti JPA si incazza
+				if(res == true)
+					res = delete(Car.class,car.getIdCar());
+			}	
+		}catch(Exception ex) {
+			System.err.println("Exception during feedbacks selection: " + ex.getMessage());
+			return false;
+		}
+		return res;
+	}
+		
 	
 	public static int insertNewFeedback(Feedback f) { //discorso simile come sopra: ho supposto si passasse un oggetto Feedback, ma se si vuole far passare i parametri uno per uno e far costruire l'oggetto classe da questo metodo ci vuole 1 minuto a cambiare
 		int result = create(f);
