@@ -10,10 +10,10 @@ public class RentHandler {
     	int ret;
         String outcome = "";
         if(regUser!=null) {
-        	if(regUser.getName().equals("") == false && regUser.getSurname().equals("") == false && 
+        	if(regUser.getFiscalCode().equals("") == false && regUser.getNickName().equals("") == false && regUser.getName().equals("") == false && regUser.getSurname().equals("") == false && 
         			regUser.getEmail().equals("") == false && regUser.getPassword().equals("") == false) {
-        		//1) se l'utente ha già una prenotazione, 2) database error, 0) inserimento riuscito
-                ret = HandleDB.registerUser(regUser);
+        		//1) se l'utente esiste gi�, 2) database error, 0) inserimento riuscito
+                ret = JPAHandleDB.create(regUser);
                 switch (ret){
                     case 0:
                         System.out.println("Successfull registration!");
@@ -43,7 +43,7 @@ public class RentHandler {
         if(loggedUser!=null) {
         	if(loggedUser.getEmail().equals("") == false && loggedUser.getPassword() != null) {
         		//1) se l'utente ha già una prenotazione, 2) database error, 0) inserimento riuscito
-        		ret = HandleDB.logIn(loggedUser);
+        		ret = JPAHandleDB.logIn(loggedUser);
                 switch (ret){
                     case 0:
                         System.out.println("Successfull login!");
@@ -106,7 +106,7 @@ public class RentHandler {
     }
     
     public String deleteReservation(User user) {
-        boolean succ = HandleDB.deleteReservation(user);
+        boolean succ = JPAHandleDB.deleteReservation(user);
         if(succ) {
             System.out.println("Reservation deleted");
             return "Your reservation has been deleted!";

@@ -32,8 +32,8 @@ public class LoginInterface {
     private final VBox registerPanel; 
     final Label registerTitle;
     private final Text regMsg;
-    final Label r_name, r_surname, r_email, r_password, r_status;
-    private final TextField r_fieldName, r_fieldSurname, r_fieldEmail, r_fieldPwd;
+    final Label r_fiscalCode, r_nickName, r_name, r_surname, r_email, r_password, r_status;
+    private final TextField r_fieldFiscalCode, r_fieldNickName, r_fieldName, r_fieldSurname, r_fieldEmail, r_fieldPwd;
     private final ComboBox r_fieldStatus;
     final Button submit;
     
@@ -66,6 +66,10 @@ public class LoginInterface {
         r_fieldName = new TextField();
         r_surname = new Label("Surname:");
         r_fieldSurname = new TextField();
+        r_fiscalCode = new Label("Fiscal Code:");
+        r_fieldFiscalCode = new TextField();
+        r_nickName = new Label("Nickname:");
+        r_fieldNickName = new TextField();
         r_email = new Label("Email:");
         r_fieldEmail = new TextField();
         r_password = new Label("Password:");
@@ -83,7 +87,8 @@ public class LoginInterface {
                                         login);
         
         registerPanel.getChildren().addAll(registerTitle, r_name, r_fieldName, r_surname, 
-                                           r_fieldSurname, r_email, r_fieldEmail, 
+                                           r_fieldSurname, r_fiscalCode, r_fieldFiscalCode, r_nickName,
+                                           r_fieldNickName, r_email, r_fieldEmail, 
                                            r_password, r_fieldPwd, 
                                            r_status, r_fieldStatus, regMsg, submit);
         
@@ -157,12 +162,12 @@ public class LoginInterface {
             String selectedStatus = r_fieldStatus.getValue().toString();
             switch (selectedStatus) {
                 case "Customer":
-                    regUser = new User(r_fieldName.getText(),r_fieldSurname.getText(), true,
-                                    r_fieldEmail.getText(),cryptPwd(r_fieldPwd.getText()), 0);
+                    regUser = new User(r_fieldFiscalCode.getText(), r_fieldNickName.getText(), r_fieldName.getText(), r_fieldSurname.getText(), true,
+                                    r_fieldEmail.getText(),cryptPwd(r_fieldPwd.getText()));
                     break;
                 case "Employer":
-                    regUser = new User(r_fieldName.getText(),r_fieldSurname.getText(), false,
-                                    r_fieldEmail.getText(),cryptPwd(r_fieldPwd.getText()), 0);
+                    regUser = new User(r_fieldFiscalCode.getText(), r_fieldNickName.getText(), r_fieldName.getText(),r_fieldSurname.getText(), false,
+                                    r_fieldEmail.getText(),cryptPwd(r_fieldPwd.getText()));
                     break;
             }
             String outcome = rh.register(regUser);
