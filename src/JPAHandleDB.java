@@ -128,9 +128,6 @@ public class JPAHandleDB {
 			query.setParameter("password", user.getPassword());
 			query.setParameter("customer", user.getCustomer());
 			retrievedUser = query.getSingleResult();
-			// RICORDA: togliere id
-			user.setId(retrievedUser.getId());
-			// RICORDATELOOOOOOOOOoooooooo......!!! D:
 			user.setFiscalCode(retrievedUser.getFiscalCode());
 			user.setNickName(retrievedUser.getNickName());
 			user.setName(retrievedUser.getName());
