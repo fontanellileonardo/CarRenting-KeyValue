@@ -119,7 +119,6 @@ public class CustomerInterface {
     
     public void appEventHandler(User user, RentHandler rh, CarRenting carR) {
 
-    	
     	// "inizialization" phase
     	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
         buttonBoxHandler(true);
