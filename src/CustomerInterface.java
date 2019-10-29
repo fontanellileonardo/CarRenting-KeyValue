@@ -148,7 +148,7 @@ public class CustomerInterface {
             else {
 
                 selectedCar = tableCar.getSelectionModel().getSelectedItem();
-                System.out.println("I selected: "+selectedCar.getIdCar());
+                System.out.println("I selected: "+selectedCar.getLicencePlate());
                 
                 buttonBoxHandler(false);
                 
