@@ -71,7 +71,7 @@ public class RentHandler {
         if(car!=null) {
         	if(car.getLicencePlate().equals("") == false && car.getVendor().equals("") == false) {
         		//1) se l'utente ha già una prenotazione, 2) database error, 0) inserimento riuscito
-        		ret = HandleDB.insertCar(car);
+        		ret = JPAHandleDB.create(car);
                 switch (ret){
                         case 0:
                             System.out.println("Successfull insertion!");
