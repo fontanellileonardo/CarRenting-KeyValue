@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 
 
-public class UserInterface {
+public class CustomerInterface {
     
     String seats;
     String locality;
@@ -29,20 +29,20 @@ public class UserInterface {
     private final Label tableTitle;
     private final VisualTableCar tableCar;
     private final Label rankTitle;
-    private final VisualTableRank tableRank;
+    private final VisualTableFeedback tableFeedback;
     private final HBox buttonBox;
     private final Button reserve;
     private final Button delete;
     private final Button logOut;
 
-    public UserInterface() { 
+    public CustomerInterface() { 
         box = new AnchorPane();
         title = new Label("Car Renting");
         tableTitle = new Label("AVAILABLE CARS");
         sxPanel = new VBox(3);
         tableCar = new VisualTableCar();
         rankTitle = new Label("RANK");
-        tableRank = new VisualTableRank();
+        tableFeedback = new VisualTableFeedback();
         reserve = new Button("RESERVE");
         delete = new Button("DELETE RESERVATION");
         logOut = new Button("LOG OUT");
@@ -54,7 +54,7 @@ public class UserInterface {
         sxPanel.setAlignment(Pos.CENTER);
         searchPanel = new SearchPanel();
         dxPanel = new VBox(DX_PANEL_SPACE);
-        dxPanel.getChildren().addAll(rankTitle, tableRank);
+        dxPanel.getChildren().addAll(rankTitle, tableFeedback);
         box.getChildren().addAll(   logOut,title,
                                             searchPanel.getLabels(),
                                             searchPanel.getBox(),
@@ -80,7 +80,7 @@ public class UserInterface {
         sxPanel.setLayoutY(150);
         sxPanel.setPrefSize(400,500);
         tableCar.setTableCarStyle();
-        tableRank.setTableRankStyle();
+        tableFeedback.setTableFeedbackStyle();
         searchPanel.setSearchPanelStyle("Calibri", 11); 
         dxPanel.setLayoutX(530);
         dxPanel.setLayoutY(150);
@@ -119,21 +119,26 @@ public class UserInterface {
     
     public void appEventHandler(User user, RentHandler rh, CarRenting carR) {
 
-        tableRank.ListRankUpdate(rh.showRank());
+    	
+    	// "inizialization" phase
+    	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
+        buttonBoxHandler(true);
+        searchEventHandler(rh);
         
-        
-        
+        // Customer log-out
         logOut.setOnAction((ActionEvent e)-> {
             clearAll();
             carR.setScene("logout");
         });
-        buttonBoxHandler(true);
+        
+        // Delete a reservation
         delete.setOnAction((ActionEvent e)-> {
             String outcome = rh.deleteReservation(user);
             userMsg.setText(outcome);
-            tableRank.ListRankUpdate(rh.showRank());
+            //tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
         });
-        searchEventHandler(rh);
+        
+        // Listen when the customer select a car from table car
         tableCar.getSelectionModel().selectedIndexProperty().addListener((num) ->
         {           
             if(tableCar.getSelectionModel().getSelectedItem() == null) {
@@ -146,21 +151,24 @@ public class UserInterface {
                 System.out.println("I selected: "+selectedCar.getIdCar());
                 
                 buttonBoxHandler(false);
+                
+                // Reserve a car
                 reserve.setOnAction((ActionEvent e)-> {
-                        String outcome = rh.addReservation(user, selectedCar, pickUpDate, deliveryDate);
-                        if(outcome.equals("Success!")) {
-                           tableCar.getCars().remove(tableCar.getSelectionModel().getSelectedIndex());
-                           buttonBoxHandler(true);
-                           tableRank.ListRankUpdate(rh.showRank());
-                           userMsg.setText(outcome);
-                        }     
-                        else
-                            userMsg.setText(outcome);  
+	                String outcome = rh.addReservation(user, selectedCar, pickUpDate, deliveryDate);
+	                if(outcome.equals("Success!")) {
+	                   tableCar.getCars().remove(tableCar.getSelectionModel().getSelectedIndex());
+	                   buttonBoxHandler(true);
+	                   //tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
+	                   userMsg.setText(outcome);
+	                }     
+	                else
+	                    userMsg.setText(outcome);  
                 });               
             }
         });
     }
     
+    // reset Customer page
     public void clearAll() {
         searchPanel.getPickUpDate().setValue(LocalDate.now().plusDays(1));
         searchPanel.getDeliveryDate().setValue(LocalDate.now().plusDays(1));
@@ -175,4 +183,3 @@ public class UserInterface {
     public SearchPanel getSearchPanel() {return searchPanel;}
     
 }
-
