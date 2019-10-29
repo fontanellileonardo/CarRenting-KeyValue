@@ -1,4 +1,3 @@
-
 import java.math.*;
 import java.security.*;
 import javafx.collections.*;
@@ -16,88 +15,85 @@ public class LoginInterface {
     private final static int    TITLE_SIZE = 30,
                                 SECTION_SIZE = 9, 
                                 DX_PANEL_SPACE = 3; 
-    private final AnchorPane box;
+//	------ LABELS ------
     private final Label title;
+    // msg for the user(log form). Green->everything ok, Red->errors
     private final Text loginMsg;
-    //login section
-    private final VBox loginPanel; 
-    final Label loginTitle,email,password,status;
-    private final TextField fieldEmail; 
-    private final PasswordField fieldPwd;
-    //private final TextField fieldPwd; 
-    private final ComboBox fieldStatus;
-    final Button login;
-    
-    //registration section
-    private final VBox registerPanel; 
-    final Label registerTitle;
+    private final Label loginTitle,email,password,status;
+    private final Label registerTitle;
+    // msg for the user(reg form). Green->everything ok, Red->errors
     private final Text regMsg;
-    final Label r_fiscalCode, r_nickName, r_name, r_surname, r_email, r_password, r_status;
+    private final Label r_fiscalCode, r_nickName, r_name, r_surname, r_email, r_password, r_status;
+//	------ TEXT FIELDS ------  
+    private final TextField l_fieldEmail; 
+    private final PasswordField l_fieldPwd;
     private final TextField r_fieldFiscalCode, r_fieldNickName, r_fieldName, r_fieldSurname, r_fieldEmail, r_fieldPwd;
+//	------ COMBO BOXES ------
+    private final ComboBox fieldStatus;
     private final ComboBox r_fieldStatus;
+//	------ BUTTONS ------
+    private final Button login;
     final Button submit;
+//	------ BOXES ------
+    private final VBox loginPanel; 
+    private final VBox registerPanel; 
+    private final AnchorPane box;
     
     public LoginInterface() {
-    
-        box = new AnchorPane();
+//    	------ LABELS ------
         title = new Label("Car Renting");
-        
-        //initializing login section
-        loginMsg = new Text();
-        loginPanel = new VBox(3);
         loginTitle = new Label("Login Form");
+        loginMsg = new Text();
         email = new Label("Email:");
-        fieldEmail = new TextField();
         password = new Label("Password:");
-        fieldPwd = new PasswordField();
         status = new Label("Status:");
+        regMsg = new Text();
+        registerTitle = new Label("Registration form");
+        r_name = new Label("Name:");
+        r_surname = new Label("Surname:");
+        r_fiscalCode = new Label("Fiscal Code:");
+        r_nickName = new Label("Nickname:");
+        r_email = new Label("Email:");
+        r_password = new Label("Password:");
+        r_status = new Label("Status:");
+//    	------ TEXT FIELDS AND COMBO BOXES ------ 
+        l_fieldEmail = new TextField();
+        l_fieldPwd = new PasswordField();
+        r_fieldName = new TextField();
+        r_fieldSurname = new TextField();
+        r_fieldFiscalCode = new TextField();
+        r_fieldNickName = new TextField();
+        r_fieldEmail = new TextField();
+        r_fieldPwd = new TextField();
+//    	------ COMBO BOXES ------
         ObservableList<String> levels = 
                 FXCollections.observableArrayList (
                     "Customer","Employer");
         fieldStatus = new ComboBox(levels);
         fieldStatus.setValue("Customer");
-        login = new Button("LOGIN");
-        
-        //inizializing registration section
-        regMsg = new Text();
-        registerPanel = new VBox(DX_PANEL_SPACE);
-        registerTitle = new Label("Registration form");
-        r_name = new Label("Name:");
-        r_fieldName = new TextField();
-        r_surname = new Label("Surname:");
-        r_fieldSurname = new TextField();
-        r_fiscalCode = new Label("Fiscal Code:");
-        r_fieldFiscalCode = new TextField();
-        r_nickName = new Label("Nickname:");
-        r_fieldNickName = new TextField();
-        r_email = new Label("Email:");
-        r_fieldEmail = new TextField();
-        r_password = new Label("Password:");
-        r_fieldPwd = new TextField();
-        r_status = new Label("Status:");
-        ObservableList<String> r_levels = 
-                FXCollections.observableArrayList (
-                    "Customer","Employer");
-        r_fieldStatus = new ComboBox(r_levels);
+        r_fieldStatus = new ComboBox(levels);
         r_fieldStatus.setValue("Customer");
+//    	------ BUTTONS ------
+        login = new Button("LOGIN");
         submit = new Button("SUBMIT");
-        
-        loginPanel.getChildren().addAll(loginTitle,email,fieldEmail,password,
-                                        fieldPwd,status,fieldStatus, loginMsg,
-                                        login);
-        
+//    	------ BOXES ------
+        loginPanel = new VBox(3);
+        loginPanel.getChildren().addAll(loginTitle,email,l_fieldEmail,password,
+                l_fieldPwd,status,fieldStatus, loginMsg,
+                login);
+        registerPanel = new VBox(DX_PANEL_SPACE);
         registerPanel.getChildren().addAll(registerTitle, r_name, r_fieldName, r_surname, 
-                                           r_fieldSurname, r_fiscalCode, r_fieldFiscalCode, r_nickName,
-                                           r_fieldNickName, r_email, r_fieldEmail, 
-                                           r_password, r_fieldPwd, 
-                                           r_status, r_fieldStatus, regMsg, submit);
-        
+                r_fieldSurname, r_fiscalCode, r_fieldFiscalCode, r_nickName,
+                r_fieldNickName, r_email, r_fieldEmail, 
+                r_password, r_fieldPwd, 
+                r_status, r_fieldStatus, regMsg, submit);
+        box = new AnchorPane();        
         box.getChildren().addAll(title,loginPanel, registerPanel);
     }
     
+    // set the style
     public void setLoginInterfaceStyle() { 
-        box.setStyle("-fx-background-color: aliceblue");
-        box.setPrefWidth(800);
+//    	------ LABELS ------
         title.setFont(Font.font("Calibri", 11 + TITLE_SIZE)); 
         title.setLayoutX(275);
         title.setLayoutY(10);
@@ -105,19 +101,28 @@ public class LoginInterface {
         loginMsg.setFill(Color.RED);
         regMsg.setFont(Font.font("Calibri", 16));
         regMsg.setFill(Color.RED);
+        registerTitle.setLayoutX(300);
+//    	------ TEXT FIELDS AND COMBO BOXES ------ 
+    	
+//    	------ BUTTONS ------
+    	
+//    	------ BOXES ------
         loginPanel.setLayoutX(60);
         loginPanel.setPrefSize(300,450);
         loginPanel.setAlignment(Pos.CENTER);
-        registerTitle.setLayoutX(300);
         registerPanel.setLayoutX(430);
         registerPanel.setLayoutY(51);
         registerPanel.setPrefSize(300, 450);
         registerPanel.fillWidthProperty();
         registerPanel.setAlignment(Pos.CENTER);
+        box.setStyle("-fx-background-color: aliceblue");
+        box.setPrefWidth(800);
     }
     
+    // encrypt the password
     String cryptPwd(String pwd) {
     	String ret = null;
+    	// if the field is empty -> error
     	if(pwd.equals("") == true)
     		return ret;
     	try {
@@ -131,12 +136,13 @@ public class LoginInterface {
     	return ret;
     }
     
+    // listen the events from Login Interface
     void startEventHandler(User loggedUser, RentHandler rh, CarRenting carR){
     	// login
         login.setOnAction((ActionEvent ev)-> {
-            loggedUser.setEmail(fieldEmail.getText());
-            loggedUser.setPassword(cryptPwd(fieldPwd.getText()));
-            //loggedUser.setPassword(fieldPwd.getText());
+        	// takes values from the log form
+            loggedUser.setEmail(l_fieldEmail.getText());
+            loggedUser.setPassword(cryptPwd(l_fieldPwd.getText()));
             String selectedStatus = fieldStatus.getValue().toString();
             switch (selectedStatus) {
                 case "Customer":
@@ -146,12 +152,14 @@ public class LoginInterface {
                     loggedUser.setCustomer(false);
                     break;
             }
+            // check if the credentials are right
             String outcome = rh.login(loggedUser);
             System.out.println("Utente aggiornato: "+loggedUser.getFiscalCode());
             if(outcome.equals("Success!")) {
                 loginMsg.setText("");
                 clearAll();
                 regMsg.setText("");
+                // change the scene
                 carR.setScene(selectedStatus);    
             }
             else
@@ -161,6 +169,7 @@ public class LoginInterface {
         // registration
         submit.setOnAction((ActionEvent ev)-> {
             User regUser = null;  
+            // takes values from reg form
             String selectedStatus = r_fieldStatus.getValue().toString();
             switch (selectedStatus) {
                 case "Customer":
@@ -174,6 +183,7 @@ public class LoginInterface {
                                     r_fieldEmail.getText(),cryptPwd(r_fieldPwd.getText()));
                     break;
             }
+            // try to insert the user in the DB
             String outcome = rh.register(regUser);
             if(outcome.equals("You've been registered!")) {
                 regMsg.setFill(Color.GREEN);
@@ -185,9 +195,10 @@ public class LoginInterface {
         });
     }
     
+    // reset the fields in the Login Interface
     public void clearAll() {
-        fieldEmail.clear();
-        fieldPwd.clear();
+        l_fieldEmail.clear();
+        l_fieldPwd.clear();
         fieldStatus.setValue("Customer");
         r_fieldFiscalCode.clear();
         r_fieldNickName.clear();
