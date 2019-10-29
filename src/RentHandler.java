@@ -92,10 +92,17 @@ public class RentHandler {
         outcome = "OOps! You didn't insert "+'\n'+"        the login fields";
         return outcome;
     }
-    public List<User> showRank() {
-        System.out.println("rank updated");
-        List<User> us = HandleDB.showRank();
-        return us;
+
+    public List<Feedback> showFeedbacks() {
+        System.out.println("Feedbacks updated");
+        List<Feedback> feedbacks = JPAHandleDB.selectAllFeedbacks();
+        return feedbacks;
+    }
+    
+    public List<Feedback> showFeedbacks(int mark) {
+        System.out.println("Feedbacks updated");
+        List<Feedback> feedbacks = JPAHandleDB.selectAllFeedbacks(mark);
+        return feedbacks;
     }
     
     public String deleteReservation(User user) {
@@ -111,7 +118,8 @@ public class RentHandler {
     }
     
     public List<Car> showAvailableCar(LocalDate pickUpDate, LocalDate deliveryDate, String locality, String seats, StringBuilder out) {
-        List<Car> carList = HandleDB.loadingAvailableCars(pickUpDate, deliveryDate, locality, seats);
+    	int numSeats = Integer.parseInt(seats);
+        List<Car> carList = JPAHandleDB.findAvailableCars(pickUpDate, deliveryDate, locality, numSeats);
         if(carList == null){
            System.out.println("Database Error!"); 
            out.append("Try Again Later. Server not Found");
