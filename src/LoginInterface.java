@@ -132,7 +132,7 @@ public class LoginInterface {
     }
     
     void startEventHandler(User loggedUser, RentHandler rh, CarRenting carR){
-    	
+    	// login
         login.setOnAction((ActionEvent ev)-> {
             loggedUser.setEmail(fieldEmail.getText());
             loggedUser.setPassword(cryptPwd(fieldPwd.getText()));
@@ -147,6 +147,7 @@ public class LoginInterface {
                     break;
             }
             String outcome = rh.login(loggedUser);
+            System.out.println("Utente aggiornato: "+loggedUser.getFiscalCode());
             if(outcome.equals("Success!")) {
                 loginMsg.setText("");
                 clearAll();
@@ -157,6 +158,7 @@ public class LoginInterface {
                 loginMsg.setText(outcome);
         });
         
+        // registration
         submit.setOnAction((ActionEvent ev)-> {
             User regUser = null;  
             String selectedStatus = r_fieldStatus.getValue().toString();
@@ -164,6 +166,8 @@ public class LoginInterface {
                 case "Customer":
                     regUser = new User(r_fieldFiscalCode.getText(), r_fieldNickName.getText(), r_fieldName.getText(), r_fieldSurname.getText(), true,
                                     r_fieldEmail.getText(),cryptPwd(r_fieldPwd.getText()));
+                    System.out.println("Campi form: "+" fc:"+r_fieldFiscalCode.getText()+" nickn: "+r_fieldNickName.getText()+" name:"+r_fieldName.getText()+" surname: "+r_fieldSurname.getText()
+                                    +" email: "+r_fieldEmail.getText()+" pwd: "+cryptPwd(r_fieldPwd.getText()));
                     break;
                 case "Employer":
                     regUser = new User(r_fieldFiscalCode.getText(), r_fieldNickName.getText(), r_fieldName.getText(),r_fieldSurname.getText(), false,
@@ -185,6 +189,8 @@ public class LoginInterface {
         fieldEmail.clear();
         fieldPwd.clear();
         fieldStatus.setValue("Customer");
+        r_fieldFiscalCode.clear();
+        r_fieldNickName.clear();
         r_fieldName.clear();
         r_fieldSurname.clear();
         r_fieldEmail.clear();

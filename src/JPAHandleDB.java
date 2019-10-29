@@ -7,7 +7,7 @@ import org.hibernate.exception.ConstraintViolationException;
 public class JPAHandleDB {
 	private static EntityManagerFactory factory;
 	private static EntityManager entityManager;
-	private static String findUser = "SELECT u FROM User u WHERE u.email= :email AND u.password= :password AND u.customer= ";
+	private static String findUser = "SELECT u FROM User u WHERE u.email= :email AND u.password= :password AND u.customer= :customer ";
 	private static String selectAllCustomers = "SELECT u FROM User u WHERE u.customer = true";
 	private static String selectAllFeedbacks = "SELECT f FROM Feedback f WHERE f.mark <= :minMark";
 	private static String selectActiveReservation = "SELECT r FROM Reservation r WHERE r.user = :user AND r.pickUpDate > :actualDate";
@@ -123,8 +123,8 @@ public class JPAHandleDB {
 			query.setParameter("email", user.getEmail());
 			query.setParameter("password", user.getPassword());
 			query.setParameter("customer", user.getCustomer());
-			retrievedUser = query.getSingleResult();
-			if(retrievedUser != null)
+			user = query.getSingleResult();
+			if(user != null)
 				result = 0;
 		} catch (Exception ex) {
 			System.err.println("Database error while searching for user data: " + ex.getMessage());
@@ -293,6 +293,12 @@ public class JPAHandleDB {
 	public static void finish() {
 		factory.close();
 	}
-	
-	
+	/*
+	public static void main(String[]args) {
+		//create(new User("AAA","AAA","AAA","AAA",true,"AAA","AAA"));
+		JPAHandleDB.create(new User("AAA","AAA","AAA","AAA",true,"AAA","AAA"));
+		//JPAHandleDB.create(new Feedback(4, "commento a caso", LocalDate.now() ,null));
+		//String cf, String nm, String n, String c, Boolean cust, String e, String pwd
+	}
+	*/
 }

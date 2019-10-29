@@ -41,7 +41,7 @@ public class CustomerInterface {
         tableTitle = new Label("AVAILABLE CARS");
         sxPanel = new VBox(3);
         tableCar = new VisualTableCar();
-        rankTitle = new Label("RANK");
+        rankTitle = new Label("FEEDBACK");
         tableFeedback = new VisualTableFeedback();
         reserve = new Button("RESERVE");
         delete = new Button("DELETE RESERVATION");
