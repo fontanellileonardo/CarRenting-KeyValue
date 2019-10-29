@@ -174,7 +174,7 @@ public class JPAHandleDB {
 			return 1;
 	}
 	
-	public static int insertNewReservation(Reservation r) { //Ho supposto che si passasse un oggetto Reservation a questo metodo. Se si vuole far passare gli stessi parametri della scorsa versione, si può anche cambiare (o fare un overloading)
+	public static int create(Reservation r) { 
 		int reservation = selectActiveReservation(r);
 		if (reservation == 1) {
 			System.err.println("It's not permitted to book more than one car at a time");
@@ -245,12 +245,6 @@ public class JPAHandleDB {
 		return res;
 	}
 		
-	
-	public static int insertNewFeedback(Feedback f) { //discorso simile come sopra: ho supposto si passasse un oggetto Feedback, ma se si vuole far passare i parametri uno per uno e far costruire l'oggetto classe da questo metodo ci vuole 1 minuto a cambiare
-		int result = create(f);
-		return result;
-	}
-	
 	public static void finish() {
 		factory.close();
 	}
