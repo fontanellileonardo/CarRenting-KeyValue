@@ -11,7 +11,7 @@ public class JPAHandleDB {
 	private static String selectAllCustomers = "SELECT u FROM User u WHERE u.customer = true";
 	private static String selectAllFeedbacks = "SELECT f FROM Feedback f WHERE f.mark <= :minMark";
 	private static String selectActiveReservation = "SELECT r FROM Reservation r WHERE r.user = :user AND r.pickUpDate > :actualDate";
-	private static String findAvailableCars = "SELECT c FROM Car c WHERE c.location = :location AND c.seatNumber = :seatNumber AND c.idCar NOT IN "
+	private static String findAvailableCars = "SELECT c FROM Car c WHERE c.location = :location AND c.seatNumber = :seatNumber AND c.removed = false AND c.licencePlate NOT IN "
 												+ "(SELECT r.car FROM Reservation r WHERE (r.pickUpDate BETWEEN :pickUpDate AND :deliveryDate) "
 												+ "OR (r.deliveryDate BETWEEN :pickUpDate AND :deliveryDate) "
 												+ "OR (pickUpDate < :pickUpDate AND deliveryDate > :deliveryDate))";
@@ -284,36 +284,19 @@ public class JPAHandleDB {
 	// Eugenia
 	// Delete can be fail because: a customer have the car (RentHandler has to check if is it true), error in the DB
 	public static boolean delete(Car car) {
-		boolean res = true;
+		boolean result = false;
 		try {
-			// Select all the reservations related to this car
-			List <Reservation> reservations = selectReservations(car);	
-			if(reservations != null) {
-				// Modify the car object in reservation, because the previous car doen't exists anymore
-				for(int i = 0; i < reservations.size() && res != false; i++) {
-					reservations.get(i).setCar(null);
-					res = update(reservations.get(i));
-				}
-				// the delete has to be done after we delete the car from its reservations
-				if(res == true)
-					res = delete(Car.class,car.getIdCar());
-			}	
+			car.setRemoved(true);
+			result = update(car);
 		}catch(Exception ex) {
-			System.err.println("Exception during feedbacks selection: " + ex.getMessage());
+			System.err.println("Exception during car deletion: " + ex.getMessage());
 			return false;
 		}
-		return res;
+		return result;
 	}
 		
 	public static void finish() {
 		factory.close();
 	}
-	/*
-	public static void main(String[]args) {
-		//create(new User("AAA","AAA","AAA","AAA",true,"AAA","AAA"));
-		JPAHandleDB.create(new User("AAA","AAA","AAA","AAA",true,"AAA","AAA"));
-		//JPAHandleDB.create(new Feedback(4, "commento a caso", LocalDate.now() ,null));
-		//String cf, String nm, String n, String c, Boolean cust, String e, String pwd
-	}
-	*/
+	
 }

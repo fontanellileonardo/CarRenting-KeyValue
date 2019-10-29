@@ -5,7 +5,6 @@ import javafx.beans.property.*;
 @Entity
 @Table(name="User")
 public class User {
-	private long id;
 	private final SimpleStringProperty fiscalCode;
 	private final SimpleStringProperty nickName;
     private final SimpleStringProperty name;
@@ -42,7 +41,6 @@ public class User {
         
     }
     
-    public void setId(long i) {id = i;}
     public void setFiscalCode(String cf) {fiscalCode.set(cf);}
     public void setNickName(String nm) {nickName.set(nm);}    
     public void setName(String n) { name.set(n); }
@@ -54,15 +52,11 @@ public class User {
     public void setReservations(List<Reservation> res) {reservations = res;}
     
     @Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "idUser")
-	public long getId() { return id; }
-    
-    @Column(name = "NickName", unique = true)
-    public String getNickName() { return nickName.get();}  
-    
     @Column(name = "FiscalCode", unique = true)
     public String getFiscalCode() { return fiscalCode.get();}
+
+    @Column(name = "NickName", unique = true)
+    public String getNickName() { return nickName.get();}  
     
     @Column(name = "Name")
     public String getName() { return name.get(); }
