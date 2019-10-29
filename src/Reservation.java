@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "Reservations")
+@Table(name = "Reservation")
 public class Reservation {
 	private long id;
 	private LocalDate pickUpDate;

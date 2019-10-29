@@ -1,4 +1,3 @@
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -11,12 +10,13 @@ public class JPAHandleDB {
 	private static String findUser = "SELECT u FROM User u WHERE u.Email= :email AND u.Password= :password AND u.Customer= ";
 	private static String selectAllCustomers = "SELECT u FROM User u WHERE u.customer = true";
 	private static String selectAllFeedbacks = "SELECT f FROM Feedback f WHERE f.mark <= :minMark";
-	private static String selectActiveReservation = "SELECT r FROM Reservation r WHERE r.User = :user AND r.pickUpDate > :pickUpDate";
+	private static String selectActiveReservation = "SELECT r FROM Reservation r WHERE r.user = :user AND r.pickUpDate > :actualDate";
 	private static String findAvailableCars = "SELECT c FROM Car c WHERE c.location = :location AND c.seatNumber = :seatNumber AND c.idCar NOT IN "
-												+ "(SELECT r.Car FROM Reservation r WHERE (r.pickUpDate BETWEEN :pickUpDate AND :deliveryDate) "
+												+ "(SELECT r.car FROM Reservation r WHERE (r.pickUpDate BETWEEN :pickUpDate AND :deliveryDate) "
 												+ "OR (r.deliveryDate BETWEEN :pickUpDate AND :deliveryDate) "
 												+ "OR (pickUpDate < :pickUpDate AND deliveryDate > :deliveryDate))";
-	
+	private static String selectReservations = "SELECT r FROM Reservation r WHERE r.car = :car";
+	private static String selectAllCars = "SELECT c FROM Car c";
 	static {
 		factory = Persistence.createEntityManagerFactory("CarRenting");
 	}
@@ -172,24 +172,22 @@ public class JPAHandleDB {
 		return result;
 	}
 	
-	public static List<Car> findAvailableCars(LocalDate arrival, LocalDate departure, String loc, String seats){
+	public static List<Car> findAvailableCars(LocalDate arrival, LocalDate departure, String loc, int seats){
 		List<Car> result = null;
-		Date arr = java.sql.Date.valueOf(arrival);
-		Date dep = java.sql.Date.valueOf(departure);
 		try {
 			entityManager = factory.createEntityManager();
 			TypedQuery<Car> query = entityManager.createQuery(findAvailableCars, Car.class);
 			query.setParameter("location", loc);
 			query.setParameter("seatNumber", seats);
-			query.setParameter("pickUpDate", arr);
-			query.setParameter("deliveryDate", dep);
-			query.setParameter("pickUpDate", arr);
-			query.setParameter("deliveryDate", dep);
-			query.setParameter("pickUpDate", arr);
-			query.setParameter("deliveryDate", dep);
+			query.setParameter("pickUpDate", arrival);
+			query.setParameter("deliveryDate", departure);
+			query.setParameter("pickUpDate", arrival);
+			query.setParameter("deliveryDate", departure);
+			query.setParameter("pickUpDate", arrival);
+			query.setParameter("deliveryDate", departure);
 			result = query.getResultList();
 		} catch (Exception ex) {
-			System.err.println("Exception while searching for available cars");
+			System.err.println("Exception while searching for available cars" + ex.getMessage());
 			return null;
 		}
 		finally {
@@ -200,11 +198,12 @@ public class JPAHandleDB {
 	
 	public static int selectActiveReservation(Reservation r) {
 		List<Reservation> result = null;
+		LocalDate date = LocalDate.now();
 		try {
 			entityManager = factory.createEntityManager();
 			TypedQuery<Reservation> query = entityManager.createQuery(selectActiveReservation, Reservation.class);
 			query.setParameter("user", r.getUser()); 
-			query.setParameter("pickUpDate", r.getPickUpDate());
+			query.setParameter("actualDate", date);
 			result = query.getResultList();
 		}
 		catch (Exception ex){
@@ -214,28 +213,85 @@ public class JPAHandleDB {
 		finally {
 			entityManager.close();
 		}
-		if(result == null)
+		if(result.isEmpty())
 			return 0;
 		else
 			return 1;
 	}
 	
-	public static int insertNewReservation(Reservation r) { //Ho supposto che si passasse un oggetto Reservation a questo metodo. Se si vuole far passare gli stessi parametri della scorsa versione, si può anche cambiare (o fare un overloading)
+	public static int create(Reservation r) { 
 		int reservation = selectActiveReservation(r);
 		if (reservation == 1) {
 			System.err.println("It's not permitted to book more than one car at a time");
 			return 1;
 		}
+		else if (reservation == 2){
+			return 2;
+		}
 		int result = create(r);
 		return result;
 	}
 	
-	public static boolean insertNewFeedback(Feedback f) {
-		int result = create(f);
+	// Eugenia
+	public static List<Car> selectAllCars() {
+		List<Car> result = null;
+		try {
+			entityManager = factory.createEntityManager();
+			TypedQuery<Car> query = entityManager.createQuery(selectAllCars, Car.class);
+			result = query.getResultList();
+		} catch (Exception ex) {
+			System.err.println("Exception during feedbacks selection: " + ex.getMessage());
+			return null;
+		} finally {
+			entityManager.close();
+		}
 		return result;
 	}
 	
+	//Eugenia
+	// Find all the reservations giving a specific Car
+	public static List <Reservation> selectReservations(Car car) {
+		List <Reservation> reservations = null;
+		try {
+			entityManager = factory.createEntityManager();
+			TypedQuery<Reservation> query = entityManager.createQuery(selectReservations, Reservation.class);
+			query.setParameter("car", car);
+			reservations = query.getResultList();
+		}catch(Exception ex) {
+			System.err.println("Exception during feedbacks selection: " + ex.getMessage());
+			return null;
+		} finally {
+			entityManager.close();
+		}
+		return reservations;
+	}
+	
+	// Eugenia
+	// Delete can be fail because: a customer have the car (RentHandler has to check if is it true), error in the DB
+	public static boolean delete(Car car) {
+		boolean res = true;
+		try {
+			// Select all the reservations related to this car
+			List <Reservation> reservations = selectReservations(car);	
+			if(reservations != null) {
+				// Modify the car object in reservation, because the previous car doen't exists anymore
+				for(int i = 0; i < reservations.size() && res != false; i++) {
+					reservations.get(i).setCar(null);
+					res = update(reservations.get(i));
+				}
+				// the delete has to be done after we delete the car from its reservations
+				if(res == true)
+					res = delete(Car.class,car.getIdCar());
+			}	
+		}catch(Exception ex) {
+			System.err.println("Exception during feedbacks selection: " + ex.getMessage());
+			return false;
+		}
+		return res;
+	}
+		
 	public static void finish() {
 		factory.close();
 	}
+	
 }
