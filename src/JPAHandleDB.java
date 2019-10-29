@@ -183,7 +183,7 @@ public class JPAHandleDB {
 		else if (reservation == 2){
 			return 2;
 		}
-		int result = create(r);
+		int result = create((Object) r);
 		return result;
 	}
 	

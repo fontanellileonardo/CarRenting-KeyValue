@@ -124,11 +124,11 @@ public class RentHandler {
         return carList;
     }
       
-    public String addReservation(User user, Car selectedCar, LocalDate pickUpDate, LocalDate deliveryDate)
-    {
+    public String addReservation(User user, Car selectedCar, LocalDate pickUpDate, LocalDate deliveryDate) {
+    	Reservation res = new Reservation(pickUpDate, deliveryDate, user, selectedCar);
         String outcome = "";
-        //1) se l'utente ha già una prenotazione, 2) database error, 0) inserimento riuscito
-        int ret = HandleDB.insertReservation(user, selectedCar, pickUpDate, deliveryDate);
+        //1) if user already has an active reservation, 2) database error, 0) inserting done
+        int ret = JPAHandleDB.create(res);
             switch (ret){
                 case 0:
                     System.out.println("Successfull Reservation!");
@@ -139,7 +139,7 @@ public class RentHandler {
                     outcome = "OOps! There's already an active reservation for you";
                     return outcome;
                 default:
-                    System.out.println("Database Error");
+                    System.err.println("Database Error");
                     outcome = "OOps! Something went wrong!:(";
                     return outcome;
             }                
