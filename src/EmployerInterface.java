@@ -33,6 +33,9 @@ public class EmployerInterface {
     private final TextField fieldPrice; 
     final Button insertButton;
     final Button logOutButton;
+    private final VBox dxPanel;
+    private final Label feedbackTitle;
+    private final VisualTableFeedback tableFeedback;
     
     public EmployerInterface() {
     
@@ -65,13 +68,16 @@ public class EmployerInterface {
         fieldPrice = new TextField();
         insertButton = new Button("INSERT");
         logOutButton = new Button("LOG OUT");
-        
+        feedbackTitle = new Label("FEEDBACKS");
+        tableFeedback = new VisualTableFeedback();
+        dxPanel = new VBox(DX_PANEL_SPACE);
+        dxPanel.getChildren().addAll(feedbackTitle, tableFeedback);
         insertPanel.getChildren().addAll(insertTitle,errorMsg,idCar,fieldIdCar,vendor,
                                         fieldVendor,seatNumber,fieldSeats, location,
                                         fieldLocation,kilometers, fieldKm, price, 
                                         fieldPrice, insertButton);
         
-        box.getChildren().addAll(logOutButton,title,insertPanel);
+        box.getChildren().addAll(logOutButton,title,insertPanel,dxPanel);
     }
     
     public void setEmpInterfaceStyle() { 
@@ -87,6 +93,7 @@ public class EmployerInterface {
         insertPanel.setLayoutY(50);
         insertPanel.setPrefSize(300,450);
         insertPanel.setAlignment(Pos.CENTER);
+        tableFeedback.setTableFeedbackStyle();
         box.setLeftAnchor(title, 90.0);
         box.setTopAnchor(title, 30.0);
         box.setLeftAnchor(logOutButton,430.0);
@@ -94,7 +101,8 @@ public class EmployerInterface {
     }
     
     void empEventHandler(RentHandler rh, CarRenting carR){
-        
+    	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
+    	
         logOutButton.setOnAction((ActionEvent e)-> {
             errorMsg.setText("");
             clearAll();

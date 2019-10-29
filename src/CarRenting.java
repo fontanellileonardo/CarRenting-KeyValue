@@ -14,7 +14,7 @@ public class CarRenting extends Application {
     
     private RentHandler rentHandler;
     private User loggedUser = new User();
-    private UserInterface graphicInterface;
+    private CustomerInterface graphicInterface;
     private LoginInterface loginInterface;
     private EmployerInterface empInterface;
     private Stage stage;
@@ -32,7 +32,7 @@ public class CarRenting extends Application {
         loginInterface.startEventHandler(loggedUser, rentHandler, this);
         empInterface.empEventHandler(rentHandler, this);
         empInterface.setEmpInterfaceStyle();
-        graphicInterface = new UserInterface();
+        graphicInterface = new CustomerInterface();
         graphicInterface.setUserInterfaceStyle();
         
         sceneStart = new Scene(new Group(loginInterface.getBox()));
