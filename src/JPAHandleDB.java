@@ -105,8 +105,12 @@ public class JPAHandleDB {
 			activeReservation = query.getSingleResult();
 			if(activeReservation != null) 
 				ret = delete(Reservation.class, activeReservation.getId());
+		}catch (NoResultException noResEx) {
+			System.out.println("Non esiste alcune reservation dell'utente "+user.getFiscalCode());
+			ret = true;
 		} catch (Exception ex) {
 			System.err.println("Database error while searching for user data: " + ex.getMessage());
+			System.err.println(ex);
 			ret = false;
 		} finally {
 			entityManager.close();
@@ -123,7 +127,18 @@ public class JPAHandleDB {
 			query.setParameter("email", user.getEmail());
 			query.setParameter("password", user.getPassword());
 			query.setParameter("customer", user.getCustomer());
-			user = query.getSingleResult();
+			retrievedUser = query.getSingleResult();
+			// RICORDA: togliere id
+			user.setId(retrievedUser.getId());
+			// RICORDATELOOOOOOOOOoooooooo......!!! D:
+			user.setFiscalCode(retrievedUser.getFiscalCode());
+			user.setNickName(retrievedUser.getNickName());
+			user.setName(retrievedUser.getName());
+			user.setSurname(retrievedUser.getSurname());
+			System.out.println("Logged User: fc:"+user.getFiscalCode()+" nickName: "
+			+user.getNickName()+" name:"+user.getName()+" surname:"+user.getSurname()+" customer: "+user.getCustomer()
+			+" email: "+user.getEmail()+" password:"+user.getPassword());
+			
 			if(user != null)
 				result = 0;
 		} catch (Exception ex) {
