@@ -222,26 +222,19 @@ public class JPAHandleDB {
 	}
 	
 	// Eugenia
-	// Eliminazione può fallire perchè: la macchina è prenotata (gestita dal RentHandler), errore nel db
+	// Delete can be fail because: a customer have the car (RentHandler has to check if is it true), error in the DB
 	public static boolean delete(Car car) {
 		boolean res = true;
 		try {
 			// Select all the reservations related to this car
 			List <Reservation> reservations = selectReservations(car);	
 			if(reservations != null) {
-				System.out.println("Reservations found: " + reservations.size());
 				// Modify the car object in reservation, because the previous car doen't exists anymore
-				
-				// Codice da eliminare
-				List <Car> cars = selectAllCars();
-				// Fine 
 				for(int i = 0; i < reservations.size() && res != false; i++) {
-					System.out.println("Reservation "+reservations.get(i).getId()+" id car before: "+reservations.get(i).getCar().getIdCar());
 					reservations.get(i).setCar(null);
 					res = update(reservations.get(i));
-					System.out.println("Reservation "+reservations.get(i).getId()+" id car after: "+reservations.get(i).getCar().getIdCar());
 				}
-				// la delete va fatta dopo che ho scollegato tutte le reservations da questa car altrimenti JPA si incazza
+				// the delete has to be done after we delete the car from its reservations
 				if(res == true)
 					res = delete(Car.class,car.getIdCar());
 			}	
