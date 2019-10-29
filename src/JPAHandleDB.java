@@ -7,7 +7,7 @@ import org.hibernate.exception.ConstraintViolationException;
 public class JPAHandleDB {
 	private static EntityManagerFactory factory;
 	private static EntityManager entityManager;
-	private static String findUser = "SELECT u FROM User u WHERE u.Email= :email AND u.Password= :password AND u.Customer= ";
+	private static String findUser = "SELECT u FROM User u WHERE u.email= :email AND u.password= :password AND u.customer= ";
 	private static String selectAllCustomers = "SELECT u FROM User u WHERE u.customer = true";
 	private static String selectAllFeedbacks = "SELECT f FROM Feedback f WHERE f.mark <= :minMark";
 	private static String selectActiveReservation = "SELECT r FROM Reservation r WHERE r.user = :user AND r.pickUpDate > :actualDate";
@@ -93,7 +93,7 @@ public class JPAHandleDB {
 	}
 	
 	public static boolean deleteReservation(User user) {
-		Date date = java.sql.Date.valueOf(LocalDate.now());
+		LocalDate date = LocalDate.now();
 		Reservation activeReservation = null;
 		boolean ret = true;
 		
@@ -101,7 +101,7 @@ public class JPAHandleDB {
 			entityManager = factory.createEntityManager();
 			TypedQuery<Reservation> query = entityManager.createQuery(selectActiveReservation, Reservation.class);
 			query.setParameter("user", user);
-			query.setParameter("pickUpDate", date);
+			query.setParameter("actualDate", date);
 			activeReservation = query.getSingleResult();
 			if(activeReservation != null) 
 				ret = delete(Reservation.class, activeReservation.getId());
