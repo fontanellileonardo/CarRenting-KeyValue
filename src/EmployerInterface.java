@@ -109,9 +109,8 @@ public class EmployerInterface {
             if(fieldIdCar.getText().equals("") == false && fieldVendor.getText().equals("") == false &&
             		fieldKm.getText().matches("^\\d+$") == true && 
             		fieldPrice.getText().matches("^\\d+\\.?[0-9]*$") == true ) {
-            	Car car = new Car(fieldIdCar.getText(),fieldVendor.getText(),
-                        seats,loc,Integer.parseInt(fieldKm.getText()),
-                        Double.parseDouble(fieldPrice.getText()));
+            	Car car = new Car(fieldVendor.getText(),seats,loc,Integer.parseInt(fieldKm.getText()),
+            			Double.parseDouble(fieldPrice.getText()),fieldIdCar.getText());
             	outcome = rh.insertCar(car);
                 if(outcome.equals("Success!")) {
                 	errorMsg.setFill(Color.GREEN);
