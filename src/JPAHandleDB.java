@@ -7,6 +7,7 @@ import org.hibernate.exception.ConstraintViolationException;
 public class JPAHandleDB {
 	private static EntityManagerFactory factory;
 	private static EntityManager entityManager;
+	private static String findUser = "SELECT u FROM User u WHERE u.Email= :email AND u.Password= :password AND u.Customer= ";
 	private static String selectAllCustomers = "SELECT u FROM User u WHERE u.customer = true";
 	private static String selectAllFeedbacks = "SELECT f FROM Feedback f WHERE f.mark <= :minMark";
 	private static String selectActiveReservation = "SELECT r FROM Reservation r WHERE r.user = :user AND r.pickUpDate > :actualDate";
@@ -89,6 +90,50 @@ public class JPAHandleDB {
 			entityManager.close();
 		}
 		return true;
+	}
+	
+	public static boolean deleteReservation(User user) {
+		Date date = java.sql.Date.valueOf(LocalDate.now());
+		Reservation activeReservation = null;
+		boolean ret = true;
+		
+		try {
+			entityManager = factory.createEntityManager();
+			TypedQuery<Reservation> query = entityManager.createQuery(selectActiveReservation, Reservation.class);
+			query.setParameter("user", user);
+			query.setParameter("pickUpDate", date);
+			activeReservation = query.getSingleResult();
+			if(activeReservation != null) 
+				ret = delete(Reservation.class, activeReservation.getId());
+		} catch (Exception ex) {
+			System.err.println("Database error while searching for user data: " + ex.getMessage());
+			ret = false;
+		} finally {
+			entityManager.close();
+		}
+		return ret;
+	}
+	
+	public static int logIn(User user) {
+		int result = 1;
+		User retrievedUser = null;
+		try {
+			entityManager = factory.createEntityManager();
+			TypedQuery<User> query = entityManager.createQuery(findUser, User.class);
+			query.setParameter("email", user.getEmail());
+			query.setParameter("password", user.getPassword());
+			query.setParameter("customer", user.getCustomer());
+			retrievedUser = query.getSingleResult();
+			if(retrievedUser != null)
+				result = 0;
+		} catch (Exception ex) {
+			System.err.println("Database error while searching for user data: " + ex.getMessage());
+			result = 2;
+			return result;
+		} finally {
+			entityManager.close();
+		}
+		return result;
 	}
 	
 	public static List<User> selectAllCustomers() {
@@ -174,7 +219,7 @@ public class JPAHandleDB {
 			return 1;
 	}
 	
-	public static int insertNewReservation(Reservation r) { //Ho supposto che si passasse un oggetto Reservation a questo metodo. Se si vuole far passare gli stessi parametri della scorsa versione, si può anche cambiare (o fare un overloading)
+	public static int create(Reservation r) { 
 		int reservation = selectActiveReservation(r);
 		if (reservation == 1) {
 			System.err.println("It's not permitted to book more than one car at a time");
@@ -245,12 +290,6 @@ public class JPAHandleDB {
 		return res;
 	}
 		
-	
-	public static int insertNewFeedback(Feedback f) { //discorso simile come sopra: ho supposto si passasse un oggetto Feedback, ma se si vuole far passare i parametri uno per uno e far costruire l'oggetto classe da questo metodo ci vuole 1 minuto a cambiare
-		int result = create(f);
-		return result;
-	}
-	
 	public static void finish() {
 		factory.close();
 	}
