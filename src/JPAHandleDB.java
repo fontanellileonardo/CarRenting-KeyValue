@@ -281,7 +281,7 @@ public class JPAHandleDB {
 				}
 				// the delete has to be done after we delete the car from its reservations
 				if(res == true)
-					res = delete(Car.class,car.getIdCar());
+					res = delete(Car.class,car.getLicencePlate());
 			}	
 		}catch(Exception ex) {
 			System.err.println("Exception during feedbacks selection: " + ex.getMessage());
@@ -293,12 +293,4 @@ public class JPAHandleDB {
 	public static void finish() {
 		factory.close();
 	}
-	/*
-	public static void main(String[]args) {
-		//create(new User("AAA","AAA","AAA","AAA",true,"AAA","AAA"));
-		JPAHandleDB.create(new User("AAA","AAA","AAA","AAA",true,"AAA","AAA"));
-		//JPAHandleDB.create(new Feedback(4, "commento a caso", LocalDate.now() ,null));
-		//String cf, String nm, String n, String c, Boolean cust, String e, String pwd
-	}
-	*/
 }
