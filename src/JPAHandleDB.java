@@ -17,6 +17,8 @@ public class JPAHandleDB {
 												+ "OR (pickUpDate < :pickUpDate AND deliveryDate > :deliveryDate))";
 	private static String selectReservations = "SELECT r FROM Reservation r WHERE r.car = :car";
 	private static String selectAllCars = "SELECT c FROM Car c";
+	private static String selectCarActiveReservations = "SELECT r FROM Reservation r WHERE r.car = :car AND r.pickUpDate > :actualDate";
+	
 	static {
 		factory = Persistence.createEntityManagerFactory("CarRenting");
 	}
@@ -278,6 +280,28 @@ public class JPAHandleDB {
 		return reservations;
 	}
 	
+	// This function returns 1 if there is a reservation for the car, 0 if there isn't and 2 if there is an error in the DB
+	public static int existsCarActiveReservations(Car car) {
+		int result = 2;
+		try {
+			entityManager = factory.createEntityManager();
+			TypedQuery<Reservation> query = entityManager.createQuery(selectCarActiveReservations, Reservation.class);
+			query.setParameter("car", car);
+			query.setParameter("actualDate", LocalDate.now());
+			query.getSingleResult();
+			result = 1;
+		} catch(NoResultException ex) {
+			System.err.println("There is no reservation for the car");
+			return 0;
+		} catch (Exception ex) {
+			System.err.println("Exception during car active reservations selection: " + ex.getMessage());
+			return 2;
+		} finally {
+			entityManager.close();
+		}
+		return result;
+	}
+	
 	// Eugenia
 	// Delete can be fail because: a customer have the car (RentHandler has to check if is it true), error in the DB
 	public static boolean delete(Car car) {
@@ -295,5 +319,4 @@ public class JPAHandleDB {
 	public static void finish() {
 		factory.close();
 	}
-	
 }
