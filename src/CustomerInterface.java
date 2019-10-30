@@ -1,4 +1,7 @@
 import java.time.*;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,8 +27,13 @@ public class CustomerInterface {
     private final Label title;
     private final Label tableTitle;
     private final Label rankTitle;
+    private final Label addFeedbackTitle;
     // Message for the user. Green -> ok, Red -> an error occurs
     private final Text userMsg;
+//	------ TEXT FIELDS ------ 
+    private final TextField comment;
+//	------ COMBO BOXES ------
+    private final ComboBox mark;
 //	------ TABLES ------
     private final VisualTableCar tableCar;
     private final VisualTableFeedback tableFeedback;
@@ -33,6 +41,7 @@ public class CustomerInterface {
     private final Button reserve;
     private final Button delete;
     private final Button logOut;
+    private final Button addComment;
 //	------ BOXES ------
     private final SearchPanel searchPanel;
     private final HBox buttonBox;
@@ -47,13 +56,23 @@ public class CustomerInterface {
         rankTitle = new Label("FEEDBACK");
         userMsg = new Text();
         userMsg.setFont(Font.font("Calibri", 16));
+        addFeedbackTitle = new Label("Insert a new Feedback");
+//    	------ TEXT FIELDS ------ 
+        comment = new TextField();
+//    	------ COMBO BOXES ------
+        ObservableList<String> scores = 
+                FXCollections.observableArrayList (
+                    "1","2","3","4","5");
+        mark = new ComboBox(scores);
+        mark.setValue("5");
 //		------ TABLES ------
         tableCar = new VisualTableCar(true);
         tableFeedback = new VisualTableFeedback();
 // 		------ BUTTONS ------
         reserve = new Button("RESERVE");
         delete = new Button("DELETE RESERVATION");
-        logOut = new Button("LOG OUT");  
+        logOut = new Button("LOG OUT"); 
+        addComment = new Button("ADD");
 //		------ BOXES ------
         searchPanel = new SearchPanel();
         buttonBox = new HBox(40);
@@ -62,7 +81,7 @@ public class CustomerInterface {
         sxPanel.getChildren().addAll(userMsg,tableTitle, tableCar, buttonBox);
         sxPanel.setAlignment(Pos.CENTER);
         dxPanel = new VBox(DX_PANEL_SPACE);
-        dxPanel.getChildren().addAll(rankTitle, tableFeedback);
+        dxPanel.getChildren().addAll(rankTitle,tableFeedback,addFeedbackTitle,comment,mark,addComment);
         box = new AnchorPane();
         box.getChildren().addAll(   logOut,title,
                                             searchPanel.getLabels(),
@@ -177,6 +196,18 @@ public class CustomerInterface {
 	                    userMsg.setText(outcome);  
                 });               
             }
+        });
+        
+        // add new comment
+        addComment.setOnAction((ActionEvent e)-> {
+        	// take the values from the fields
+        	if(rh.addFeedback(user, comment.getText(),mark.getValue().toString())) {
+        		userMsg.setFill(Color.GREEN);
+        		tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
+        	} else {
+        		userMsg.setFill(Color.RED);
+        		userMsg.setText("Ooops, something went wrong");
+        	}
         });
     }
     
