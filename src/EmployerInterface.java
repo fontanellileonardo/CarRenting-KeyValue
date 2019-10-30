@@ -44,6 +44,7 @@ public class EmployerInterface {
     final Button logOutButton;
 //	------ BOXES ------
     private final VBox insertPanel;
+    private final VBox dxPanel;
     private final VBox userPanel;
     private final VBox carPanel;
     private final VBox feedbackPanel;
@@ -106,14 +107,16 @@ public class EmployerInterface {
         userPanel.getChildren().addAll(userTitle, tableUser);
         carPanel = new VBox(DX_PANEL_SPACE);
         carPanel.getChildren().addAll(carTitle, tableCar, deleteButton);
+        dxPanel = new VBox(8);
+        dxPanel.getChildren().addAll(tableChoose, carPanel);
         box = new AnchorPane();
-        box.getChildren().addAll(logOutButton,title, insertPanel, tableChoose, carPanel);
+        box.getChildren().addAll(title, logOutButton, insertPanel, dxPanel);
     }
     
     public void setEmpInterfaceStyle() { 
 //    	------ LABELS ------
         title.setFont(Font.font("Calibri", 11 + TITLE_SIZE)); 
-        title.setLayoutX(340);
+        title.setLayoutX(240);
         title.setLayoutY(10);
         insertTitle.setFont(Font.font("Calibri", 16));
         errorMsg.setFont(Font.font("Calibri", 16));
@@ -122,33 +125,46 @@ public class EmployerInterface {
         tableFeedback.setTableFeedbackStyle();
         tableUser.setTableUserStyle(); //tabella User
         tableCar.setTableCarStyle();
+//		------ BUTTONS ------
+        logOutButton.setLayoutX(830);
+        logOutButton.setLayoutY(3);
 //    	------ BOXES ------
         insertPanel.setLayoutX(60);
         insertPanel.setLayoutY(100);
         insertPanel.setPrefSize(300,450);
         insertPanel.setAlignment(Pos.CENTER);
         
-        feedbackPanel.setLayoutX(400);
+        dxPanel.setLayoutX(400);
+        dxPanel.setLayoutY(100);
+        dxPanel.setPrefSize(500,450);
+        dxPanel.setAlignment(Pos.CENTER_LEFT);
+        dxPanel.fillWidthProperty();
+        
+        feedbackPanel.setAlignment(Pos.CENTER);
+        userPanel.setAlignment(Pos.CENTER);
+        carPanel.setAlignment(Pos.CENTER);
+        
+        /*feedbackPanel.setLayoutX(400);
         feedbackPanel.setLayoutY(100);
         feedbackPanel.setPrefSize(500,450);
-        feedbackPanel.setAlignment(Pos.CENTER);
+        
         feedbackPanel.fillWidthProperty();
         
         userPanel.setLayoutX(400);
         userPanel.setLayoutY(100);
         userPanel.setPrefSize(500,450);
-        userPanel.setAlignment(Pos.CENTER);
+        
         userPanel.fillWidthProperty();
         
         carPanel.setLayoutX(400);
         carPanel.setLayoutY(100);
         carPanel.setPrefSize(500,450);
-        carPanel.setAlignment(Pos.CENTER);
-        carPanel.fillWidthProperty();
+        
+        carPanel.fillWidthProperty();*/
         
         box.setStyle("-fx-background-color: khaki"); 
         box.setPadding(new Insets(0,5,0,0));
-        box.setPrefWidth(890);
+        box.setPrefWidth(950);
         box.setPrefHeight(660);
         box.setTopAnchor(insertPanel,129.0);
         /*box.setLeftAnchor(title, 90.0);
@@ -175,35 +191,35 @@ public class EmployerInterface {
         tableChoose.setOnAction((ActionEvent ev)-> { 
         	if(tableChoose.getValue() == "User Table") {
                 if(table == 1) {	
-                	box.getChildren().removeAll(carPanel);
+                	dxPanel.getChildren().removeAll(carPanel);
                 }
                 else if(table == 3) { 
-                	box.getChildren().removeAll(feedbackPanel);
+                	dxPanel.getChildren().removeAll(feedbackPanel);
                 }
                 table = 2;
-                box.getChildren().addAll(userPanel); 
+                dxPanel.getChildren().addAll(userPanel); 
         	}
         	
         	else if(tableChoose.getValue() == "Car Manager") {
         		if(table == 2) {
-        			box.getChildren().removeAll(userPanel);
+        			dxPanel.getChildren().removeAll(userPanel);
         		}
         		else if(table == 3) {
-        			box.getChildren().removeAll(feedbackPanel);
+        			dxPanel.getChildren().removeAll(feedbackPanel);
         		}
         		table = 1;
-        		box.getChildren().addAll(carPanel);
+        		dxPanel.getChildren().addAll(carPanel);
         	}
         	
         	else if(tableChoose.getValue() == "Feedback Table") {
         		if(table == 1) {
-        			box.getChildren().removeAll(carPanel);
+        			dxPanel.getChildren().removeAll(carPanel);
         		}
         		else if(table == 2) {
-        			box.getChildren().removeAll(userPanel);
+        			dxPanel.getChildren().removeAll(userPanel);
         		}
         		table = 3;
-        		box.getChildren().addAll(feedbackPanel);
+        		dxPanel.getChildren().addAll(feedbackPanel);
         	}
         });
         
