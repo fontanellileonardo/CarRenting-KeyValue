@@ -12,6 +12,8 @@ public class VisualTableFeedback extends TableView<Feedback> {
        
         TableColumn columnNickname = new TableColumn("NICK NAME");
         columnNickname.setCellValueFactory(new PropertyValueFactory<>("nickName"));
+        TableColumn columnDate = new TableColumn("DATE");
+        columnDate.setCellValueFactory(new PropertyValueFactory<>("date"));
         TableColumn columnMark = new TableColumn("MARK");
         columnMark.setCellValueFactory(new PropertyValueFactory<>("mark"));
         TableColumn columnComment = new TableColumn("COMMENT");
@@ -19,7 +21,7 @@ public class VisualTableFeedback extends TableView<Feedback> {
         
         feedbackList = FXCollections.observableArrayList();
         setItems(feedbackList);
-        getColumns().addAll(columnNickname, columnMark, columnComment);
+        getColumns().addAll(columnNickname, columnDate, columnMark, columnComment);
     }
     
     public void setTableFeedbackStyle() {
