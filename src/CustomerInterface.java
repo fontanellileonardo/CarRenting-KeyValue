@@ -48,7 +48,7 @@ public class CustomerInterface {
         userMsg = new Text();
         userMsg.setFont(Font.font("Calibri", 16));
 //		------ TABLES ------
-        tableCar = new VisualTableCar();
+        tableCar = new VisualTableCar(true);
         tableFeedback = new VisualTableFeedback();
 // 		------ BUTTONS ------
         reserve = new Button("RESERVE");
@@ -132,7 +132,7 @@ public class CustomerInterface {
     
     // listen the events from the Customer interface
     public void appEventHandler(User user, RentHandler rh, CarRenting carR) {
-
+    	
     	// "initialization" phase
     	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
         buttonBoxHandler(true);
