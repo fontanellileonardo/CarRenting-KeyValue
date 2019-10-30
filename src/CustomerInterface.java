@@ -151,7 +151,7 @@ public class CustomerInterface {
     
     // listen the events from the Customer interface
     public void appEventHandler(User user, RentHandler rh, CarRenting carR) {
-
+    	
     	// "initialization" phase
     	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
         buttonBoxHandler(true);
