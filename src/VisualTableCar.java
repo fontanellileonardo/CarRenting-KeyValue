@@ -1,4 +1,5 @@
 
+import javafx.event.*;
 import java.util.*;
 import javafx.collections.*;
 import javafx.scene.control.*;
@@ -8,7 +9,7 @@ import javafx.scene.control.cell.*;
 public class VisualTableCar extends TableView<Car> {
     private ObservableList<Car> CarList;
     
-     public VisualTableCar(){
+     public VisualTableCar(Boolean customer){
        
         TableColumn columnVendor = new TableColumn("VENDOR");
         columnVendor.setCellValueFactory(new PropertyValueFactory<>("vendor"));
@@ -19,9 +20,26 @@ public class VisualTableCar extends TableView<Car> {
         TableColumn columnPrice = new TableColumn("DAY PRICE");
         columnPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
         
+        if(customer) {
+        	getColumns().addAll(columnVendor, columnSeat, columnKM, columnPrice);
+        	setEditable(true);
+        }
+        	
+        
+        else {
+        	 TableColumn columnLicensePlate = new TableColumn("LICENSE PLATE");
+             columnLicensePlate.setCellValueFactory(new PropertyValueFactory<>("licensePlate"));
+             TableColumn columnLocation = new TableColumn("LOCATION");
+             columnLocation.setCellValueFactory(new PropertyValueFactory<>("location"));
+             TableColumn columnRemoved = new TableColumn("REMOVED");
+             columnRemoved.setCellValueFactory(new PropertyValueFactory<>("removed"));
+             
+             getColumns().addAll(columnLicensePlate, columnVendor, columnSeat, columnLocation, columnKM, columnPrice, columnRemoved);
+        }
+        
         CarList = FXCollections.observableArrayList();
         setItems(CarList);
-        getColumns().addAll(columnVendor, columnSeat, columnKM, columnPrice);
+       
     }
     
     public void setTableCarStyle() {
