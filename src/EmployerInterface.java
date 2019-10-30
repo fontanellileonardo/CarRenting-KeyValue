@@ -23,6 +23,7 @@ public class EmployerInterface {
     private final Label insertTitle;
     final Label idCar,vendor,seatNumber,location,kilometers,price;
     private final Label feedbackTitle;
+    private final Label userTitle;
 //	------ TEXT FIELDS ------
     private final TextField fieldIdCar; 
     private final TextField fieldVendor; 
@@ -31,19 +32,25 @@ public class EmployerInterface {
 //	------ COMBO BOXES ------
     private final ComboBox fieldLocation;
     private final ComboBox fieldSeats;
+    private final ComboBox<String> tableChoose;
 //	------ TABLES ------
     private final VisualTableFeedback tableFeedback;
+    private final VisualTableUser tableUser;
 //	------ BUTTONS ------
     final Button insertButton;
+    final Button deleteButton;
     final Button logOutButton;
 //	------ BOXES ------
     private final VBox insertPanel;
-    private final VBox dxPanel;
+    private final VBox userPanel;
+    private final VBox feedbackPanel;
     private final AnchorPane box;
+    
+    private int table = 1; //1-> Car Manager, 2 -> User Table, 3 -> Feedback Table
      
     public EmployerInterface() {
 //    	------ LABELS ------
-        title = new Label("Car Management");
+        title = new Label("Employer Management");
         errorMsg = new Text();
         insertTitle = new Label("Insert a new car");
         idCar = new Label("Id Car:");
@@ -51,8 +58,9 @@ public class EmployerInterface {
         location = new Label("Location:");
         kilometers = new Label("Kilometers:");
         price = new Label("Price:");
-        feedbackTitle = new Label("FEEDBACKS");
         seatNumber = new Label("Seat Number:");
+        feedbackTitle = new Label("FEEDBACKS");
+        userTitle = new Label("USERS");
 //    	------ TEXT FIELDS ------
         fieldIdCar = new TextField();
         fieldVendor = new TextField();
@@ -69,50 +77,74 @@ public class EmployerInterface {
                     "2","4","5","6");
         fieldSeats = new ComboBox(seats);
         fieldSeats.setValue("4");
+        ObservableList<String>  choose = //ComboBox per la scelta della tabella da visualizzare
+        		FXCollections.observableArrayList (
+        				"Car Manager", "User Table", "Feedback Table");
+        tableChoose = new ComboBox(choose);
+        tableChoose.setValue("Car Manager"); //tabella CAR editabile
 //    	------ TABLES ------
         tableFeedback = new VisualTableFeedback();
+        tableUser = new VisualTableUser(); //tabella per visualizzare gli users
 //    	------ BUTTONS ------
         insertButton = new Button("INSERT");
+        deleteButton = new Button("DELETE");
         logOutButton = new Button("LOG OUT");
 //    	------ BOXES ------
         insertPanel = new VBox(3);
-        insertPanel.getChildren().addAll(insertTitle,errorMsg,idCar,fieldIdCar,vendor,
+        insertPanel.getChildren().addAll(insertTitle, errorMsg,idCar,fieldIdCar,vendor,
                 fieldVendor,seatNumber,fieldSeats, location,
                 fieldLocation,kilometers, fieldKm, price, 
-                fieldPrice, insertButton);
-        dxPanel = new VBox(DX_PANEL_SPACE);
-        dxPanel.getChildren().addAll(feedbackTitle, tableFeedback);
+                fieldPrice, insertButton, deleteButton);
+        feedbackPanel = new VBox(DX_PANEL_SPACE);
+        feedbackPanel.getChildren().addAll(feedbackTitle, tableFeedback);
+        userPanel = new VBox(DX_PANEL_SPACE); 
+        userPanel.getChildren().addAll(userTitle, tableUser);
         box = new AnchorPane();
-        box.getChildren().addAll(logOutButton,title,insertPanel,dxPanel);
+        box.getChildren().addAll(logOutButton,title, tableChoose, insertPanel);
     }
     
     public void setEmpInterfaceStyle() { 
 //    	------ LABELS ------
         title.setFont(Font.font("Calibri", 11 + TITLE_SIZE)); 
-        title.setLayoutX(100);
+        title.setLayoutX(50);
         title.setLayoutY(10);
         insertTitle.setFont(Font.font("Calibri", 16));
         errorMsg.setFont(Font.font("Calibri", 16));
         errorMsg.setFill(Color.RED);
 //    	------ TABLES ------
         tableFeedback.setTableFeedbackStyle();
+        tableUser.setTableUserStyle(); //tabella User
+        //tabella CAR editabile qua
 //    	------ BOXES ------
         insertPanel.setLayoutX(100);
         insertPanel.setLayoutY(50);
         insertPanel.setPrefSize(300,450);
         insertPanel.setAlignment(Pos.CENTER);
+        
+        feedbackPanel.setLayoutX(100);
+        feedbackPanel.setLayoutY(50);
+        feedbackPanel.setPrefSize(300,450);
+        feedbackPanel.setAlignment(Pos.CENTER);
+        
+        userPanel.setLayoutX(100);
+        userPanel.setLayoutY(50);
+        userPanel.setPrefSize(300,450);
+        userPanel.setAlignment(Pos.CENTER);
         box.setStyle("-fx-background-color: khaki"); 
         box.setPadding(new Insets(0,5,0,0));
         box.setLeftAnchor(title, 90.0);
         box.setTopAnchor(title, 30.0);
         box.setLeftAnchor(logOutButton,430.0);
         box.setTopAnchor(logOutButton,5.0);
+        box.setBottomAnchor(deleteButton, 70.0);
+        box.setBottomAnchor(insertButton, 50.0);
     }
     
     // listen the events 
-    void empEventHandler(RentHandler rh, CarRenting carR){
+    void empEventHandler(RentHandler rh, CarRenting carR){ 
     	// "initialization" phase
     	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
+    	tableUser.UserListUpdate(rh.showCustomers());
     	
     	// logout
         logOutButton.setOnAction((ActionEvent e)-> {
@@ -120,6 +152,43 @@ public class EmployerInterface {
             clearAll();
             carR.setScene("logout");
         });
+        
+        tableChoose.setOnAction((ActionEvent ev)-> { 
+        	if(tableChoose.getValue() == "User Table") {
+                if(table == 1) {	
+                	box.getChildren().removeAll(insertPanel);
+                }
+                else if(table == 3) { 
+                	box.getChildren().removeAll(feedbackPanel);
+                }
+                table = 2;
+                box.getChildren().addAll(userPanel); 
+        	}
+        	
+        	else if(tableChoose.getValue() == "Car Manager") {
+        		//tabella CAR editabile
+        		if(table == 2) {
+        			box.getChildren().removeAll(userPanel);
+        		}
+        		else if(table == 3) {
+        			box.getChildren().removeAll(feedbackPanel);
+        		}
+        		table = 1;
+        		box.getChildren().addAll(insertPanel);
+        	}
+        	
+        	else if(tableChoose.getValue() == "Feedback Table") {
+        		if(table == 1) {
+        			box.getChildren().removeAll(insertPanel);
+        		}
+        		else if(table == 2) {
+        			box.getChildren().removeAll(userPanel);
+        		}
+        		table = 3;
+        		box.getChildren().addAll(feedbackPanel);
+        	}
+        });
+        
         
         // insert car
         insertButton.setOnAction((ActionEvent ev)-> {

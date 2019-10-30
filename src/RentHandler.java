@@ -12,7 +12,7 @@ public class RentHandler {
         if(regUser!=null) {
         	if(regUser.getFiscalCode().equals("") == false && regUser.getNickName().equals("") == false && regUser.getName().equals("") == false && regUser.getSurname().equals("") == false && 
         			regUser.getEmail().equals("") == false && regUser.getPassword().equals("") == false) {
-        		//1) se l'utente esiste già, 2) database error, 0) inserimento riuscito
+        		//1) se l'utente esiste giï¿½, 2) database error, 0) inserimento riuscito
                 ret = JPAHandleDB.create(regUser);
                 switch (ret){
                     case 0:
@@ -85,12 +85,38 @@ public class RentHandler {
                             System.out.println("Database Error");
                             outcome = "OOps! Something went wrong!:(";
                             return outcome;
-                    } 
+                } 
         	}
         } 
         System.out.println("The login fields are not correctly inserted");
         outcome = "OOps! You didn't insert "+'\n'+"        the login fields";
         return outcome;
+    }
+    
+    // The function deletes a car if it has no active reservation, otherwise it returns an error.
+    public String deleteCar(Car car) {
+    	String outcome = "";
+    	int ret = JPAHandleDB.existsCarActiveReservations(car);
+    	switch (ret){
+	        case 0: // There is no reservation for this car
+	        	if (JPAHandleDB.delete(car)) {
+	        		System.out.println("Successfull delation!");
+		            outcome = "Success!";
+		            return outcome;
+	        	} else {
+	        		System.out.println("Database Error");
+		            outcome = "OOps! Something went wrong!:(";
+		            return outcome;
+	        	}
+	        case 1: // There is an active reservation for this car
+	            System.out.println("The employer attempt to delete a car that has an active reservation! ");
+	            outcome = "OOps! This car has an active reservation!";
+	            return outcome;
+	        default: // Database error
+	            System.out.println("Database Error");
+	            outcome = "OOps! Something went wrong!:(";
+	            return outcome;
+    	}
     }
 
     public List<Feedback> showFeedbacks() {
@@ -103,6 +129,11 @@ public class RentHandler {
         System.out.println("Feedbacks updated");
         List<Feedback> feedbacks = JPAHandleDB.selectAllFeedbacks(mark);
         return feedbacks;
+    }
+    
+    public List<User> showCustomers(){
+    	List<User> customers = JPAHandleDB.selectAllCustomers();
+    	return customers;
     }
     
     public String deleteReservation(User user) {
@@ -152,6 +183,4 @@ public class RentHandler {
                     return outcome;
             }                
     }
-    
-    
 }

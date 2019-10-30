@@ -26,7 +26,7 @@ public class Car {
         removed = new SimpleBooleanProperty(false);
     }
     
-    public Car(String v, int s, String l, int k, Double pr, String p, Boolean r) {
+    public Car(String v, int s, String l, double k, double pr, String p, boolean r) {
     	licencePlate = new SimpleStringProperty(p);
     	vendor = new SimpleStringProperty(v);
         seatNumber = new SimpleIntegerProperty(s);
@@ -40,9 +40,9 @@ public class Car {
     public void setSeatNumber(int s) {seatNumber.set(s);}
     public void setLocation(String l) {location.set(l);}
     public void setKilometers(double k) {kilometers.set(k);}
-    public void setPrice(Double pr) {price.set(pr);}
+    public void setPrice(double pr) {price.set(pr);}
     public void setLicencePlate(String p) {licencePlate.set(p);}
-    public void setRemoved(Boolean removed) {this.removed.set(removed);}
+    public void setRemoved(boolean removed) {this.removed.set(removed);}
     public void setReservations(List<Reservation> res) {reservations = res;}
     
     @Id
@@ -57,9 +57,9 @@ public class Car {
     @Column(name="Kilometers")
     public double getKilometers() {return kilometers.get();}
     @Column(name="Price")
-    public Double getPrice() {return price.get();}
+    public double getPrice() {return price.get();}
     @Column(name="Removed")
-    public Boolean getRemoved() { return removed.get(); }
+    public boolean getRemoved() { return removed.get(); }
     @OneToMany(
     		mappedBy = "car",
     		fetch = FetchType.LAZY,
