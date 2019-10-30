@@ -183,4 +183,15 @@ public class RentHandler {
                     return outcome;
             }                
     }
+    
+    public boolean addFeedback(User user, String comment, String mark) {
+    	int intMark = Integer.parseInt(mark);
+    	Feedback feedback = new Feedback(intMark, comment, LocalDate.now(), user);
+    	int result = JPAHandleDB.create(feedback);
+    	if (result == 0) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+    }
 }
