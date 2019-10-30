@@ -85,4 +85,9 @@ public class User {
 			cascade = {}
 		)
     public List<Reservation> getReservations() { return reservations;}
+    
+   @Override 
+    public String toString() {
+    	return nickName.get();
+    }
 }
