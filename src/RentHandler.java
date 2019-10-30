@@ -12,7 +12,7 @@ public class RentHandler {
         if(regUser!=null) {
         	if(regUser.getFiscalCode().equals("") == false && regUser.getNickName().equals("") == false && regUser.getName().equals("") == false && regUser.getSurname().equals("") == false && 
         			regUser.getEmail().equals("") == false && regUser.getPassword().equals("") == false) {
-        		//1) se l'utente esiste giï¿½, 2) database error, 0) inserimento riuscito
+        		//1) se l'utente esiste già, 2) database error, 0) inserimento riuscito
                 ret = JPAHandleDB.create(regUser);
                 switch (ret){
                     case 0:
@@ -103,11 +103,6 @@ public class RentHandler {
         System.out.println("Feedbacks updated");
         List<Feedback> feedbacks = JPAHandleDB.selectAllFeedbacks(mark);
         return feedbacks;
-    }
-    
-    public List<User> showCustomers(){
-    	List<User> users = JPAHandleDB.selectAllCustomers();
-    	return users;
     }
     
     public String deleteReservation(User user) {
