@@ -188,6 +188,11 @@ public class CustomerInterface {
         // Delete a reservation
         delete.setOnAction((ActionEvent e)-> {
             String outcome = rh.deleteReservation(user);
+            if(outcome.equals("There is no active reservation registered") || outcome.equals("OOps! Something went wrong, please try later")) {
+            	userMsg.setFill(Color.RED);
+            }
+            else
+            	userMsg.setFill(Color.GREEN);
             userMsg.setText(outcome);
         });
         

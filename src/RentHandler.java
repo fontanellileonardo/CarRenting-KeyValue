@@ -150,10 +150,14 @@ public class RentHandler {
     }
     
     public String deleteReservation(User user) {
-        boolean succ = JPAHandleDB.deleteReservation(user);
-        if(succ) {
+        int succ = JPAHandleDB.deleteReservation(user);
+        if(succ == 0) {
             System.out.println("Reservation deleted");
             return "Your reservation has been deleted!";
+        }
+        else if (succ == 1) {
+        	System.out.println("No Reservation found");
+        	return "There is no active reservation registered";
         }
         else {
             System.out.println("Database error");
