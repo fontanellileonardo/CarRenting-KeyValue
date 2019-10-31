@@ -26,14 +26,16 @@ public class CustomerInterface {
 //	------ LABELS ------
     private final Label title;
     private final Label tableTitle;
-    private final Label rankTitle;
+    private final Label feedbackTitle;
     private final Label addFeedbackTitle;
+    private final Label commentTitle;
+    private final Label markTitle;
     // Message for the user. Green -> ok, Red -> an error occurs
     private final Text userMsg;
 //	------ TEXT FIELDS ------ 
-    private final TextField comment;
+    private final TextArea commentField;
 //	------ COMBO BOXES ------
-    private final ComboBox mark;
+    private final ComboBox markField;
 //	------ TABLES ------
     private final VisualTableCar tableCar;
     private final VisualTableFeedback tableFeedback;
@@ -41,30 +43,35 @@ public class CustomerInterface {
     private final Button reserve;
     private final Button delete;
     private final Button logOut;
-    private final Button addComment;
+    private final Button addCommentButton;
 //	------ BOXES ------
     private final SearchPanel searchPanel;
     private final HBox buttonBox;
     private final VBox sxPanel; 
     private final VBox dxPanel;
-    private final AnchorPane box;
+    private final GridPane insertFeedbackBox;
+    private final GridPane tablesBox;
+    private final VBox box;
 
     public CustomerInterface() { 
 //		------ LABELS ------
     	title = new Label("Car Renting");
         tableTitle = new Label("AVAILABLE CARS");
-        rankTitle = new Label("FEEDBACK");
-        userMsg = new Text();
+        feedbackTitle = new Label("FEEDBACK");
+        userMsg = new Text("");
         userMsg.setFont(Font.font("Calibri", 16));
-        addFeedbackTitle = new Label("Insert a new Feedback");
+        addFeedbackTitle = new Label("ADD NEW FEEDBACK");
+        commentTitle = new Label("Comment");
+        markTitle = new Label("Mark");
 //    	------ TEXT FIELDS ------ 
-        comment = new TextField();
+        commentField = new TextArea();
+        commentField.setWrapText(true);
 //    	------ COMBO BOXES ------
         ObservableList<String> scores = 
                 FXCollections.observableArrayList (
                     "1","2","3","4","5");
-        mark = new ComboBox(scores);
-        mark.setValue("5");
+        markField = new ComboBox(scores);
+        markField.setValue("5");
 //		------ TABLES ------
         tableCar = new VisualTableCar(true);
         tableFeedback = new VisualTableFeedback();
@@ -72,21 +79,28 @@ public class CustomerInterface {
         reserve = new Button("RESERVE");
         delete = new Button("DELETE RESERVATION");
         logOut = new Button("LOG OUT"); 
-        addComment = new Button("ADD");
+        addCommentButton = new Button("ADD");
 //		------ BOXES ------
         searchPanel = new SearchPanel();
         buttonBox = new HBox(40);
         buttonBox.getChildren().addAll(reserve,delete);
+        
+        insertFeedbackBox = new GridPane();
+        insertFeedbackBox.add(commentTitle,0,0);	insertFeedbackBox.add(markTitle,1,0);
+        insertFeedbackBox.add(commentField,0,1);	insertFeedbackBox.add(markField,1,1);
+        insertFeedbackBox.add(addCommentButton,2,1);
+        
         sxPanel = new VBox(3); 
-        sxPanel.getChildren().addAll(userMsg,tableTitle, tableCar, buttonBox);
-        sxPanel.setAlignment(Pos.CENTER);
+        sxPanel.getChildren().addAll(tableTitle, tableCar, buttonBox);
         dxPanel = new VBox(DX_PANEL_SPACE);
-        dxPanel.getChildren().addAll(rankTitle,tableFeedback,addFeedbackTitle,comment,mark,addComment);
-        box = new AnchorPane();
-        box.getChildren().addAll(   logOut,title,
-                                            searchPanel.getLabels(),
-                                            searchPanel.getBox(),
-                                            sxPanel, dxPanel  );
+        dxPanel.getChildren().addAll(feedbackTitle,tableFeedback,addFeedbackTitle,insertFeedbackBox);
+        tablesBox = new GridPane();
+        tablesBox.add(sxPanel, 0, 0);	tablesBox.add(dxPanel, 1, 0);	
+        box = new VBox();
+        box.getChildren().addAll(logOut,title,
+	                                //searchPanel.getLabels(),
+	                                searchPanel.getBox(),userMsg,
+	                                tablesBox  );
     }
     
 // set the style
@@ -96,7 +110,10 @@ public class CustomerInterface {
         title.setLayoutX(340);
         title.setLayoutY(10);
         tableTitle.setFont(Font.font("Calibri", 5 + SECTION_SIZE));
-        rankTitle.setFont(Font.font("Calibri", 5 + SECTION_SIZE));
+        feedbackTitle.setFont(Font.font("Calibri", 5 + SECTION_SIZE));
+//		------ TEXT FIELDS ------      
+        commentField.setPrefSize(265,45);
+        
 //		------ TABLES ------
         tableCar.setTableCarStyle();
         tableFeedback.setTableFeedbackStyle();
@@ -104,19 +121,24 @@ public class CustomerInterface {
         logOut.setLayoutX(750);
         logOut.setLayoutY(3);
 //		------ BOXES ------
-        searchPanel.setSearchPanelStyle("Calibri", 11); 
-        sxPanel.setLayoutX(60);
-        sxPanel.setLayoutY(150);
-        sxPanel.setPrefSize(400,500);
-        dxPanel.setLayoutX(530);
-        dxPanel.setLayoutY(150);
-        dxPanel.setPrefSize(300, 450);
-        dxPanel.fillWidthProperty();
-        dxPanel.setAlignment(Pos.CENTER);
+        searchPanel.setSearchPanelStyle("Calibri", 13); 
+        sxPanel.setAlignment(Pos.TOP_CENTER);
+        sxPanel.setSpacing(8);
+        dxPanel.setAlignment(Pos.TOP_CENTER);
+        dxPanel.setSpacing(8);
+        //insertFeedbackBox.setHgap(1);
+        insertFeedbackBox.setHgap(5);
+        insertFeedbackBox.setAlignment(Pos.CENTER);
+        //tablesBox.setVgap(5);
+        tablesBox.setAlignment(Pos.TOP_CENTER);
+        //tablesBox.setGridLinesVisible(true);
+        tablesBox.setHgap(13);
         box.setStyle("-fx-background-color: aliceblue");
+        box.setAlignment(Pos.CENTER);
+        box.setMargin(logOut,new Insets(0,0,0,740));
+        box.setSpacing(10);
         box.setPrefWidth(890);
-        box.setPrefHeight(660);
-        box.setTopAnchor(sxPanel,129.0);
+        box.setPrefHeight(750);
     }
     
     // Disable (true) or enable (false) a button
@@ -199,16 +221,22 @@ public class CustomerInterface {
         });
         
         // add new comment
-        addComment.setOnAction((ActionEvent e)-> {
+        addCommentButton.setOnAction((ActionEvent e)-> {
         	// take the values from the fields
-        	if(rh.addFeedback(user, comment.getText(),mark.getValue().toString())) {
+        	if(rh.addFeedback(user, commentField.getText(),markField.getValue().toString())) {
         		userMsg.setFill(Color.GREEN);
         		tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
         	} else {
         		userMsg.setFill(Color.RED);
         		userMsg.setText("Ooops, something went wrong");
         	}
+        	clearFeedbackForm();
         });
+    }
+    
+    public void clearFeedbackForm() {
+    	commentField.setText("");
+    	markField.setValue("5");
     }
     
     // reset Customer page
@@ -217,11 +245,13 @@ public class CustomerInterface {
         searchPanel.getDeliveryDate().setValue(LocalDate.now().plusDays(1));
         searchPanel.getPlaceField().setValue("Firenze");
         searchPanel.getSeatsNumber().setValue("4");
-        tableCar.clear();
+        commentField.setText("");
+        clearFeedbackForm();
+        
         userMsg.setText("");
     }
     
-    public AnchorPane getBox() {return box;}
+    public VBox getBox() {return box;}
     public VisualTableCar getTableCar() { return tableCar;}
     public SearchPanel getSearchPanel() {return searchPanel;}
     
