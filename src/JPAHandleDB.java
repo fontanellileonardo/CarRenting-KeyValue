@@ -18,7 +18,7 @@ public class JPAHandleDB {
 	private static String selectReservations = "SELECT r FROM Reservation r WHERE r.car = :car";
 	private static String selectAllCars = "SELECT c FROM Car c";
 	private static String selectCarActiveReservations = "SELECT r FROM Reservation r WHERE r.car = :car AND r.pickUpDate > :actualDate";
-	
+
 	static {
 		factory = Persistence.createEntityManagerFactory("CarRenting");
 	}
@@ -31,15 +31,20 @@ public class JPAHandleDB {
 			entityManager.persist(o);
 			entityManager.getTransaction().commit();
 			System.out.println("New object added");
-		} catch (Exception ex) {
-			if((ex instanceof PersistenceException) && (ex.getCause() instanceof ConstraintViolationException)) {
-				ConstraintViolationException constraintViolationException = (ConstraintViolationException) ex.getCause();
-				if(constraintViolationException.getErrorCode() == 1062) { // Object already exists
-					System.err.println("Object already exists");
-					return 1;
-				}
-			}
-			System.err.println("Exception during create: " + ex.getMessage());
+		} 
+		catch (RollbackException ex) {
+		      if (ex.getCause() instanceof PersistenceException && ex.getCause().getCause() instanceof ConstraintViolationException) {
+		    	  System.err.println("Object already exists");
+		    	  return 1;
+		    	
+		      }
+		} catch (PersistenceException ex) {
+		      if (ex.getCause() instanceof ConstraintViolationException) {
+		    	  System.err.println("UNIQUE parameter error");
+		    	  return 1;
+		      }
+		}  catch (Exception ex) {
+			System.err.println("Database Error");
 			return 2;
 		} finally {
 			entityManager.close();

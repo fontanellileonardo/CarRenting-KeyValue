@@ -17,9 +17,16 @@ public class EmployerInterface {
     private final static int    TITLE_SIZE = 30,
                                 SECTION_SIZE = 9, 
                                 DX_PANEL_SPACE = 3; 
+    
+    private final static int	CAR_MANAGER = 1,
+    							USER_TABLE = 2,
+    							FEEDBACK_TABLE = 3;
+    Car selectedCar = null;
+    
 //	------ LABELS ------
     private final Label title;
-    private final Text errorMsg;
+    private final Text errorMsgInsertion;
+    private final Text errorMsgDeletion;
     private final Label insertTitle;
     final Label licensePlate,vendor,seatNumber,location,kilometers,price;
     private final Label feedbackTitle;
@@ -34,6 +41,7 @@ public class EmployerInterface {
     private final ComboBox fieldLocation;
     private final ComboBox fieldSeats;
     private final ComboBox<String> tableChoose;
+    private final ComboBox<String> filterFeedback;
 //	------ TABLES ------
     private final VisualTableFeedback tableFeedback;
     private final VisualTableUser tableUser;
@@ -50,12 +58,13 @@ public class EmployerInterface {
     private final VBox feedbackPanel;
     private final AnchorPane box;
     
-    private int table = 1; //1-> Car Manager, 2 -> User Table, 3 -> Feedback Table
+    private int table = CAR_MANAGER;
      
     public EmployerInterface() {
 //    	------ LABELS ------
         title = new Label("Employer Management");
-        errorMsg = new Text();
+        errorMsgInsertion = new Text();
+        errorMsgDeletion = new Text();
         insertTitle = new Label("Insert a new car");
         licensePlate = new Label("License Plate:");
         vendor = new Label("Vendor:");
@@ -82,14 +91,21 @@ public class EmployerInterface {
                     "2","4","5","6");
         fieldSeats = new ComboBox(seats);
         fieldSeats.setValue("4");
-        ObservableList<String>  choose = //ComboBox per la scelta della tabella da visualizzare
+        ObservableList<String>  choose = 
         		FXCollections.observableArrayList (
         				"Car Manager", "User Table", "Feedback Table");
         tableChoose = new ComboBox(choose);
-        tableChoose.setValue("Car Manager"); //tabella CAR editabile
+        tableChoose.setValue("Car Manager");
+        ObservableList<String> filter =
+        		FXCollections.observableArrayList (
+        				"1", "2", "3", "4", "5");
+        filterFeedback = new ComboBox(filter);
+        filterFeedback.setValue("5");
+        
+        		
 //    	------ TABLES ------
         tableFeedback = new VisualTableFeedback();
-        tableUser = new VisualTableUser(); //tabella per visualizzare gli users
+        tableUser = new VisualTableUser(); 
         tableCar = new VisualTableCar(false);
 //    	------ BUTTONS ------
         insertButton = new Button("INSERT");
@@ -97,16 +113,16 @@ public class EmployerInterface {
         logOutButton = new Button("LOG OUT");
 //    	------ BOXES ------
         insertPanel = new VBox(3);
-        insertPanel.getChildren().addAll(insertTitle, errorMsg,licensePlate,fieldLicensePlate,vendor,
+        insertPanel.getChildren().addAll(insertTitle, errorMsgInsertion,licensePlate,fieldLicensePlate,vendor,
                 fieldVendor,seatNumber,fieldSeats, location,
                 fieldLocation,kilometers, fieldKm, price, 
                 fieldPrice, insertButton, deleteButton);
         feedbackPanel = new VBox(DX_PANEL_SPACE);
-        feedbackPanel.getChildren().addAll(feedbackTitle, tableFeedback);
+        feedbackPanel.getChildren().addAll(feedbackTitle, tableFeedback, filterFeedback);
         userPanel = new VBox(DX_PANEL_SPACE); 
         userPanel.getChildren().addAll(userTitle, tableUser);
         carPanel = new VBox(DX_PANEL_SPACE);
-        carPanel.getChildren().addAll(carTitle, tableCar, deleteButton);
+        carPanel.getChildren().addAll(carTitle, errorMsgDeletion, tableCar, deleteButton);
         dxPanel = new VBox(8);
         dxPanel.getChildren().addAll(tableChoose, carPanel);
         box = new AnchorPane();
@@ -119,8 +135,10 @@ public class EmployerInterface {
         title.setLayoutX(240);
         title.setLayoutY(10);
         insertTitle.setFont(Font.font("Calibri", 16));
-        errorMsg.setFont(Font.font("Calibri", 16));
-        errorMsg.setFill(Color.RED);
+        errorMsgInsertion.setFont(Font.font("Calibri", 16));
+        errorMsgInsertion.setFill(Color.RED);
+        errorMsgDeletion.setFont(Font.font("Calibri", 16));
+        errorMsgDeletion.setFill(Color.RED);
 //    	------ TABLES ------
         tableFeedback.setTableFeedbackStyle();
         tableUser.setTableUserStyle(); //tabella User
@@ -180,45 +198,48 @@ public class EmployerInterface {
     	// "initialization" phase
     	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
     	tableUser.UserListUpdate(rh.showCustomers());
+    	tableCar.carListUpdate(rh.showAllCars());
     	
     	// logout
         logOutButton.setOnAction((ActionEvent e)-> {
-            errorMsg.setText("");
+            errorMsgInsertion.setText("");
+            errorMsgDeletion.setText("");
             clearAll();
             carR.setScene("logout");
         });
         
         tableChoose.setOnAction((ActionEvent ev)-> { 
         	if(tableChoose.getValue() == "User Table") {
-                if(table == 1) {	
+                if(table == CAR_MANAGER) {	
                 	dxPanel.getChildren().removeAll(carPanel);
                 }
-                else if(table == 3) { 
+                else if(table == FEEDBACK_TABLE) { 
                 	dxPanel.getChildren().removeAll(feedbackPanel);
                 }
-                table = 2;
+                table = USER_TABLE;
                 dxPanel.getChildren().addAll(userPanel); 
         	}
         	
         	else if(tableChoose.getValue() == "Car Manager") {
-        		if(table == 2) {
+        		if(table == USER_TABLE) {
         			dxPanel.getChildren().removeAll(userPanel);
         		}
-        		else if(table == 3) {
+        		else if(table == FEEDBACK_TABLE) {
         			dxPanel.getChildren().removeAll(feedbackPanel);
         		}
-        		table = 1;
+        		table = CAR_MANAGER;
+        		tableCar.carListUpdate(rh.showAllCars());
         		dxPanel.getChildren().addAll(carPanel);
         	}
         	
         	else if(tableChoose.getValue() == "Feedback Table") {
-        		if(table == 1) {
+        		if(table == CAR_MANAGER) {
         			dxPanel.getChildren().removeAll(carPanel);
         		}
-        		else if(table == 2) {
+        		else if(table == USER_TABLE) {
         			dxPanel.getChildren().removeAll(userPanel);
         		}
-        		table = 3;
+        		table = FEEDBACK_TABLE;
         		dxPanel.getChildren().addAll(feedbackPanel);
         	}
         });
@@ -232,25 +253,50 @@ public class EmployerInterface {
             // Check if all the fields are correct
             String outcome = "";
             if(fieldLicensePlate.getText().equals("") == false && fieldVendor.getText().equals("") == false &&
-            		fieldKm.getText().matches("^\\d+$") == true && 
+            		fieldKm.getText().matches("^\\d+\\.?[0-9]*$") == true && 
             		fieldPrice.getText().matches("^\\d+\\.?[0-9]*$") == true ) {
-            	Car car = new Car(fieldVendor.getText(),seats,loc,Integer.parseInt(fieldKm.getText()),
+            	Car car = new Car(fieldVendor.getText(),seats,loc,Double.parseDouble(fieldKm.getText()),
             			Double.parseDouble(fieldPrice.getText()),fieldLicensePlate.getText(), false);
             	// try to insert new car in the DB
             	outcome = rh.insertCar(car);
                 if(outcome.equals("Success!")) {
-                	errorMsg.setFill(Color.GREEN);
+                	errorMsgInsertion.setFill(Color.GREEN);
                     clearAll();
                 } else 
-                	errorMsg.setFill(Color.RED);
+                	errorMsgInsertion.setFill(Color.RED);
             } else {
-            	errorMsg.setFill(Color.RED);
+            	errorMsgInsertion.setFill(Color.RED);
             	outcome = "You have to insert all the fields correctly";
             	System.out.println("Insert car form is not correct");
             }
-            errorMsg.setText(outcome);
+            tableCar.carListUpdate(rh.showAllCars());
+            errorMsgInsertion.setText(outcome);
         });
         
+        deleteButton.setOnAction((ActionEvent ev)-> {
+        	selectedCar = null;
+        	selectedCar = tableCar.getSelectionModel().getSelectedItem();
+        	String outcome = "";
+        	if(selectedCar != null && !selectedCar.getRemoved()) {
+        		
+        		outcome = rh.deleteCar(selectedCar);
+        		if(outcome.equals("Successful deletion!")) {
+        				errorMsgDeletion.setFill(Color.GREEN);
+        		}
+        		else
+        			errorMsgDeletion.setFill(Color.RED);
+        		errorMsgDeletion.setText(outcome);
+        		tableCar.carListUpdate(rh.showAllCars());
+        	}
+        	else if (selectedCar != null && selectedCar.getRemoved()) {
+        		errorMsgDeletion.setFill(Color.RED);
+        		errorMsgDeletion.setText("Car already deleted");
+        	}
+        });
+        
+        filterFeedback.setOnAction((ActionEvent ev)-> {
+        	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks(Integer.parseInt(filterFeedback.getValue().toString())));
+        });
     }
     
     // reset the fields in the Employer Interface

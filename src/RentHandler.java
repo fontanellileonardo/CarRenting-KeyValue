@@ -70,7 +70,7 @@ public class RentHandler {
         int ret;
         if(car!=null) {
         	if(car.getLicencePlate().equals("") == false && car.getVendor().equals("") == false) {
-        		//1) se l'utente ha già una prenotazione, 2) database error, 0) inserimento riuscito
+        		//1) se esiste già una car con quella targa -> controllo se è stata rimossa e la inserisco di nuovo, 2) database error, 0) inserimento riuscito
         		ret = JPAHandleDB.create(car);
                 switch (ret){
                         case 0:
@@ -79,7 +79,20 @@ public class RentHandler {
                             return outcome;
                         case 1:
                             System.out.println("The employer attempt to insert an existing car! ");
-                            outcome = "OOps! This car already exists!";
+                            Car control = (Car) JPAHandleDB.read(Car.class, car.getLicencePlate());
+                            if(control.getRemoved()) {
+                            	control.setRemoved(false);
+                            	control.setLocation(car.getLocation());
+                            	control.setKilometers(car.getKilometers());
+                            	control.setPrice(car.getPrice());
+                            	boolean result = JPAHandleDB.update(control);
+                            	if(result)
+                            		outcome = "Success!";
+                            	else
+                            		outcome = "Database Error";
+                            }
+                            else
+                            	outcome = "OOps! This car already exists!";
                             return outcome;
                         default:
                             System.out.println("Database Error");
@@ -100,8 +113,8 @@ public class RentHandler {
     	switch (ret){
 	        case 0: // There is no reservation for this car
 	        	if (JPAHandleDB.delete(car)) {
-	        		System.out.println("Successfull delation!");
-		            outcome = "Success!";
+	        		System.out.println("Successfull deletion!");
+		            outcome = "Successful deletion!";
 		            return outcome;
 	        	} else {
 	        		System.out.println("Database Error");
@@ -161,6 +174,11 @@ public class RentHandler {
            out.append(""); 
         }
         return carList;
+    }
+    
+    public List<Car> showAllCars(){
+    	List<Car> carList = JPAHandleDB.selectAllCars();
+    	return carList;
     }
       
     public String addReservation(User user, Car selectedCar, LocalDate pickUpDate, LocalDate deliveryDate) {
