@@ -280,7 +280,7 @@ public class EmployerInterface {
         	if(selectedCar != null && !selectedCar.getRemoved()) {
         		
         		outcome = rh.deleteCar(selectedCar);
-        		if(outcome.equals("Success!")) {
+        		if(outcome.equals("Successful deletion!")) {
         				errorMsgDeletion.setFill(Color.GREEN);
         		}
         		else
