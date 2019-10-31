@@ -162,6 +162,11 @@ public class RentHandler {
         }
         return carList;
     }
+    
+    public List<Car> showAllCars(){
+    	List<Car> carList = JPAHandleDB.selectAllCars();
+    	return carList;
+    }
       
     public String addReservation(User user, Car selectedCar, LocalDate pickUpDate, LocalDate deliveryDate) {
     	Reservation res = new Reservation(pickUpDate, deliveryDate, user, selectedCar);
