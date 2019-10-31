@@ -253,9 +253,9 @@ public class EmployerInterface {
             // Check if all the fields are correct
             String outcome = "";
             if(fieldLicensePlate.getText().equals("") == false && fieldVendor.getText().equals("") == false &&
-            		fieldKm.getText().matches("^\\d+$") == true && 
+            		fieldKm.getText().matches("^\\d+\\.?[0-9]*$") == true && 
             		fieldPrice.getText().matches("^\\d+\\.?[0-9]*$") == true ) {
-            	Car car = new Car(fieldVendor.getText(),seats,loc,Integer.parseInt(fieldKm.getText()),
+            	Car car = new Car(fieldVendor.getText(),seats,loc,Double.parseDouble(fieldKm.getText()),
             			Double.parseDouble(fieldPrice.getText()),fieldLicensePlate.getText(), false);
             	// try to insert new car in the DB
             	outcome = rh.insertCar(car);
