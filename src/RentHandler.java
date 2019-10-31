@@ -100,8 +100,8 @@ public class RentHandler {
     	switch (ret){
 	        case 0: // There is no reservation for this car
 	        	if (JPAHandleDB.delete(car)) {
-	        		System.out.println("Successfull delation!");
-		            outcome = "Success!";
+	        		System.out.println("Successfull deletion!");
+		            outcome = "Successful deletion!";
 		            return outcome;
 	        	} else {
 	        		System.out.println("Database Error");
