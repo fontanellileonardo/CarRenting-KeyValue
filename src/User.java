@@ -90,4 +90,5 @@ public class User {
     public String toString() {
     	return nickName.get();
     }
+    
 }
