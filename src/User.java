@@ -94,9 +94,4 @@ public class User {
     	return this.fiscalCode;
     }
     
-   /* 
-   @Override 
-    public String toString() {
-    	return nickName.get();
-    }*/
 }

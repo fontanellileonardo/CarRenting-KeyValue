@@ -43,9 +43,10 @@ public class VisualTableCar extends TableView<Car> {
     }
     
     public void setTableCarStyle() {
-        setFixedCellSize(40);
+        setFixedCellSize(90);
         setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        setPrefWidth(160);
+        setPrefWidth(400);
+        setMaxHeight(480);
     }
     
     public void carListUpdate(List<Car> cars){

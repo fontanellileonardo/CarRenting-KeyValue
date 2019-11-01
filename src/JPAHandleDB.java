@@ -101,11 +101,11 @@ public class JPAHandleDB {
 		return true;
 	}
 	
-	public static boolean deleteReservation(User user) {
+	public static int deleteReservation(User user) {
 		LocalDate date = LocalDate.now();
 		Reservation activeReservation = null;
-		boolean ret = true;
-		
+		int ret = 0;
+		//0->successful deletion, 1-> no reservation found, 2->database error
 		try {
 			entityManager = factory.createEntityManager();
 			TypedQuery<Reservation> query = entityManager.createQuery(selectActiveReservation, Reservation.class);
@@ -113,14 +113,16 @@ public class JPAHandleDB {
 			query.setParameter("actualDate", date);
 			activeReservation = query.getSingleResult();
 			if(activeReservation != null) 
-				ret = delete(Reservation.class, activeReservation.getId());
+				delete(Reservation.class, activeReservation.getId());
 		}catch (NoResultException noResEx) {
-			System.out.println("There is no reservation for the customer "+user.getFiscalCode());
-			ret = true;
+			System.out.println("No reservation found for the User: "+user.getFiscalCode());
+			ret = 1;
+			return ret;
 		} catch (Exception ex) {
 			System.err.println("Database error while searching for user data: " + ex.getMessage());
 			System.err.println(ex);
-			ret = false;
+			ret = 2;
+			return ret;
 		} finally {
 			entityManager.close();
 		}

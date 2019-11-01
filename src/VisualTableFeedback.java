@@ -25,9 +25,10 @@ public class VisualTableFeedback extends TableView<Feedback> {
     }
     
     public void setTableFeedbackStyle() {
-        setFixedCellSize(40);
-        setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        setPrefWidth(90);
+    	setStyle("-fx-selection-bar: powderblue; -fx-column-header-background: azure;");
+        //setFixedCellSize(90);
+        //setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        setPrefWidth(400);
         setMaxHeight(480);
     }
     
