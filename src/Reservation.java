@@ -1,13 +1,7 @@
 import java.time.LocalDate;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import java.util.*;
+import javafx.beans.property.*;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "Reservation")
@@ -72,5 +66,13 @@ public class Reservation {
 	
 	public void setCar(Car car) {
 		this.car = car;
+	}
+	
+	public SimpleStringProperty fiscalCodeProperty() {
+		return user.fiscalCodeProperty();
+	}
+	
+	public SimpleStringProperty licencePlateProperty() {
+		return car.licencePlateProperty();
 	}
 }

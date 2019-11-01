@@ -149,6 +149,24 @@ public class RentHandler {
     	return customers;
     }
     
+    //This function allows to retrieve all the cars licence plates 
+    //to show them in the reservation filter (filtered by licence plate)
+    public List<String> retrieveAllLicencePlates() {
+    	List<String> licencePlatesList = JPAHandleDB.showLicencePlates();
+    	return licencePlatesList;
+    }
+    
+    //Show only the reservations related to a selected car 
+    public List<Reservation> showCarReservations(String licencePlate) {
+    	List<Reservation> reservations = null;
+    	if(licencePlate.compareTo("ALL") == 0) {
+    		reservations = JPAHandleDB.selectAllReservations();
+    	}
+    	else
+    		reservations = JPAHandleDB.selectCarReservations(licencePlate);
+    	return reservations;
+    }
+    
     public String deleteReservation(User user) {
         boolean succ = JPAHandleDB.deleteReservation(user);
         if(succ) {

@@ -10,19 +10,20 @@ public class Feedback {
 	private final SimpleIntegerProperty mark;
 	private final SimpleStringProperty comment;
 	private final SimpleObjectProperty<LocalDate> date;
-	private User user;
+	private SimpleObjectProperty<User> user;
 	
 	public Feedback() {
 		mark = new SimpleIntegerProperty(0);
 		comment = new SimpleStringProperty("");
 		date = new SimpleObjectProperty<LocalDate> ();
+		user = new SimpleObjectProperty<User> ();
 	}
 	
 	public Feedback(int mark, String comment, LocalDate date ,User user) {
 		this.mark = new SimpleIntegerProperty(mark);
 		this.comment = new SimpleStringProperty(comment);
 		this.date = new SimpleObjectProperty<LocalDate> (date);
-		this.user = user;
+		this.user = new SimpleObjectProperty<> (user); 
 	}
 	
 	@Id
@@ -66,10 +67,14 @@ public class Feedback {
 				)
 	//@Column(name = "User")
 	public User getUser() {
-		return user;
+		return user.get();
 	}
 	
 	public void setUser(User user) {
-		this.user = user;
+		this.user.set(user);
+	}
+	
+	public SimpleStringProperty nickNameProperty() {
+		return user.get().nickNameProperty();
 	}
 }

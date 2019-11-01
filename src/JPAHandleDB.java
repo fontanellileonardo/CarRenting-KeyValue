@@ -15,8 +15,10 @@ public class JPAHandleDB {
 												+ "(SELECT r.car FROM Reservation r WHERE (r.pickUpDate BETWEEN :pickUpDate AND :deliveryDate) "
 												+ "OR (r.deliveryDate BETWEEN :pickUpDate AND :deliveryDate) "
 												+ "OR (pickUpDate < :pickUpDate AND deliveryDate > :deliveryDate))";
-	private static String selectReservations = "SELECT r FROM Reservation r WHERE r.car = :car";
+	private static String selectAllReservations = "SELECT r FROM Reservation r";
+	private static String selectCarReservations = "SELECT r FROM Reservation r WHERE r.car = :car";
 	private static String selectAllCars = "SELECT c FROM Car c";
+	private static String selectAllLicencePlates = "SELECT c.licencePlate FROM Car c";
 	private static String selectCarActiveReservations = "SELECT r FROM Reservation r WHERE r.car = :car AND r.pickUpDate > :actualDate";
 
 	static {
@@ -113,7 +115,7 @@ public class JPAHandleDB {
 			if(activeReservation != null) 
 				ret = delete(Reservation.class, activeReservation.getId());
 		}catch (NoResultException noResEx) {
-			System.out.println("Non esiste alcune reservation dell'utente "+user.getFiscalCode());
+			System.out.println("There is no reservation for the customer "+user.getFiscalCode());
 			ret = true;
 		} catch (Exception ex) {
 			System.err.println("Database error while searching for user data: " + ex.getMessage());
@@ -155,6 +157,21 @@ public class JPAHandleDB {
 		return result;
 	}
 	
+	public static List<String> showLicencePlates() {
+		List<String> result = null;
+		try {
+			entityManager = factory.createEntityManager();
+			TypedQuery<String> query = entityManager.createQuery(selectAllLicencePlates, String.class);
+			result = query.getResultList();
+		} catch (Exception ex) {
+			System.err.println("Exception during cars selection: " + ex.getMessage());
+			return null;
+		} finally {
+			entityManager.close();
+		}
+		return result;
+	}
+	
 	public static List<User> selectAllCustomers() {
 		List<User> result = null;
 		try {
@@ -163,6 +180,38 @@ public class JPAHandleDB {
 			result = query.getResultList();
 		} catch (Exception ex) {
 			System.err.println("Exception during customers selection: " + ex.getMessage());
+			return null;
+		} finally {
+			entityManager.close();
+		}
+		return result;
+	}
+	
+	public static List<Reservation> selectAllReservations() {
+		List<Reservation> result = null;
+		try {
+			entityManager = factory.createEntityManager();
+			TypedQuery<Reservation> query = entityManager.createQuery(selectAllReservations, Reservation.class);
+			result = query.getResultList();
+		} catch (Exception ex) {
+			System.err.println("Exception during reservations selection: " + ex.getMessage());
+			return null;
+		} finally {
+			entityManager.close();
+		}
+		return result;
+	}
+	
+	public static List<Reservation> selectCarReservations(String licencePlate) {
+		List<Reservation> result = null;
+		try {
+			Car selectedCar = (Car) read(Car.class, licencePlate);
+			entityManager = factory.createEntityManager();
+			TypedQuery<Reservation> query = entityManager.createQuery(selectCarReservations, Reservation.class);
+			query.setParameter("car", selectedCar);
+			result = query.getResultList();
+		} catch (Exception ex) {
+			System.err.println("Exception during reservations selection: " + ex.getMessage());
 			return null;
 		} finally {
 			entityManager.close();
@@ -259,7 +308,7 @@ public class JPAHandleDB {
 			TypedQuery<Car> query = entityManager.createQuery(selectAllCars, Car.class);
 			result = query.getResultList();
 		} catch (Exception ex) {
-			System.err.println("Exception during feedbacks selection: " + ex.getMessage());
+			System.err.println("Exception during cars selection: " + ex.getMessage());
 			return null;
 		} finally {
 			entityManager.close();
@@ -273,11 +322,11 @@ public class JPAHandleDB {
 		List <Reservation> reservations = null;
 		try {
 			entityManager = factory.createEntityManager();
-			TypedQuery<Reservation> query = entityManager.createQuery(selectReservations, Reservation.class);
+			TypedQuery<Reservation> query = entityManager.createQuery(selectCarReservations, Reservation.class);
 			query.setParameter("car", car);
 			reservations = query.getResultList();
 		}catch(Exception ex) {
-			System.err.println("Exception during feedbacks selection: " + ex.getMessage());
+			System.err.println("Exception during reservations selection: " + ex.getMessage());
 			return null;
 		} finally {
 			entityManager.close();

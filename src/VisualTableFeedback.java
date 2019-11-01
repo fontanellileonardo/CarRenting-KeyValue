@@ -11,7 +11,7 @@ public class VisualTableFeedback extends TableView<Feedback> {
      public VisualTableFeedback(){
        
         TableColumn columnNickname = new TableColumn("NICK NAME");
-        columnNickname.setCellValueFactory(new PropertyValueFactory<>("user"));	
+        columnNickname.setCellValueFactory(new PropertyValueFactory<>("nickName"));	
         TableColumn columnDate = new TableColumn("DATE");
         columnDate.setCellValueFactory(new PropertyValueFactory<>("date"));
         TableColumn columnMark = new TableColumn("MARK");

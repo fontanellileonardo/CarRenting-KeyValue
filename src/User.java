@@ -1,6 +1,6 @@
 import java.util.*;
-import javax.persistence.*;
 import javafx.beans.property.*;
+import javax.persistence.*;
 
 @Entity
 @Table(name="User")
@@ -86,8 +86,17 @@ public class User {
 		)
     public List<Reservation> getReservations() { return reservations;}
     
+    public SimpleStringProperty nickNameProperty() {
+    	return this.nickName;
+    }
+    
+    public SimpleStringProperty fiscalCodeProperty() {
+    	return this.fiscalCode;
+    }
+    
+   /* 
    @Override 
     public String toString() {
     	return nickName.get();
-    }
+    }*/
 }

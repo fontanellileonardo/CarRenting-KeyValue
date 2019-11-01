@@ -20,7 +20,8 @@ public class EmployerInterface {
     
     private final static int	CAR_MANAGER = 1,
     							USER_TABLE = 2,
-    							FEEDBACK_TABLE = 3;
+    							FEEDBACK_TABLE = 3,
+    							RESERVATION_TABLE = 4;
     Car selectedCar = null;
     
 //	------ LABELS ------
@@ -32,6 +33,8 @@ public class EmployerInterface {
     private final Label feedbackTitle;
     private final Label userTitle;
     private final Label carTitle;
+    private final Label reservationTitle;
+    private final Label licencePlateFilter;
 //	------ TEXT FIELDS ------
     private final TextField fieldLicensePlate; 
     private final TextField fieldVendor; 
@@ -42,10 +45,12 @@ public class EmployerInterface {
     private final ComboBox fieldSeats;
     private final ComboBox<String> tableChoose;
     private final ComboBox<String> filterFeedback;
+    private final ComboBox<String> filterReservation;
 //	------ TABLES ------
     private final VisualTableFeedback tableFeedback;
     private final VisualTableUser tableUser;
     private final VisualTableCar tableCar;
+    private final VisualTableReservation tableReservation;
 //	------ BUTTONS ------
     final Button insertButton;
     final Button deleteButton;
@@ -56,6 +61,7 @@ public class EmployerInterface {
     private final VBox userPanel;
     private final VBox carPanel;
     private final VBox feedbackPanel;
+    private final VBox reservationPanel;
     private final AnchorPane box;
     
     private int table = CAR_MANAGER;
@@ -75,6 +81,8 @@ public class EmployerInterface {
         feedbackTitle = new Label("FEEDBACKS");
         userTitle = new Label("USERS");
         carTitle = new Label("CARS");
+        reservationTitle = new Label("RESERVATIONS");
+        licencePlateFilter= new Label("Licence plate:");
 //    	------ TEXT FIELDS ------
         fieldLicensePlate = new TextField();
         fieldVendor = new TextField();
@@ -93,7 +101,7 @@ public class EmployerInterface {
         fieldSeats.setValue("4");
         ObservableList<String>  choose = 
         		FXCollections.observableArrayList (
-        				"Car Manager", "User Table", "Feedback Table");
+        				"Car Manager", "User Table", "Feedback Table", "Reservation Table");
         tableChoose = new ComboBox(choose);
         tableChoose.setValue("Car Manager");
         ObservableList<String> filter =
@@ -101,12 +109,17 @@ public class EmployerInterface {
         				"1", "2", "3", "4", "5");
         filterFeedback = new ComboBox(filter);
         filterFeedback.setValue("5");
+        ObservableList<String> lpFilter =
+        		FXCollections.observableArrayList("ALL");
+        filterReservation = new ComboBox(lpFilter);
+        filterReservation.setValue("ALL");
         
         		
 //    	------ TABLES ------
         tableFeedback = new VisualTableFeedback();
         tableUser = new VisualTableUser(); 
         tableCar = new VisualTableCar(false);
+        tableReservation = new VisualTableReservation();
 //    	------ BUTTONS ------
         insertButton = new Button("INSERT");
         deleteButton = new Button("DELETE");
@@ -123,6 +136,8 @@ public class EmployerInterface {
         userPanel.getChildren().addAll(userTitle, tableUser);
         carPanel = new VBox(DX_PANEL_SPACE);
         carPanel.getChildren().addAll(carTitle, errorMsgDeletion, tableCar, deleteButton);
+        reservationPanel = new VBox(DX_PANEL_SPACE);
+        reservationPanel.getChildren().addAll(reservationTitle, tableReservation,licencePlateFilter, filterReservation);
         dxPanel = new VBox(8);
         dxPanel.getChildren().addAll(tableChoose, carPanel);
         box = new AnchorPane();
@@ -143,6 +158,7 @@ public class EmployerInterface {
         tableFeedback.setTableFeedbackStyle();
         tableUser.setTableUserStyle(); //tabella User
         tableCar.setTableCarStyle();
+        tableReservation.setTableReservationStyle(); 
 //		------ BUTTONS ------
         logOutButton.setLayoutX(830);
         logOutButton.setLayoutY(3);
@@ -161,6 +177,8 @@ public class EmployerInterface {
         feedbackPanel.setAlignment(Pos.CENTER);
         userPanel.setAlignment(Pos.CENTER);
         carPanel.setAlignment(Pos.CENTER);
+        reservationPanel.setAlignment(Pos.CENTER);
+        
         
         /*feedbackPanel.setLayoutX(400);
         feedbackPanel.setLayoutY(100);
@@ -199,6 +217,9 @@ public class EmployerInterface {
     	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
     	tableUser.UserListUpdate(rh.showCustomers());
     	tableCar.carListUpdate(rh.showAllCars());
+    	tableReservation.ListReservationUpdate(rh.showCarReservations("ALL"));
+    	
+    	filterReservation.getItems().addAll(rh.retrieveAllLicencePlates());
     	
     	// logout
         logOutButton.setOnAction((ActionEvent e)-> {
@@ -216,8 +237,11 @@ public class EmployerInterface {
                 else if(table == FEEDBACK_TABLE) { 
                 	dxPanel.getChildren().removeAll(feedbackPanel);
                 }
+                else if(table == RESERVATION_TABLE) {
+                	dxPanel.getChildren().remove(reservationPanel);
+                }
                 table = USER_TABLE;
-                dxPanel.getChildren().addAll(userPanel); 
+                dxPanel.getChildren().add(userPanel); 
         	}
         	
         	else if(tableChoose.getValue() == "Car Manager") {
@@ -227,6 +251,9 @@ public class EmployerInterface {
         		else if(table == FEEDBACK_TABLE) {
         			dxPanel.getChildren().removeAll(feedbackPanel);
         		}
+        		else if(table == RESERVATION_TABLE) {
+                	dxPanel.getChildren().remove(reservationPanel);
+                }
         		table = CAR_MANAGER;
         		tableCar.carListUpdate(rh.showAllCars());
         		dxPanel.getChildren().addAll(carPanel);
@@ -239,9 +266,27 @@ public class EmployerInterface {
         		else if(table == USER_TABLE) {
         			dxPanel.getChildren().removeAll(userPanel);
         		}
+        		else if(table == RESERVATION_TABLE) {
+                	dxPanel.getChildren().remove(reservationPanel);
+                }
         		table = FEEDBACK_TABLE;
         		dxPanel.getChildren().addAll(feedbackPanel);
         	}
+        	
+        	else if(tableChoose.getValue() == "Reservation Table") {
+        		if(table == CAR_MANAGER) {
+        			dxPanel.getChildren().removeAll(carPanel);
+        		}
+        		else if(table == USER_TABLE) {
+        			dxPanel.getChildren().removeAll(userPanel);
+        		}
+        		else if(table == FEEDBACK_TABLE) {
+                	dxPanel.getChildren().remove(feedbackPanel);
+                }
+        		table = RESERVATION_TABLE;
+        		dxPanel.getChildren().add(reservationPanel);
+        	}
+        	
         });
         
         
@@ -261,6 +306,8 @@ public class EmployerInterface {
             	outcome = rh.insertCar(car);
                 if(outcome.equals("Success!")) {
                 	errorMsgInsertion.setFill(Color.GREEN);
+                	//Insert the new car also in the list used for the reservations filter
+                	filterReservation.getItems().add(car.getLicencePlate()); 
                     clearAll();
                 } else 
                 	errorMsgInsertion.setFill(Color.RED);
@@ -296,6 +343,10 @@ public class EmployerInterface {
         
         filterFeedback.setOnAction((ActionEvent ev)-> {
         	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks(Integer.parseInt(filterFeedback.getValue().toString())));
+        });
+        
+        filterReservation.setOnAction((ActionEvent ev) -> { 
+        	tableReservation.ListReservationUpdate(rh.showCarReservations(filterReservation.getValue().toString()));
         });
     }
     
