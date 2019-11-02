@@ -1,6 +1,5 @@
-import java.time.*;
+import java.sql.Date;
 import javax.persistence.*;
-
 import javafx.beans.property.*;
 
 @Entity
@@ -9,20 +8,20 @@ public class Feedback {
 	private long id;
 	private final SimpleIntegerProperty mark;
 	private final SimpleStringProperty comment;
-	private final SimpleObjectProperty<LocalDate> date;
+	private final SimpleObjectProperty<Date> date;
 	private SimpleObjectProperty<User> user;
 	
 	public Feedback() {
 		mark = new SimpleIntegerProperty(0);
 		comment = new SimpleStringProperty("");
-		date = new SimpleObjectProperty<LocalDate> ();
+		date = new SimpleObjectProperty<Date> ();
 		user = new SimpleObjectProperty<User> ();
 	}
 	
-	public Feedback(int mark, String comment, LocalDate date ,User user) {
+	public Feedback(int mark, String comment, Date date ,User user) {
 		this.mark = new SimpleIntegerProperty(mark);
 		this.comment = new SimpleStringProperty(comment);
-		this.date = new SimpleObjectProperty<LocalDate> (date);
+		this.date = new SimpleObjectProperty<Date> (date);
 		this.user = new SimpleObjectProperty<> (user); 
 	}
 	
@@ -54,10 +53,10 @@ public class Feedback {
 	}
 	
 	@Column(name = "Date")
-	public LocalDate getDate() {
+	public Date getDate() {
 		return date.get();
 	}
-	public void setDate(LocalDate date) {
+	public void setDate(Date date) {
 		this.date.set(date);
 	}
 	

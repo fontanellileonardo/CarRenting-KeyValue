@@ -1,5 +1,4 @@
 import java.time.*;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.*;
@@ -31,13 +30,13 @@ public class CustomerInterface {
     private final Label commentTitle;
     private final Label markTitle;
     // Message for the user. Green -> ok, Red -> an error occurs
-    private final Text userNickName;
     private final Text userMsg;
 //	------ TEXT FIELDS ------ 
     private final TextArea commentField;
 //	------ COMBO BOXES ------
     private final ComboBox markField;
 //	------ TABLES ------
+    private final VisualTableReservation tableReservation;
     private final VisualTableCar tableCar;
     private final VisualTableFeedback tableFeedback;
 //	------ BUTTONS ------
@@ -57,9 +56,8 @@ public class CustomerInterface {
     public CustomerInterface() { 
 //		------ LABELS ------
     	title = new Label("Car Renting");
-        tableTitle = new Label("AVAILABLE CARS");
+        tableTitle = new Label("YOUR RESERVATIONS");
         feedbackTitle = new Label("FEEDBACK");
-        userNickName = new Text("");
         userMsg = new Text("");
         userMsg.setFont(Font.font("Calibri", 16));
         addFeedbackTitle = new Label("ADD NEW FEEDBACK");
@@ -75,6 +73,7 @@ public class CustomerInterface {
         markField = new ComboBox(scores);
         markField.setValue("5");
 //		------ TABLES ------
+        tableReservation = new VisualTableReservation(true);
         tableCar = new VisualTableCar(true);
         tableFeedback = new VisualTableFeedback();
 // 		------ BUTTONS ------
@@ -93,13 +92,14 @@ public class CustomerInterface {
         insertFeedbackBox.add(addCommentButton,2,1);
         
         sxPanel = new VBox(3); 
-        sxPanel.getChildren().addAll(tableTitle, tableCar, buttonBox);
+        //sxPanel.getChildren().addAll(tableTitle, tableCar, buttonBox);
+        sxPanel.getChildren().addAll(tableTitle, tableReservation, buttonBox);
         dxPanel = new VBox(DX_PANEL_SPACE);
         dxPanel.getChildren().addAll(feedbackTitle,tableFeedback,addFeedbackTitle,insertFeedbackBox);
         tablesBox = new GridPane();
         tablesBox.add(sxPanel, 0, 0);	tablesBox.add(dxPanel, 1, 0);	
         box = new VBox();
-        box.getChildren().addAll(userNickName,logOut,title,
+        box.getChildren().addAll(logOut,title,
 	                                //searchPanel.getLabels(),
 	                                searchPanel.getBox(),userMsg,
 	                                tablesBox  );
@@ -115,10 +115,9 @@ public class CustomerInterface {
         feedbackTitle.setFont(Font.font("Calibri", 5 + SECTION_SIZE));
 //		------ TEXT FIELDS ------      
         commentField.setPrefSize(265,45);
-        userNickName.setLayoutX(620);
-        userNickName.setLayoutY(3);
-        userNickName.setFont(Font.font("Calibri", 13));
+        
 //		------ TABLES ------
+        tableReservation.setTableReservationStyle();
         tableCar.setTableCarStyle();
         tableFeedback.setTableFeedbackStyle();
 // 		------ BUTTONS ------
@@ -157,9 +156,7 @@ public class CustomerInterface {
         searchPanel.getSearch().setOnAction((ActionEvent ev)-> {
         	// takes dates from the calendars
             pickUpDate = searchPanel.getPickUpDate().getValue();
-            System.out.println("PickUpDate selected: "+ pickUpDate);
             deliveryDate = searchPanel.getDeliveryDate().getValue();
-            System.out.println("Risultato compareTo: "+deliveryDate.compareTo(pickUpDate));
             // check if the delivery date is > pick-up date
             if(deliveryDate.compareTo(pickUpDate) >= 0) {
             	userMsg.setFill(Color.GREEN);
@@ -181,10 +178,10 @@ public class CustomerInterface {
     public void appEventHandler(User user, RentHandler rh, CarRenting carR) {
     	
     	// "initialization" phase
+    	tableReservation.ListReservationUpdate(rh.showReservations(user));
     	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
         buttonBoxHandler(true);
         searchEventHandler(rh);
-        userNickName.setText("Welcome "+user.getNickName());
         
         // Customer log-out
         logOut.setOnAction((ActionEvent e)-> {
@@ -260,9 +257,7 @@ public class CustomerInterface {
         commentField.setText("");
         clearFeedbackForm();
         
-        tableCar.clear();
         userMsg.setText("");
-        userNickName.setText("");
     }
     
     public VBox getBox() {return box;}

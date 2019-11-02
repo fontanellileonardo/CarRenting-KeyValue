@@ -120,7 +120,7 @@ public class EmployerInterface {
         tableFeedback = new VisualTableFeedback();
         tableUser = new VisualTableUser(); 
         tableCar = new VisualTableCar(false);
-        tableReservation = new VisualTableReservation();
+        tableReservation = new VisualTableReservation(false);
 //    	------ BUTTONS ------
         insertButton = new Button("INSERT");
         deleteButton = new Button("DELETE");
@@ -218,7 +218,7 @@ public class EmployerInterface {
     	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
     	tableUser.UserListUpdate(rh.showCustomers());
     	tableCar.carListUpdate(rh.showAllCars());
-    	tableReservation.ListReservationUpdate(rh.showCarReservations("ALL"));
+    	tableReservation.ListReservationUpdate(rh.showReservations("ALL"));
     	
     	if(firstOpen) {
     		filterReservation.getItems().addAll(rh.retrieveAllLicencePlates());
@@ -364,7 +364,7 @@ public class EmployerInterface {
         
         filterReservation.setOnAction((ActionEvent ev) -> { 
         	System.out.println("scarico macchine appropriate");
-        	tableReservation.ListReservationUpdate(rh.showCarReservations(filterReservation.getValue().toString()));
+        	tableReservation.ListReservationUpdate(rh.showReservations(filterReservation.getValue().toString()));
         });
     }
     

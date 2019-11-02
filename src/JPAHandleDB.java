@@ -1,4 +1,4 @@
-import java.time.LocalDate;
+import java.sql.Date;
 import java.util.List;
 
 import javax.persistence.*;
@@ -20,6 +20,7 @@ public class JPAHandleDB {
 	private static String selectAllCars = "SELECT c FROM Car c";
 	private static String selectAllLicencePlates = "SELECT c.licencePlate FROM Car c";
 	private static String selectCarActiveReservations = "SELECT r FROM Reservation r WHERE r.car = :car AND r.pickUpDate > :actualDate";
+	private static String selectCustomerReservations = "SELECT r FROM Reservation r WHERE r.user = :user";
 
 	static {
 		factory = Persistence.createEntityManagerFactory("CarRenting");
@@ -102,7 +103,7 @@ public class JPAHandleDB {
 	}
 	
 	public static int deleteReservation(User user) {
-		LocalDate date = LocalDate.now();
+		
 		Reservation activeReservation = null;
 		int ret = 0;
 		//0->successful deletion, 1-> no reservation found, 2->database error
@@ -110,7 +111,7 @@ public class JPAHandleDB {
 			entityManager = factory.createEntityManager();
 			TypedQuery<Reservation> query = entityManager.createQuery(selectActiveReservation, Reservation.class);
 			query.setParameter("user", user);
-			query.setParameter("actualDate", date);
+			query.setParameter("actualDate", Utils.getCurrentSqlDate());
 			activeReservation = query.getSingleResult();
 			if(activeReservation != null) 
 				delete(Reservation.class, activeReservation.getId());
@@ -189,7 +190,7 @@ public class JPAHandleDB {
 		return result;
 	}
 	
-	public static List<Reservation> selectAllReservations() {
+	public static List<Reservation> selectReservations() {
 		List<Reservation> result = null;
 		try {
 			entityManager = factory.createEntityManager();
@@ -204,7 +205,7 @@ public class JPAHandleDB {
 		return result;
 	}
 	
-	public static List<Reservation> selectCarReservations(String licencePlate) {
+	public static List<Reservation> selectReservations(String licencePlate) {
 		List<Reservation> result = null;
 		try {
 			Car selectedCar = (Car) read(Car.class, licencePlate);
@@ -213,6 +214,22 @@ public class JPAHandleDB {
 			query.setParameter("car", selectedCar);
 			result = query.getResultList();
 		} catch (Exception ex) {
+			System.err.println("Exception during reservations selection: " + ex.getMessage());
+			return null;
+		} finally {
+			entityManager.close();
+		}
+		return result;
+	}
+	
+	public static List<Reservation> selectReservations(User user) {
+		List<Reservation> result = null;
+		try {
+			entityManager = factory.createEntityManager();
+			TypedQuery<Reservation> query = entityManager.createQuery(selectCustomerReservations, Reservation.class);
+			query.setParameter("user", user);
+			result = query.getResultList();
+		}catch (Exception ex) {
 			System.err.println("Exception during reservations selection: " + ex.getMessage());
 			return null;
 		} finally {
@@ -242,7 +259,7 @@ public class JPAHandleDB {
 		return result;
 	}
 	
-	public static List<Car> findAvailableCars(LocalDate arrival, LocalDate departure, String loc, int seats){
+	public static List<Car> findAvailableCars(Date arrival, Date departure, String loc, int seats){
 		List<Car> result = null;
 		try {
 			entityManager = factory.createEntityManager();
@@ -268,12 +285,11 @@ public class JPAHandleDB {
 	
 	public static int selectActiveReservation(Reservation r) {
 		List<Reservation> result = null;
-		LocalDate date = LocalDate.now();
 		try {
 			entityManager = factory.createEntityManager();
 			TypedQuery<Reservation> query = entityManager.createQuery(selectActiveReservation, Reservation.class);
 			query.setParameter("user", r.getUser()); 
-			query.setParameter("actualDate", date);
+			query.setParameter("actualDate", Utils.getCurrentSqlDate());
 			result = query.getResultList();
 		}
 		catch (Exception ex){
@@ -343,7 +359,7 @@ public class JPAHandleDB {
 			entityManager = factory.createEntityManager();
 			TypedQuery<Reservation> query = entityManager.createQuery(selectCarActiveReservations, Reservation.class);
 			query.setParameter("car", car);
-			query.setParameter("actualDate", LocalDate.now());
+			query.setParameter("actualDate", Utils.getCurrentSqlDate());
 			query.getSingleResult();
 			result = 1;
 		} catch(NoResultException ex) {
