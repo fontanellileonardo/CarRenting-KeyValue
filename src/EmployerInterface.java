@@ -65,6 +65,7 @@ public class EmployerInterface {
     private final AnchorPane box;
     
     private int table = CAR_MANAGER;
+    private boolean firstOpen = true;
      
     public EmployerInterface() {
 //    	------ LABELS ------
@@ -219,13 +220,26 @@ public class EmployerInterface {
     	tableCar.carListUpdate(rh.showAllCars());
     	tableReservation.ListReservationUpdate(rh.showCarReservations("ALL"));
     	
-    	filterReservation.getItems().addAll(rh.retrieveAllLicencePlates());
+    	if(firstOpen) {
+    		filterReservation.getItems().addAll(rh.retrieveAllLicencePlates());
+    		firstOpen = false;
+    	}
+    	
+    	filterReservation.setVisibleRowCount(filterReservation.getItems().size());
     	
     	// logout
         logOutButton.setOnAction((ActionEvent e)-> {
             errorMsgInsertion.setText("");
             errorMsgDeletion.setText("");
             clearAll();
+            
+            //remove the table present at the logout moment. Every type of panel related to a specific 
+            //TableView is always at index 1 in the list of nodes assigned to dxPanel
+            dxPanel.getChildren().remove(1);   
+          
+    		table = CAR_MANAGER;
+    		tableChoose.setValue("Car Manager");
+
             carR.setScene("logout");
         });
         
@@ -270,6 +284,7 @@ public class EmployerInterface {
                 	dxPanel.getChildren().remove(reservationPanel);
                 }
         		table = FEEDBACK_TABLE;
+        		filterFeedback.setValue("5");
         		dxPanel.getChildren().addAll(feedbackPanel);
         	}
         	
@@ -284,6 +299,8 @@ public class EmployerInterface {
                 	dxPanel.getChildren().remove(feedbackPanel);
                 }
         		table = RESERVATION_TABLE;
+        		System.out.println("Resetto lista");
+        		filterReservation.setValue("ALL");
         		dxPanel.getChildren().add(reservationPanel);
         	}
         	
@@ -346,19 +363,21 @@ public class EmployerInterface {
         });
         
         filterReservation.setOnAction((ActionEvent ev) -> { 
+        	System.out.println("scarico macchine appropriate");
         	tableReservation.ListReservationUpdate(rh.showCarReservations(filterReservation.getValue().toString()));
         });
     }
     
     // reset the fields in the Employer Interface
     public void clearAll() {
-        
+       
         fieldLicensePlate.clear();
         fieldVendor.clear();
         fieldLocation.setValue("Firenze");
         fieldSeats.setValue("4");
         fieldKm.clear();
         fieldPrice.clear();
+        
     }
     
     public AnchorPane getBox() {return box;}

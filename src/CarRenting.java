@@ -30,7 +30,6 @@ public class CarRenting extends Application {
         empInterface = new EmployerInterface();
         loginInterface.setLoginInterfaceStyle();
         loginInterface.startEventHandler(loggedUser, rentHandler, this);
-        empInterface.empEventHandler(rentHandler, this);
         empInterface.setEmpInterfaceStyle();
         graphicInterface = new CustomerInterface();
         graphicInterface.setUserInterfaceStyle();
@@ -53,6 +52,7 @@ public class CarRenting extends Application {
                 this.stage.show();
                 break;
             case "Employer":
+            	empInterface.empEventHandler(rentHandler, this);
                 this.stage.setScene(sceneEmployer);
                 this.stage.show();
                 break;

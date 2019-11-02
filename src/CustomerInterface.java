@@ -31,6 +31,7 @@ public class CustomerInterface {
     private final Label commentTitle;
     private final Label markTitle;
     // Message for the user. Green -> ok, Red -> an error occurs
+    private final Text userNickName;
     private final Text userMsg;
 //	------ TEXT FIELDS ------ 
     private final TextArea commentField;
@@ -58,6 +59,7 @@ public class CustomerInterface {
     	title = new Label("Car Renting");
         tableTitle = new Label("AVAILABLE CARS");
         feedbackTitle = new Label("FEEDBACK");
+        userNickName = new Text("");
         userMsg = new Text("");
         userMsg.setFont(Font.font("Calibri", 16));
         addFeedbackTitle = new Label("ADD NEW FEEDBACK");
@@ -97,7 +99,7 @@ public class CustomerInterface {
         tablesBox = new GridPane();
         tablesBox.add(sxPanel, 0, 0);	tablesBox.add(dxPanel, 1, 0);	
         box = new VBox();
-        box.getChildren().addAll(logOut,title,
+        box.getChildren().addAll(userNickName,logOut,title,
 	                                //searchPanel.getLabels(),
 	                                searchPanel.getBox(),userMsg,
 	                                tablesBox  );
@@ -113,7 +115,9 @@ public class CustomerInterface {
         feedbackTitle.setFont(Font.font("Calibri", 5 + SECTION_SIZE));
 //		------ TEXT FIELDS ------      
         commentField.setPrefSize(265,45);
-        
+        userNickName.setLayoutX(620);
+        userNickName.setLayoutY(3);
+        userNickName.setFont(Font.font("Calibri", 13));
 //		------ TABLES ------
         tableCar.setTableCarStyle();
         tableFeedback.setTableFeedbackStyle();
@@ -153,7 +157,9 @@ public class CustomerInterface {
         searchPanel.getSearch().setOnAction((ActionEvent ev)-> {
         	// takes dates from the calendars
             pickUpDate = searchPanel.getPickUpDate().getValue();
+            System.out.println("PickUpDate selected: "+ pickUpDate);
             deliveryDate = searchPanel.getDeliveryDate().getValue();
+            System.out.println("Risultato compareTo: "+deliveryDate.compareTo(pickUpDate));
             // check if the delivery date is > pick-up date
             if(deliveryDate.compareTo(pickUpDate) >= 0) {
             	userMsg.setFill(Color.GREEN);
@@ -178,6 +184,7 @@ public class CustomerInterface {
     	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
         buttonBoxHandler(true);
         searchEventHandler(rh);
+        userNickName.setText("Welcome "+user.getNickName());
         
         // Customer log-out
         logOut.setOnAction((ActionEvent e)-> {
@@ -253,7 +260,9 @@ public class CustomerInterface {
         commentField.setText("");
         clearFeedbackForm();
         
+        tableCar.clear();
         userMsg.setText("");
+        userNickName.setText("");
     }
     
     public VBox getBox() {return box;}
