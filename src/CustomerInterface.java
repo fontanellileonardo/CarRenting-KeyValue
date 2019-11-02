@@ -52,7 +52,9 @@ public class CustomerInterface {
     private final VBox dxPanel;
     private final GridPane insertFeedbackBox;
     private final GridPane tablesBox;
+    private final HBox logBox;
     private final VBox box;
+    
 
     public CustomerInterface() { 
 //		------ LABELS ------
@@ -96,10 +98,12 @@ public class CustomerInterface {
         sxPanel.getChildren().addAll(tableTitle, tableCar, buttonBox);
         dxPanel = new VBox(DX_PANEL_SPACE);
         dxPanel.getChildren().addAll(feedbackTitle,tableFeedback,addFeedbackTitle,insertFeedbackBox);
+        logBox = new HBox(20);
+        logBox.getChildren().addAll(userNickName,logOut);
         tablesBox = new GridPane();
         tablesBox.add(sxPanel, 0, 0);	tablesBox.add(dxPanel, 1, 0);	
         box = new VBox();
-        box.getChildren().addAll(userNickName,logOut,title,
+        box.getChildren().addAll(logBox,title,
 	                                //searchPanel.getLabels(),
 	                                searchPanel.getBox(),userMsg,
 	                                tablesBox  );
@@ -115,15 +119,13 @@ public class CustomerInterface {
         feedbackTitle.setFont(Font.font("Calibri", 5 + SECTION_SIZE));
 //		------ TEXT FIELDS ------      
         commentField.setPrefSize(265,45);
-        userNickName.setLayoutX(620);
-        userNickName.setLayoutY(3);
-        userNickName.setFont(Font.font("Calibri", 13));
+        userNickName.setFont(Font.font("Comic Sans", FontWeight.LIGHT, FontPosture.ITALIC, 16));
+        userNickName.setFill(Color.DARKCYAN);
 //		------ TABLES ------
         tableCar.setTableCarStyle();
         tableFeedback.setTableFeedbackStyle();
 // 		------ BUTTONS ------
-        logOut.setLayoutX(750);
-        logOut.setLayoutY(3);
+      
 //		------ BOXES ------
         searchPanel.setSearchPanelStyle("Calibri", 13); 
         sxPanel.setAlignment(Pos.TOP_CENTER);
@@ -137,9 +139,10 @@ public class CustomerInterface {
         tablesBox.setAlignment(Pos.TOP_CENTER);
         //tablesBox.setGridLinesVisible(true);
         tablesBox.setHgap(13);
+        logBox.setAlignment(Pos.CENTER_RIGHT);
         box.setStyle("-fx-background-color: aliceblue");
         box.setAlignment(Pos.CENTER);
-        box.setMargin(logOut,new Insets(0,0,0,740));
+        box.setMargin(logBox,new Insets(0,40,0,650));
         box.setSpacing(10);
         box.setPrefWidth(890);
         box.setPrefHeight(750);
