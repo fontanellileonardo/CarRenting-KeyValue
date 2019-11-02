@@ -1,5 +1,5 @@
+import java.sql.Date;
 import java.time.LocalDate;
-import java.util.*;
 import javafx.beans.property.*;
 import javax.persistence.*;
 
@@ -7,16 +7,19 @@ import javax.persistence.*;
 @Table(name = "Reservation")
 public class Reservation {
 	private long id;
-	private LocalDate pickUpDate;
-	private LocalDate deliveryDate;
+	private SimpleObjectProperty<Date> pickUpDate;
+	private SimpleObjectProperty<Date> deliveryDate;
 	private User user;
 	private Car car;
 	
-	public Reservation() {}
+	public Reservation() {
+		pickUpDate = new SimpleObjectProperty<Date> ();
+		deliveryDate = new SimpleObjectProperty<Date> ();
+	}
 	
 	public Reservation(LocalDate pickUpDate, LocalDate deliveryDate, User user, Car car) {
-		this.pickUpDate = pickUpDate;
-		this.deliveryDate = deliveryDate;
+		this.pickUpDate = new SimpleObjectProperty<Date> (Utils.localDateToSqlDate(pickUpDate));
+		this.deliveryDate = new SimpleObjectProperty<Date> (Utils.localDateToSqlDate(deliveryDate));
 		this.user = user;
 		this.car = car;
 	}
@@ -29,13 +32,13 @@ public class Reservation {
 	}
 	
 	@Column(name = "PickUpDate")
-	public LocalDate getPickUpDate() {
-		return pickUpDate;
+	public Date getPickUpDate() {
+		return pickUpDate.get();
 	}
 	
 	@Column(name = "DeliveryDate")
-	public LocalDate getDeliveryDate() {
-		return deliveryDate;
+	public Date getDeliveryDate() {
+		return deliveryDate.get();
 	}
 	
 	@ManyToOne(fetch = FetchType.EAGER, cascade = {})
@@ -52,12 +55,12 @@ public class Reservation {
 		this.id = id;
 	}
 	
-	public void setPickUpDate(LocalDate pickUpDate) {
-		this.pickUpDate = pickUpDate;
+	public void setPickUpDate(Date  pickUpDate) {
+		this.pickUpDate.set(pickUpDate);
 	}
 	
-	public void setDeliveryDate(LocalDate deliveryDate) {
-		this.deliveryDate = deliveryDate;
+	public void setDeliveryDate(Date  deliveryDate) {
+		this.deliveryDate.set(deliveryDate);
 	}
 	
 	public void setUser(User user) {

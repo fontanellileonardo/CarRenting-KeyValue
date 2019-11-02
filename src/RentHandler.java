@@ -157,13 +157,20 @@ public class RentHandler {
     }
     
     //Show only the reservations related to a selected car 
-    public List<Reservation> showCarReservations(String licencePlate) {
+    public List<Reservation> showReservations(String licencePlate) {
     	List<Reservation> reservations = null;
     	if(licencePlate.compareTo("ALL") == 0) {
-    		reservations = JPAHandleDB.selectAllReservations();
+    		reservations = JPAHandleDB.selectReservations();
     	}
     	else
-    		reservations = JPAHandleDB.selectCarReservations(licencePlate);
+    		reservations = JPAHandleDB.selectReservations(licencePlate);
+    	return reservations;
+    }
+    
+    // Retrieve all the reservations of one user
+    public List<Reservation> showReservations(User user) {
+    	List<Reservation> reservations = null;
+    	reservations = JPAHandleDB.selectReservations(user);
     	return reservations;
     }
     
@@ -185,7 +192,8 @@ public class RentHandler {
     
     public List<Car> showAvailableCar(LocalDate pickUpDate, LocalDate deliveryDate, String locality, String seats, StringBuilder out) {
     	int numSeats = Integer.parseInt(seats);
-        List<Car> carList = JPAHandleDB.findAvailableCars(pickUpDate, deliveryDate, locality, numSeats);
+        List<Car> carList = JPAHandleDB.findAvailableCars(Utils.localDateToSqlDate(pickUpDate), Utils.localDateToSqlDate(deliveryDate), 
+        		locality, numSeats);
         if(carList == null){
            System.out.println("Database Error!"); 
            out.append("Try Again Later. Server not Found");
@@ -226,7 +234,7 @@ public class RentHandler {
     
     public boolean addFeedback(User user, String comment, String mark) {
     	int intMark = Integer.parseInt(mark);
-    	Feedback feedback = new Feedback(intMark, comment, LocalDate.now(), user);
+    	Feedback feedback = new Feedback(intMark, comment,Utils.getCurrentSqlDate(), user);
     	int result = JPAHandleDB.create(feedback);
     	if (result == 0) {
     		return true;
