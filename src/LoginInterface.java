@@ -2,8 +2,11 @@ import java.math.*;
 import java.security.*;
 import javafx.collections.*;
 import javafx.event.*;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
@@ -34,6 +37,9 @@ public class LoginInterface {
 //	------ BUTTONS ------
     private final Button login;
     final Button submit;
+//	------ IMAGE ------
+    private final Image carImage;
+    private final ImageView carImageView;
 //	------ BOXES ------
     private final VBox loginPanel; 
     private final VBox registerPanel; 
@@ -76,6 +82,14 @@ public class LoginInterface {
 //    	------ BUTTONS ------
         login = new Button("LOGIN");
         submit = new Button("SUBMIT");
+//      ------ IMAGE ------
+        carImage = new Image("file:///C:/Users/Dani/Desktop/icon_rental_car.png");
+        carImageView = new ImageView();
+        carImageView.setImage(carImage);
+        carImageView.setFitWidth(100);
+        carImageView.setPreserveRatio(true);
+        carImageView.setSmooth(true);
+        carImageView.setCache(true);
 //    	------ BOXES ------
         loginPanel = new VBox(3);
         loginPanel.getChildren().addAll(loginTitle,email,l_fieldEmail,password,
@@ -88,15 +102,15 @@ public class LoginInterface {
                 r_password, r_fieldPwd, 
                 r_status, r_fieldStatus, regMsg, submit);
         box = new AnchorPane();        
-        box.getChildren().addAll(title,loginPanel, registerPanel);
+        box.getChildren().addAll(carImageView,title,loginPanel, registerPanel);
     }
     
     // set the style
     public void setLoginInterfaceStyle() { 
 //    	------ LABELS ------
         title.setFont(Font.font("Calibri", 11 + TITLE_SIZE)); 
-        title.setLayoutX(275);
-        title.setLayoutY(10);
+        title.setLayoutX(280);
+        title.setLayoutY(15);
         loginMsg.setFont(Font.font("Calibri", 16));
         loginMsg.setFill(Color.RED);
         regMsg.setFont(Font.font("Calibri", 16));
@@ -115,6 +129,7 @@ public class LoginInterface {
         registerPanel.setPrefSize(300, 450);
         registerPanel.fillWidthProperty();
         registerPanel.setAlignment(Pos.CENTER);
+        box.setLeftAnchor(carImageView,200.0);
         box.setStyle("-fx-background-color: aliceblue");
         box.setPrefWidth(800);
     }
