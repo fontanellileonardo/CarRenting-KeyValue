@@ -174,20 +174,16 @@ public class RentHandler {
     	return reservations;
     }
     
-    public String deleteReservation(User user) {
-        int succ = JPAHandleDB.deleteReservation(user);
-        if(succ == 0) {
+    // delete the reservation selected 
+    public boolean delete(Reservation reservation) {
+        boolean succ = JPAHandleDB.delete(Reservation.class,reservation.getId());
+        if(succ) {
             System.out.println("Reservation deleted");
-            return "Your reservation has been deleted!";
-        }
-        else if (succ == 1) {
-        	System.out.println("No Reservation found");
-        	return "There is no active reservation registered";
         }
         else {
             System.out.println("Database error");
-            return "OOps! Something went wrong, please try later";
         }
+        return succ;
     }
     
     public List<Car> showAvailableCar(LocalDate pickUpDate, LocalDate deliveryDate, String locality, String seats, StringBuilder out) {
@@ -211,6 +207,7 @@ public class RentHandler {
     	return carList;
     }
       
+    // Add a new Reservation for the customer
     public String addReservation(User user, Car selectedCar, LocalDate pickUpDate, LocalDate deliveryDate) {
     	Reservation res = new Reservation(pickUpDate, deliveryDate, user, selectedCar);
         String outcome = "";
@@ -222,8 +219,8 @@ public class RentHandler {
                     outcome = "Success!";
                     return outcome;
                 case 1:
-                    System.out.println("The user attempt to insert another reservation. There's already an existing one! ");
-                    outcome = "OOps! There's already an active reservation for you";
+                    System.out.println("The reservation already exists");
+                    outcome = "OOps! Something went wrong!:(";
                     return outcome;
                 default:
                     System.err.println("Database Error");

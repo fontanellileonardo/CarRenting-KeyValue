@@ -26,6 +26,11 @@ public class JPAHandleDB {
 		factory = Persistence.createEntityManagerFactory("CarRenting");
 	}
 	
+	/* Create new object. 
+	 * Return 0 -> everything is ok
+	 * Return 1 -> object already exists or a unique value already exists
+	 * Return 2 -> DB error
+	 */
 	public static int create(Object o) {
 		System.out.println("Add a new object");
 		try {
@@ -102,7 +107,9 @@ public class JPAHandleDB {
 		return true;
 	}
 	
-	public static int deleteReservation(User user) {
+	/*
+	// Delete the reservation if it is active
+	public static int deleteReservation(Reservation res, User user) {
 		
 		Reservation activeReservation = null;
 		int ret = 0;
@@ -129,6 +136,7 @@ public class JPAHandleDB {
 		}
 		return ret;
 	}
+	*/
 	
 	public static int logIn(User user) {
 		int result = 1;
@@ -305,6 +313,7 @@ public class JPAHandleDB {
 			return 1;
 	}
 	
+	/*
 	public static int create(Reservation r) { 
 		int reservation = selectActiveReservation(r);
 		if (reservation == 1) {
@@ -317,6 +326,7 @@ public class JPAHandleDB {
 		int result = create((Object) r);
 		return result;
 	}
+	*/
 	
 	// Eugenia
 	public static List<Car> selectAllCars() {

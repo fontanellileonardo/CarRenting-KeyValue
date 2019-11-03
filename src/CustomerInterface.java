@@ -148,6 +148,7 @@ public class CustomerInterface {
     // Disable (true) or enable (false) a button
     void buttonBoxHandler(boolean disable) {
         reserve.setDisable(disable);
+        delete.setDisable(!disable);
     }
     
     // listen the events from the search panel
@@ -191,7 +192,8 @@ public class CustomerInterface {
     	currentTable = Utils.RESERVATION_TABLE;
     	tableReservation.ListReservationUpdate(rh.showReservations(user));
     	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
-        buttonBoxHandler(true);
+    	reserve.setDisable(true);
+    	delete.setDisable(true);
         searchEventHandler(rh);
         showReservationsEventHandler(rh,user);
         
@@ -201,19 +203,47 @@ public class CustomerInterface {
             carR.setScene("logout");
         });
         
-        // Delete a reservation
-        delete.setOnAction((ActionEvent e)-> {
-            String outcome = rh.deleteReservation(user);
-            if(outcome.equals("There is no active reservation registered") || outcome.equals("OOps! Something went wrong, please try later")) {
-            	userMsg.setFill(Color.RED);
+        // Listen when the customer select a car from table car
+        tableReservation.getSelectionModel().selectedIndexProperty().addListener((num) ->
+        {       
+        	// select an empty field
+            if(tableReservation.getSelectionModel().getSelectedItem() == null) {
+               tableReservation.getSelectionModel().clearSelection();
+
             }
             else {
-            	userMsg.setFill(Color.GREEN);
-            	changeTable(Utils.RESERVATION_TABLE);
-            	tableReservation.ListReservationUpdate(rh.showReservations(user));
-            }	
-            userMsg.setText(outcome);
-        });
+            	// take the field selected from the car table
+            	Reservation selectedReservation;
+                selectedReservation = tableReservation.getSelectionModel().getSelectedItem();
+                System.out.println("Selected reservation Id: "+selectedReservation.getId());
+                //buttonBoxHandler(false);
+                delete.setDisable(false);
+                
+                // Delete a reservation
+                delete.setOnAction((ActionEvent e)-> {	
+                	String outcome = "";
+                	// Check if the Reservation is active -> it can be deleted
+                	if(selectedReservation.getPickUpDate().compareTo(Utils.getCurrentSqlDate())>0) {
+                        if(rh.delete(selectedReservation)) {
+                        	userMsg.setFill(Color.GREEN);
+                        	tableReservation.ListReservationUpdate(rh.showReservations(user));
+                        	outcome = "Your reservation has been deleted";	
+                        	delete.setDisable(true);
+                        }
+                        else {
+                        	userMsg.setFill(Color.RED);
+                        	outcome = "Oops, something went wrong, try later! :(";
+                        }	
+                	}
+                	else {
+                		// The selected reservation is not active
+                		userMsg.setFill(Color.RED);
+                		outcome = "The Reservation can't be deleted";
+                	}
+                    userMsg.setText(outcome);
+                });             
+            }
+        }); 
         
         // Listen when the customer select a car from table car
         tableCar.getSelectionModel().selectedIndexProperty().addListener((num) ->
@@ -233,11 +263,10 @@ public class CustomerInterface {
                 reserve.setOnAction((ActionEvent e)-> {
 	                String outcome = rh.addReservation(user, selectedCar, pickUpDate, deliveryDate);
 	                if(outcome.equals("Success!")) {
-	                	// remove from table the car selected from the customer
 	                	changeTable(Utils.RESERVATION_TABLE);
 	                	tableReservation.ListReservationUpdate(rh.showReservations(user));
-	                	buttonBoxHandler(true);
 	                	userMsg.setText(outcome);
+	                	reserve.setDisable(true);
 	                }     
 	                else
 	                    userMsg.setText(outcome);  
@@ -290,6 +319,7 @@ public class CustomerInterface {
     				currentTable = table;
             		sxPanel.getChildren().add(0, reservationsTitle);
                 	sxPanel.getChildren().add(1, tableReservation);
+                	reserve.setDisable(true);
     			} else {
     				userMsg.setFill(Color.RED);
                 	userMsg.setText("Oops, something went wrong! :(");
@@ -302,6 +332,7 @@ public class CustomerInterface {
         			currentTable = table;
             		sxPanel.getChildren().add(0, carsTitle);
                 	sxPanel.getChildren().add(1, tableCar);
+                	//buttonBoxHandler(false);
         		} else {
         			userMsg.setFill(Color.RED);
                 	userMsg.setText("Oops, something went wrong! :(");
