@@ -18,7 +18,7 @@ public class EmployerInterface {
                                 SECTION_SIZE = 9, 
                                 DX_PANEL_SPACE = 3; 
     
-    Car selectedCar = null;
+    private Car selectedCar = null;
     
 //	------ LABELS ------
     private final Label title;
@@ -31,6 +31,7 @@ public class EmployerInterface {
     private final Label carTitle;
     private final Label reservationTitle;
     private final Label licencePlateFilter;
+    private final Label selectMarkTitle;
 //	------ TEXT FIELDS ------
     private final TextField fieldLicensePlate; 
     private final TextField fieldVendor; 
@@ -80,6 +81,7 @@ public class EmployerInterface {
         carTitle = new Label("CARS");
         reservationTitle = new Label("RESERVATIONS");
         licencePlateFilter= new Label("Licence plate:");
+        selectMarkTitle = new Label("Mark:");
 //    	------ TEXT FIELDS ------
         fieldLicensePlate = new TextField();
         fieldVendor = new TextField();
@@ -128,13 +130,13 @@ public class EmployerInterface {
                 fieldLocation,kilometers, fieldKm, price, 
                 fieldPrice, insertButton, deleteButton);
         feedbackPanel = new VBox(DX_PANEL_SPACE);
-        feedbackPanel.getChildren().addAll(feedbackTitle, tableFeedback, filterFeedback);
+        feedbackPanel.getChildren().addAll(feedbackTitle, tableFeedback,selectMarkTitle,filterFeedback);
         userPanel = new VBox(DX_PANEL_SPACE); 
         userPanel.getChildren().addAll(userTitle, tableUser);
         carPanel = new VBox(DX_PANEL_SPACE);
         carPanel.getChildren().addAll(carTitle, errorMsgDeletion, tableCar, deleteButton);
         reservationPanel = new VBox(DX_PANEL_SPACE);
-        reservationPanel.getChildren().addAll(reservationTitle, tableReservation,licencePlateFilter, filterReservation);
+        reservationPanel.getChildren().addAll(reservationTitle, tableReservation,licencePlateFilter,filterReservation);
         dxPanel = new VBox(8);
         dxPanel.getChildren().addAll(tableChoose, carPanel);
         box = new AnchorPane();
@@ -175,37 +177,12 @@ public class EmployerInterface {
         userPanel.setAlignment(Pos.CENTER);
         carPanel.setAlignment(Pos.CENTER);
         reservationPanel.setAlignment(Pos.CENTER);
-        
-        
-        /*feedbackPanel.setLayoutX(400);
-        feedbackPanel.setLayoutY(100);
-        feedbackPanel.setPrefSize(500,450);
-        
-        feedbackPanel.fillWidthProperty();
-        
-        userPanel.setLayoutX(400);
-        userPanel.setLayoutY(100);
-        userPanel.setPrefSize(500,450);
-        
-        userPanel.fillWidthProperty();
-        
-        carPanel.setLayoutX(400);
-        carPanel.setLayoutY(100);
-        carPanel.setPrefSize(500,450);
-        
-        carPanel.fillWidthProperty();*/
-        
+ 
         box.setStyle("-fx-background-color: khaki"); 
         box.setPadding(new Insets(0,5,0,0));
         box.setPrefWidth(950);
-        box.setPrefHeight(660);
+        box.setPrefHeight(600);
         box.setTopAnchor(insertPanel,129.0);
-        /*box.setLeftAnchor(title, 90.0);
-        box.setTopAnchor(title, 30.0);
-        box.setLeftAnchor(logOutButton,430.0);
-        box.setTopAnchor(logOutButton,5.0);
-        box.setBottomAnchor(deleteButton, 70.0);
-        box.setBottomAnchor(insertButton, 50.0);*/
     }
     
     // listen the events 

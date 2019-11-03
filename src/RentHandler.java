@@ -42,7 +42,7 @@ public class RentHandler {
         int ret;
         if(loggedUser!=null) {
         	if(loggedUser.getEmail().equals("") == false && loggedUser.getPassword() != null) {
-        		//1) se l'utente ha già una prenotazione, 2) database error, 0) inserimento riuscito
+        		//1) se l'utente non esiste, 2) database error, 0) login riuscito
         		ret = JPAHandleDB.logIn(loggedUser);
                 switch (ret){
                     case 0:

@@ -107,37 +107,6 @@ public class JPAHandleDB {
 		return true;
 	}
 	
-	/*
-	// Delete the reservation if it is active
-	public static int deleteReservation(Reservation res, User user) {
-		
-		Reservation activeReservation = null;
-		int ret = 0;
-		//0->successful deletion, 1-> no reservation found, 2->database error
-		try {
-			entityManager = factory.createEntityManager();
-			TypedQuery<Reservation> query = entityManager.createQuery(selectActiveReservation, Reservation.class);
-			query.setParameter("user", user);
-			query.setParameter("actualDate", Utils.getCurrentSqlDate());
-			activeReservation = query.getSingleResult();
-			if(activeReservation != null) 
-				delete(Reservation.class, activeReservation.getId());
-		}catch (NoResultException noResEx) {
-			System.out.println("No reservation found for the User: "+user.getFiscalCode());
-			ret = 1;
-			return ret;
-		} catch (Exception ex) {
-			System.err.println("Database error while searching for user data: " + ex.getMessage());
-			System.err.println(ex);
-			ret = 2;
-			return ret;
-		} finally {
-			entityManager.close();
-		}
-		return ret;
-	}
-	*/
-	
 	public static int logIn(User user) {
 		int result = 1;
 		User retrievedUser = null;
@@ -158,8 +127,13 @@ public class JPAHandleDB {
 			
 			if(user != null)
 				result = 0;
-		} catch (Exception ex) {
+		} catch (NoResultException ex) {
 			System.err.println("Database error while searching for user data: " + ex.getMessage());
+			result = 1;
+			return result;
+		}catch (Exception ex) {
+			System.err.println("Database error while searching for user data: " + ex.getMessage());
+			System.out.println(ex);
 			result = 2;
 			return result;
 		} finally {

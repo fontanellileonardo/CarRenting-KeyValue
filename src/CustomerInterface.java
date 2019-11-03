@@ -49,6 +49,7 @@ public class CustomerInterface {
     private final Button addCommentButton;
 //	------ BOXES ------
     private final SearchPanel searchPanel;
+    private final HBox topButtonBox;
     private final HBox buttonBox;
     private final VBox sxPanel; 
     private final VBox dxPanel;
@@ -88,6 +89,8 @@ public class CustomerInterface {
         addCommentButton = new Button("ADD");
 //		------ BOXES ------
         searchPanel = new SearchPanel();
+        topButtonBox = new HBox(20);
+        topButtonBox.getChildren().addAll(reservationListButton,logOut);
         buttonBox = new HBox(40);
         buttonBox.getChildren().addAll(reserve,delete);
         
@@ -97,13 +100,13 @@ public class CustomerInterface {
         insertFeedbackBox.add(addCommentButton,2,1);
         
         sxPanel = new VBox(3); 
-        sxPanel.getChildren().addAll(reservationsTitle, tableReservation, buttonBox,reservationListButton);
+        sxPanel.getChildren().addAll(reservationsTitle, tableReservation, buttonBox);
         dxPanel = new VBox(DX_PANEL_SPACE);
         dxPanel.getChildren().addAll(feedbackTitle,tableFeedback,addFeedbackTitle,insertFeedbackBox);
         tablesBox = new GridPane();
         tablesBox.add(sxPanel, 0, 0);	tablesBox.add(dxPanel, 1, 0);	
         box = new VBox();
-        box.getChildren().addAll(logOut,title,
+        box.getChildren().addAll(topButtonBox,title,
 	                                searchPanel.getBox(),userMsg,
 	                                tablesBox  );
     }
@@ -128,6 +131,7 @@ public class CustomerInterface {
         logOut.setLayoutX(750);
         logOut.setLayoutY(3);
 //		------ BOXES ------
+        topButtonBox.setAlignment(Pos.TOP_CENTER);
         searchPanel.setSearchPanelStyle("Calibri", 13); 
         sxPanel.setAlignment(Pos.TOP_CENTER);
         sxPanel.setSpacing(8);
@@ -139,7 +143,7 @@ public class CustomerInterface {
         tablesBox.setHgap(13);
         box.setStyle("-fx-background-color: aliceblue");
         box.setAlignment(Pos.CENTER);
-        box.setMargin(logOut,new Insets(0,0,0,740));
+        box.setMargin(topButtonBox,new Insets(0,0,0,535));
         box.setSpacing(10);
         box.setPrefWidth(890);
         box.setPrefHeight(750);
@@ -267,6 +271,7 @@ public class CustomerInterface {
 	                	tableReservation.ListReservationUpdate(rh.showReservations(user));
 	                	userMsg.setText(outcome);
 	                	reserve.setDisable(true);
+	                	delete.setDisable(true);
 	                }     
 	                else
 	                    userMsg.setText(outcome);  

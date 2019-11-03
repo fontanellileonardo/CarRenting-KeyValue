@@ -116,10 +116,6 @@ public class LoginInterface {
         regMsg.setFont(Font.font("Calibri", 16));
         regMsg.setFill(Color.RED);
         registerTitle.setLayoutX(300);
-//    	------ TEXT FIELDS AND COMBO BOXES ------ 
-    	
-//    	------ BUTTONS ------
-    	
 //    	------ BOXES ------
         loginPanel.setLayoutX(60);
         loginPanel.setPrefSize(300,450);

@@ -29,9 +29,9 @@ public class VisualTableReservation extends TableView<Reservation>{
     }
     
     public void setTableReservationStyle() {
-        setFixedCellSize(40);
+        //setFixedCellSize(90);
         setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        setPrefWidth(90);
+        setPrefWidth(400);
         setMaxHeight(480);
     }
     
