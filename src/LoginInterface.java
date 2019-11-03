@@ -1,5 +1,8 @@
 import java.math.*;
 import java.security.*;
+
+import org.jboss.jandex.Main;
+
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.Insets;
@@ -83,7 +86,7 @@ public class LoginInterface {
         login = new Button("LOGIN");
         submit = new Button("SUBMIT");
 //      ------ IMAGE ------
-        carImage = new Image("file:\\\\..\\Images\\icon_rental_car.png");
+        carImage = new Image("resources/icon_rental_car.png");
         carImageView = new ImageView();
         carImageView.setImage(carImage);
         carImageView.setFitWidth(100);
