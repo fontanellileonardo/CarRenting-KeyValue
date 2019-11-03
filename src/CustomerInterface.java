@@ -12,19 +12,21 @@ import javafx.scene.text.*;
 
 public class CustomerInterface {
     
-    String seats;
-    String locality;
-    LocalDate pickUpDate;
-    LocalDate deliveryDate;
-    Car selectedCar;
+    private String seats;
+    private String locality;
+    private LocalDate pickUpDate;
+    private LocalDate deliveryDate;
+    private Car selectedCar;
+    private int currentTable;
     
     
     private final static int    TITLE_SIZE = 30,
                                 SECTION_SIZE = 9, 
-                                DX_PANEL_SPACE = 3; 
+                                DX_PANEL_SPACE = 3;
 //	------ LABELS ------
     private final Label title;
-    private final Label tableTitle;
+    private final Label reservationsTitle;
+    private final Label carsTitle;
     private final Label feedbackTitle;
     private final Label addFeedbackTitle;
     private final Label commentTitle;
@@ -40,6 +42,7 @@ public class CustomerInterface {
     private final VisualTableCar tableCar;
     private final VisualTableFeedback tableFeedback;
 //	------ BUTTONS ------
+    private final Button reservationListButton;
     private final Button reserve;
     private final Button delete;
     private final Button logOut;
@@ -56,7 +59,8 @@ public class CustomerInterface {
     public CustomerInterface() { 
 //		------ LABELS ------
     	title = new Label("Car Renting");
-        tableTitle = new Label("YOUR RESERVATIONS");
+        reservationsTitle = new Label("YOUR RESERVATIONS");
+        carsTitle = new Label("AVAILABLE CARS");
         feedbackTitle = new Label("FEEDBACK");
         userMsg = new Text("");
         userMsg.setFont(Font.font("Calibri", 16));
@@ -77,6 +81,7 @@ public class CustomerInterface {
         tableCar = new VisualTableCar(true);
         tableFeedback = new VisualTableFeedback();
 // 		------ BUTTONS ------
+        reservationListButton = new Button("SHOW RESERVATIONS");
         reserve = new Button("RESERVE");
         delete = new Button("DELETE RESERVATION");
         logOut = new Button("LOG OUT"); 
@@ -92,15 +97,13 @@ public class CustomerInterface {
         insertFeedbackBox.add(addCommentButton,2,1);
         
         sxPanel = new VBox(3); 
-        //sxPanel.getChildren().addAll(tableTitle, tableCar, buttonBox);
-        sxPanel.getChildren().addAll(tableTitle, tableReservation, buttonBox);
+        sxPanel.getChildren().addAll(reservationsTitle, tableReservation, buttonBox,reservationListButton);
         dxPanel = new VBox(DX_PANEL_SPACE);
         dxPanel.getChildren().addAll(feedbackTitle,tableFeedback,addFeedbackTitle,insertFeedbackBox);
         tablesBox = new GridPane();
         tablesBox.add(sxPanel, 0, 0);	tablesBox.add(dxPanel, 1, 0);	
         box = new VBox();
         box.getChildren().addAll(logOut,title,
-	                                //searchPanel.getLabels(),
 	                                searchPanel.getBox(),userMsg,
 	                                tablesBox  );
     }
@@ -111,7 +114,8 @@ public class CustomerInterface {
         title.setFont(Font.font("Calibri", 11 + TITLE_SIZE)); 
         title.setLayoutX(340);
         title.setLayoutY(10);
-        tableTitle.setFont(Font.font("Calibri", 5 + SECTION_SIZE));
+        reservationsTitle.setFont(Font.font("Calibri", 5 + SECTION_SIZE));
+        carsTitle.setFont(Font.font("Calibri", 5 + SECTION_SIZE));
         feedbackTitle.setFont(Font.font("Calibri", 5 + SECTION_SIZE));
 //		------ TEXT FIELDS ------      
         commentField.setPrefSize(265,45);
@@ -129,12 +133,9 @@ public class CustomerInterface {
         sxPanel.setSpacing(8);
         dxPanel.setAlignment(Pos.TOP_CENTER);
         dxPanel.setSpacing(8);
-        //insertFeedbackBox.setHgap(1);
         insertFeedbackBox.setHgap(5);
         insertFeedbackBox.setAlignment(Pos.CENTER);
-        //tablesBox.setVgap(5);
         tablesBox.setAlignment(Pos.TOP_CENTER);
-        //tablesBox.setGridLinesVisible(true);
         tablesBox.setHgap(13);
         box.setStyle("-fx-background-color: aliceblue");
         box.setAlignment(Pos.CENTER);
@@ -147,11 +148,10 @@ public class CustomerInterface {
     // Disable (true) or enable (false) a button
     void buttonBoxHandler(boolean disable) {
         reserve.setDisable(disable);
-        //delete.setDisable(!disable);
     }
     
     // listen the events from the search panel
-    void searchEventHandler(RentHandler rh) {
+    private void searchEventHandler(RentHandler rh) {
     	
         searchPanel.getSearch().setOnAction((ActionEvent ev)-> {
         	// takes dates from the calendars
@@ -159,11 +159,13 @@ public class CustomerInterface {
             deliveryDate = searchPanel.getDeliveryDate().getValue();
             // check if the delivery date is > pick-up date
             if(deliveryDate.compareTo(pickUpDate) >= 0) {
+            	// Insert the tableCar and remove the tableReservation
             	userMsg.setFill(Color.GREEN);
             	locality = searchPanel.getPlaceField().getValue().toString();
                 seats = searchPanel.getSeatsNumber().getValue().toString();
                 StringBuilder outcome = new StringBuilder("");
                 // update the car table with the available cars 
+                changeTable(Utils.CAR_MANAGER);
                 tableCar.carListUpdate(rh.showAvailableCar(pickUpDate, deliveryDate, locality, seats, outcome));
                 userMsg.setText(outcome.toString());
             } else {
@@ -174,14 +176,24 @@ public class CustomerInterface {
         });
     }
     
+    // activate the show reservation button and manage the events sent by it
+    private void showReservationsEventHandler(RentHandler rh, User user) {
+    	reservationListButton.setOnAction((ActionEvent ev)-> {
+        	if(changeTable(Utils.RESERVATION_TABLE))
+        		tableReservation.ListReservationUpdate(rh.showReservations(user));
+        });
+    }
+    
     // listen the events from the Customer interface
     public void appEventHandler(User user, RentHandler rh, CarRenting carR) {
     	
     	// "initialization" phase
+    	currentTable = Utils.RESERVATION_TABLE;
     	tableReservation.ListReservationUpdate(rh.showReservations(user));
     	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
         buttonBoxHandler(true);
         searchEventHandler(rh);
+        showReservationsEventHandler(rh,user);
         
         // Customer log-out
         logOut.setOnAction((ActionEvent e)-> {
@@ -195,8 +207,11 @@ public class CustomerInterface {
             if(outcome.equals("There is no active reservation registered") || outcome.equals("OOps! Something went wrong, please try later")) {
             	userMsg.setFill(Color.RED);
             }
-            else
+            else {
             	userMsg.setFill(Color.GREEN);
+            	changeTable(Utils.RESERVATION_TABLE);
+            	tableReservation.ListReservationUpdate(rh.showReservations(user));
+            }	
             userMsg.setText(outcome);
         });
         
@@ -219,7 +234,8 @@ public class CustomerInterface {
 	                String outcome = rh.addReservation(user, selectedCar, pickUpDate, deliveryDate);
 	                if(outcome.equals("Success!")) {
 	                	// remove from table the car selected from the customer
-	                	tableCar.getCars().remove(tableCar.getSelectionModel().getSelectedIndex());
+	                	changeTable(Utils.RESERVATION_TABLE);
+	                	tableReservation.ListReservationUpdate(rh.showReservations(user));
 	                	buttonBoxHandler(true);
 	                	userMsg.setText(outcome);
 	                }     
@@ -256,8 +272,45 @@ public class CustomerInterface {
         searchPanel.getSeatsNumber().setValue("4");
         commentField.setText("");
         clearFeedbackForm();
+        changeTable(Utils.RESERVATION_TABLE);
         
         userMsg.setText("");
+    }
+    
+    // show carTable or ReservationTable. Return true if it change the table, false otherwise
+    private boolean changeTable(int table) {
+
+    	// check if the table is already visible in the CustomerInterface
+    	if(currentTable != table) {
+    		// change the table
+    		boolean ret = true;
+    		if (table == Utils.RESERVATION_TABLE) {
+    			ret = sxPanel.getChildren().removeAll(carsTitle,tableCar);
+    			if(ret) {	// no error in remove
+    				currentTable = table;
+            		sxPanel.getChildren().add(0, reservationsTitle);
+                	sxPanel.getChildren().add(1, tableReservation);
+    			} else {
+    				userMsg.setFill(Color.RED);
+                	userMsg.setText("Oops, something went wrong! :(");
+                	return false;
+    			}
+        	} else {
+        		// Utils.CAR_MANAGER
+        		ret = sxPanel.getChildren().removeAll(reservationsTitle,tableReservation);
+        		if(ret) {	// no error in remove
+        			currentTable = table;
+            		sxPanel.getChildren().add(0, carsTitle);
+                	sxPanel.getChildren().add(1, tableCar);
+        		} else {
+        			userMsg.setFill(Color.RED);
+                	userMsg.setText("Oops, something went wrong! :(");
+                	return false;
+        		}
+        	}
+    		return true;
+    	} 
+    	return false;
     }
     
     public VBox getBox() {return box;}

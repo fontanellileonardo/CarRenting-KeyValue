@@ -3,6 +3,12 @@ import java.time.ZoneId;
 import java.util.Calendar;
 
 public class Utils {
+	
+	public final static int	CAR_MANAGER = 1,
+			USER_TABLE = 2,
+			FEEDBACK_TABLE = 3,
+			RESERVATION_TABLE = 4;
+	
 	// Return the current date (java.sql.Date)
 	public static java.sql.Date getCurrentSqlDate() {
 		Calendar cal = Calendar.getInstance();

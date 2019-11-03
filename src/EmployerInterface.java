@@ -18,10 +18,6 @@ public class EmployerInterface {
                                 SECTION_SIZE = 9, 
                                 DX_PANEL_SPACE = 3; 
     
-    private final static int	CAR_MANAGER = 1,
-    							USER_TABLE = 2,
-    							FEEDBACK_TABLE = 3,
-    							RESERVATION_TABLE = 4;
     Car selectedCar = null;
     
 //	------ LABELS ------
@@ -64,7 +60,7 @@ public class EmployerInterface {
     private final VBox reservationPanel;
     private final AnchorPane box;
     
-    private int table = CAR_MANAGER;
+    private int table = Utils.CAR_MANAGER;
     private boolean firstOpen = true;
      
     public EmployerInterface() {
@@ -237,7 +233,7 @@ public class EmployerInterface {
             //TableView is always at index 1 in the list of nodes assigned to dxPanel
             dxPanel.getChildren().remove(1);   
           
-    		table = CAR_MANAGER;
+    		table = Utils.CAR_MANAGER;
     		tableChoose.setValue("Car Manager");
 
             carR.setScene("logout");
@@ -245,60 +241,60 @@ public class EmployerInterface {
         
         tableChoose.setOnAction((ActionEvent ev)-> { 
         	if(tableChoose.getValue() == "User Table") {
-                if(table == CAR_MANAGER) {	
+                if(table == Utils.CAR_MANAGER) {	
                 	dxPanel.getChildren().removeAll(carPanel);
                 }
-                else if(table == FEEDBACK_TABLE) { 
+                else if(table == Utils.FEEDBACK_TABLE) { 
                 	dxPanel.getChildren().removeAll(feedbackPanel);
                 }
-                else if(table == RESERVATION_TABLE) {
+                else if(table == Utils.RESERVATION_TABLE) {
                 	dxPanel.getChildren().remove(reservationPanel);
                 }
-                table = USER_TABLE;
+                table = Utils.USER_TABLE;
                 dxPanel.getChildren().add(userPanel); 
         	}
         	
         	else if(tableChoose.getValue() == "Car Manager") {
-        		if(table == USER_TABLE) {
+        		if(table == Utils.USER_TABLE) {
         			dxPanel.getChildren().removeAll(userPanel);
         		}
-        		else if(table == FEEDBACK_TABLE) {
+        		else if(table == Utils.FEEDBACK_TABLE) {
         			dxPanel.getChildren().removeAll(feedbackPanel);
         		}
-        		else if(table == RESERVATION_TABLE) {
+        		else if(table == Utils.RESERVATION_TABLE) {
                 	dxPanel.getChildren().remove(reservationPanel);
                 }
-        		table = CAR_MANAGER;
+        		table = Utils.CAR_MANAGER;
         		tableCar.carListUpdate(rh.showAllCars());
         		dxPanel.getChildren().addAll(carPanel);
         	}
         	
         	else if(tableChoose.getValue() == "Feedback Table") {
-        		if(table == CAR_MANAGER) {
+        		if(table == Utils.CAR_MANAGER) {
         			dxPanel.getChildren().removeAll(carPanel);
         		}
-        		else if(table == USER_TABLE) {
+        		else if(table == Utils.USER_TABLE) {
         			dxPanel.getChildren().removeAll(userPanel);
         		}
-        		else if(table == RESERVATION_TABLE) {
+        		else if(table == Utils.RESERVATION_TABLE) {
                 	dxPanel.getChildren().remove(reservationPanel);
                 }
-        		table = FEEDBACK_TABLE;
+        		table = Utils.FEEDBACK_TABLE;
         		filterFeedback.setValue("5");
         		dxPanel.getChildren().addAll(feedbackPanel);
         	}
         	
         	else if(tableChoose.getValue() == "Reservation Table") {
-        		if(table == CAR_MANAGER) {
+        		if(table == Utils.CAR_MANAGER) {
         			dxPanel.getChildren().removeAll(carPanel);
         		}
-        		else if(table == USER_TABLE) {
+        		else if(table == Utils.USER_TABLE) {
         			dxPanel.getChildren().removeAll(userPanel);
         		}
-        		else if(table == FEEDBACK_TABLE) {
+        		else if(table == Utils.FEEDBACK_TABLE) {
                 	dxPanel.getChildren().remove(feedbackPanel);
                 }
-        		table = RESERVATION_TABLE;
+        		table = Utils.RESERVATION_TABLE;
         		System.out.println("Resetto lista");
         		filterReservation.setValue("ALL");
         		dxPanel.getChildren().add(reservationPanel);
