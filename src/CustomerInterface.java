@@ -34,6 +34,7 @@ public class CustomerInterface {
     // Message for the user. Green -> ok, Red -> an error occurs
     private final Text userMsg;
 //	------ TEXT FIELDS ------ 
+    private final Text welcomeMsg;
     private final TextArea commentField;
 //	------ COMBO BOXES ------
     private final ComboBox markField;
@@ -69,6 +70,7 @@ public class CustomerInterface {
         commentTitle = new Label("Comment");
         markTitle = new Label("Mark");
 //    	------ TEXT FIELDS ------ 
+        welcomeMsg = new Text();
         commentField = new TextArea();
         commentField.setWrapText(true);
 //    	------ COMBO BOXES ------
@@ -90,7 +92,7 @@ public class CustomerInterface {
 //		------ BOXES ------
         searchPanel = new SearchPanel();
         topButtonBox = new HBox(20);
-        topButtonBox.getChildren().addAll(reservationListButton,logOut);
+        topButtonBox.getChildren().addAll(welcomeMsg,reservationListButton,logOut);
         buttonBox = new HBox(40);
         buttonBox.getChildren().addAll(reserve,delete);
         
@@ -131,7 +133,7 @@ public class CustomerInterface {
         logOut.setLayoutX(750);
         logOut.setLayoutY(3);
 //		------ BOXES ------
-        topButtonBox.setAlignment(Pos.TOP_CENTER);
+        topButtonBox.setAlignment(Pos.CENTER_RIGHT);
         searchPanel.setSearchPanelStyle("Calibri", 13); 
         sxPanel.setAlignment(Pos.TOP_CENTER);
         sxPanel.setSpacing(8);
@@ -143,7 +145,7 @@ public class CustomerInterface {
         tablesBox.setHgap(13);
         box.setStyle("-fx-background-color: aliceblue");
         box.setAlignment(Pos.CENTER);
-        box.setMargin(topButtonBox,new Insets(0,0,0,535));
+        box.setMargin(topButtonBox,new Insets(0,20,0,400));
         box.setSpacing(10);
         box.setPrefWidth(890);
         box.setPrefHeight(750);
@@ -193,6 +195,7 @@ public class CustomerInterface {
     public void appEventHandler(User user, RentHandler rh, CarRenting carR) {
     	
     	// "initialization" phase
+    	welcomeMsg.setText("Welcome "+user.getNickName());
     	currentTable = Utils.RESERVATION_TABLE;
     	tableReservation.ListReservationUpdate(rh.showReservations(user));
     	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());

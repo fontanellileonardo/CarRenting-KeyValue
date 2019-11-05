@@ -7,7 +7,6 @@ public class VisualTableUser extends TableView<User>{
 	private ObservableList<User> userList;
 	
     public VisualTableUser(){
-        
         TableColumn columnName = new TableColumn("NAME");
         columnName.setCellValueFactory(new PropertyValueFactory<>("name"));
         TableColumn columnSurname = new TableColumn("SURNAME");
