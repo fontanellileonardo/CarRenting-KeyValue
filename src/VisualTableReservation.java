@@ -10,18 +10,18 @@ public class VisualTableReservation extends TableView<Reservation>{
 	 private ObservableList<Reservation> reservationsList;
 	    
      public VisualTableReservation(boolean customer){
-    	 TableColumn columnLicencePlate = new TableColumn("LICENCE PLATE");
-		 columnLicencePlate.setCellValueFactory(new PropertyValueFactory<>("licencePlate"));
+    	 TableColumn columnLicensePlate = new TableColumn("LICENSE PLATE");
+		 columnLicensePlate.setCellValueFactory(new PropertyValueFactory<>("licensePlate"));
 		 TableColumn columnPickUpDate = new TableColumn("PICKUP DATE");
 		 columnPickUpDate.setCellValueFactory(new PropertyValueFactory<>("pickUpDate"));
 		 TableColumn columnDeliveryDate = new TableColumn("DELIVERY DATE");
 		 columnDeliveryDate.setCellValueFactory(new PropertyValueFactory<>("deliveryDate"));
     	 if(customer) {
-    		 getColumns().addAll(columnLicencePlate, columnPickUpDate, columnDeliveryDate);
+    		 getColumns().addAll(columnLicensePlate, columnPickUpDate, columnDeliveryDate);
     	 } else {
     		 TableColumn columnFiscalCode = new TableColumn("FISCAL CODE");
  	         columnFiscalCode.setCellValueFactory(new PropertyValueFactory<>("fiscalCode"));
- 	         getColumns().addAll(columnFiscalCode, columnLicencePlate, columnPickUpDate, columnDeliveryDate);
+ 	         getColumns().addAll(columnFiscalCode, columnLicensePlate, columnPickUpDate, columnDeliveryDate);
     	 }
         reservationsList = FXCollections.observableArrayList();
         setItems(reservationsList);

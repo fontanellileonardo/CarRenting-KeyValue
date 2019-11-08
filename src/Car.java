@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name="Car")
 public class Car {
 	
-	private final SimpleStringProperty licencePlate;
+	private final SimpleStringProperty licensePlate;
     private final SimpleStringProperty vendor;
     private final SimpleIntegerProperty seatNumber;
     private final SimpleStringProperty location;
@@ -17,7 +17,7 @@ public class Car {
     private List<Reservation> reservations =	new ArrayList<>();
     
     public Car() {
-    	licencePlate = new SimpleStringProperty("");
+    	licensePlate = new SimpleStringProperty("");
     	vendor = new SimpleStringProperty("");
         seatNumber = new SimpleIntegerProperty(0);
         location = new SimpleStringProperty("");
@@ -27,7 +27,7 @@ public class Car {
     }
     
     public Car(String v, int s, String l, double k, double pr, String p, boolean r) {
-    	licencePlate = new SimpleStringProperty(p);
+    	licensePlate = new SimpleStringProperty(p);
     	vendor = new SimpleStringProperty(v);
         seatNumber = new SimpleIntegerProperty(s);
         location = new SimpleStringProperty(l);
@@ -41,13 +41,13 @@ public class Car {
     public void setLocation(String l) {location.set(l);}
     public void setKilometers(double k) {kilometers.set(k);}
     public void setPrice(double pr) {price.set(pr);}
-    public void setLicencePlate(String p) {licencePlate.set(p);}
+    public void setLicensePlate(String p) {licensePlate.set(p);}
     public void setRemoved(boolean removed) {this.removed.set(removed);}
     public void setReservations(List<Reservation> res) {reservations = res;}
     
     @Id
-    @Column(name="LicencePlate", unique = true)
-    public String getLicencePlate() {return licencePlate.get();}
+    @Column(name="LicensePlate", unique = true)
+    public String getLicensePlate() {return licensePlate.get();}
     @Column(name="Vendor")
     public String getVendor() { return vendor.get();}
     @Column(name="SeatNumber")
@@ -67,8 +67,8 @@ public class Car {
     		)
     public List<Reservation> getReservations() { return reservations; }
     
-    public SimpleStringProperty licencePlateProperty() {
-    	return this.licencePlate;
+    public SimpleStringProperty licensePlateProperty() {
+    	return this.licensePlate;
     }
 }
 

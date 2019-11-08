@@ -73,7 +73,7 @@ public class SearchPanel{
 //    	------ DATE PICKERS ------
         pickUpDate = new DatePicker(LocalDate.now().plusDays(1));
         pickUpDate.setDayCellFactory(pickUpCellFactory);
-        deliveryDate = new DatePicker(LocalDate.now().plusDays(1));
+        deliveryDate = new DatePicker(LocalDate.now().plusDays(2));
         deliveryDate.setDayCellFactory(deliveryCellFactory);
 //    	------ COMBO BOXES ------
         ObservableList<String> loc = 

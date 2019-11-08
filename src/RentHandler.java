@@ -69,7 +69,7 @@ public class RentHandler {
         String outcome = "";
         int ret;
         if(car!=null) {
-        	if(car.getLicencePlate().equals("") == false && car.getVendor().equals("") == false) {
+        	if(car.getLicensePlate().equals("") == false && car.getVendor().equals("") == false) {
         		//1) se esiste già una car con quella targa -> controllo se è stata rimossa e la inserisco di nuovo, 2) database error, 0) inserimento riuscito
         		ret = JPAHandleDB.create(car);
                 switch (ret){
@@ -79,7 +79,7 @@ public class RentHandler {
                             return outcome;
                         case 1:
                             System.out.println("The employer attempt to insert an existing car! ");
-                            Car control = (Car) JPAHandleDB.read(Car.class, car.getLicencePlate());
+                            Car control = (Car) JPAHandleDB.read(Car.class, car.getLicensePlate());
                             if(control.getRemoved()) {
                             	control.setRemoved(false);
                             	control.setLocation(car.getLocation());
@@ -149,21 +149,21 @@ public class RentHandler {
     	return customers;
     }
     
-    //This function allows to retrieve all the cars licence plates 
-    //to show them in the reservation filter (filtered by licence plate)
-    public List<String> retrieveAllLicencePlates() {
-    	List<String> licencePlatesList = JPAHandleDB.showLicencePlates();
-    	return licencePlatesList;
+    //This function allows to retrieve all the cars license plates 
+    //to show them in the reservation filter (filtered by license plate)
+    public List<String> retrieveAllLicensePlates() {
+    	List<String> licensePlatesList = JPAHandleDB.showLicensePlates();
+    	return licensePlatesList;
     }
     
     //Show only the reservations related to a selected car 
-    public List<Reservation> showReservations(String licencePlate) {
+    public List<Reservation> showReservations(String licensePlate) {
     	List<Reservation> reservations = null;
-    	if(licencePlate.compareTo("ALL") == 0) {
+    	if(licensePlate.compareTo("ALL") == 0) {
     		reservations = JPAHandleDB.selectReservations();
     	}
     	else
-    		reservations = JPAHandleDB.selectReservations(licencePlate);
+    		reservations = JPAHandleDB.selectReservations(licensePlate);
     	return reservations;
     }
     
@@ -210,6 +210,7 @@ public class RentHandler {
     // Add a new Reservation for the customer
     public String addReservation(User user, Car selectedCar, LocalDate pickUpDate, LocalDate deliveryDate) {
     	Reservation res = new Reservation(pickUpDate, deliveryDate, user, selectedCar);
+    	System.out.println("DEBUG: Reservation fields: PickUp:"+res.getPickUpDate()+" delDate:"+res.getDeliveryDate());
         String outcome = "";
         //1) if user already has an active reservation, 2) database error, 0) inserting done
         int ret = JPAHandleDB.create(res);

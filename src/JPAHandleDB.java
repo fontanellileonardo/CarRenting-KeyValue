@@ -11,14 +11,14 @@ public class JPAHandleDB {
 	private static String selectAllCustomers = "SELECT u FROM User u WHERE u.customer = true";
 	private static String selectAllFeedbacks = "SELECT f FROM Feedback f WHERE f.mark <= :minMark";
 	private static String selectActiveReservation = "SELECT r FROM Reservation r WHERE r.user = :user AND r.pickUpDate > :actualDate";
-	private static String findAvailableCars = "SELECT c FROM Car c WHERE c.location = :location AND c.seatNumber = :seatNumber AND c.removed = false AND c.licencePlate NOT IN "
+	private static String findAvailableCars = "SELECT c FROM Car c WHERE c.location = :location AND c.seatNumber = :seatNumber AND c.removed = false AND c.licensePlate NOT IN "
 												+ "(SELECT r.car FROM Reservation r WHERE (r.pickUpDate BETWEEN :pickUpDate AND :deliveryDate) "
 												+ "OR (r.deliveryDate BETWEEN :pickUpDate AND :deliveryDate) "
 												+ "OR (pickUpDate < :pickUpDate AND deliveryDate > :deliveryDate))";
 	private static String selectAllReservations = "SELECT r FROM Reservation r";
 	private static String selectCarReservations = "SELECT r FROM Reservation r WHERE r.car = :car";
 	private static String selectAllCars = "SELECT c FROM Car c";
-	private static String selectAllLicencePlates = "SELECT c.licencePlate FROM Car c";
+	private static String selectAllLicensePlates = "SELECT c.licensePlate FROM Car c";
 	private static String selectCarActiveReservations = "SELECT r FROM Reservation r WHERE r.car = :car AND r.pickUpDate > :actualDate";
 	private static String selectCustomerReservations = "SELECT r FROM Reservation r WHERE r.user = :user";
 
@@ -142,11 +142,11 @@ public class JPAHandleDB {
 		return result;
 	}
 	
-	public static List<String> showLicencePlates() {
+	public static List<String> showLicensePlates() {
 		List<String> result = null;
 		try {
 			entityManager = factory.createEntityManager();
-			TypedQuery<String> query = entityManager.createQuery(selectAllLicencePlates, String.class);
+			TypedQuery<String> query = entityManager.createQuery(selectAllLicensePlates, String.class);
 			result = query.getResultList();
 		} catch (Exception ex) {
 			System.err.println("Exception during cars selection: " + ex.getMessage());
@@ -187,10 +187,10 @@ public class JPAHandleDB {
 		return result;
 	}
 	
-	public static List<Reservation> selectReservations(String licencePlate) {
+	public static List<Reservation> selectReservations(String licensePlate) {
 		List<Reservation> result = null;
 		try {
-			Car selectedCar = (Car) read(Car.class, licencePlate);
+			Car selectedCar = (Car) read(Car.class, licensePlate);
 			entityManager = factory.createEntityManager();
 			TypedQuery<Reservation> query = entityManager.createQuery(selectCarReservations, Reservation.class);
 			query.setParameter("car", selectedCar);

@@ -82,7 +82,7 @@ public class CustomerInterface {
 //		------ TABLES ------
         tableReservation = new VisualTableReservation(true);
         tableCar = new VisualTableCar(true);
-        tableFeedback = new VisualTableFeedback();
+        tableFeedback = new VisualTableFeedback(true);
 // 		------ BUTTONS ------
         reservationListButton = new Button("SHOW RESERVATIONS");
         reserve = new Button("RESERVE");
@@ -167,13 +167,13 @@ public class CustomerInterface {
             // check if the delivery date is > pick-up date
             if(deliveryDate.compareTo(pickUpDate) >= 0) {
             	// Insert the tableCar and remove the tableReservation
-            	userMsg.setFill(Color.GREEN);
+            	userMsg.setFill(Color.RED);
             	locality = searchPanel.getPlaceField().getValue().toString();
                 seats = searchPanel.getSeatsNumber().getValue().toString();
                 StringBuilder outcome = new StringBuilder("");
                 // update the car table with the available cars 
                 changeTable(Utils.CAR_MANAGER);
-                tableCar.carListUpdate(rh.showAvailableCar(pickUpDate, deliveryDate, locality, seats, outcome));
+                tableCar.carListUpdate(rh.showAvailableCar(pickUpDate, deliveryDate, locality, seats, outcome));                	                
                 userMsg.setText(outcome.toString());
             } else {
             	userMsg.setFill(Color.RED);
@@ -263,13 +263,15 @@ public class CustomerInterface {
             else {
             	// take the field selected from the car table
                 selectedCar = tableCar.getSelectionModel().getSelectedItem();
-                System.out.println("I selected: "+selectedCar.getLicencePlate());
+                System.out.println("I selected: "+selectedCar.getLicensePlate());
                 buttonBoxHandler(false);
                 
                 // Reserve a car
                 reserve.setOnAction((ActionEvent e)-> {
+                	System.out.println("DEBUG: pickUp:"+pickUpDate+" delDate:"+deliveryDate);
 	                String outcome = rh.addReservation(user, selectedCar, pickUpDate, deliveryDate);
 	                if(outcome.equals("Success!")) {
+	                	userMsg.setFill(Color.GREEN);
 	                	changeTable(Utils.RESERVATION_TABLE);
 	                	tableReservation.ListReservationUpdate(rh.showReservations(user));
 	                	userMsg.setText(outcome);

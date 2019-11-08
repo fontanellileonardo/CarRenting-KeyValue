@@ -75,7 +75,7 @@ public class Reservation {
 		return user.fiscalCodeProperty();
 	}
 	
-	public SimpleStringProperty licencePlateProperty() {
-		return car.licencePlateProperty();
+	public SimpleStringProperty licensePlateProperty() {
+		return car.licensePlateProperty();
 	}
 }

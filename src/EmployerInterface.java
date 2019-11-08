@@ -30,7 +30,7 @@ public class EmployerInterface {
     private final Label userTitle;
     private final Label carTitle;
     private final Label reservationTitle;
-    private final Label licencePlateFilter;
+    private final Label licensePlateFilter;
     private final Label selectMarkTitle;
 //	------ TEXT FIELDS ------
     private final TextField fieldLicensePlate; 
@@ -80,7 +80,7 @@ public class EmployerInterface {
         userTitle = new Label("USERS");
         carTitle = new Label("CARS");
         reservationTitle = new Label("RESERVATIONS");
-        licencePlateFilter= new Label("Licence plate:");
+        licensePlateFilter= new Label("License plate:");
         selectMarkTitle = new Label("Mark:");
 //    	------ TEXT FIELDS ------
         fieldLicensePlate = new TextField();
@@ -115,7 +115,7 @@ public class EmployerInterface {
         
         		
 //    	------ TABLES ------
-        tableFeedback = new VisualTableFeedback();
+        tableFeedback = new VisualTableFeedback(false);
         tableUser = new VisualTableUser(); 
         tableCar = new VisualTableCar(false);
         tableReservation = new VisualTableReservation(false);
@@ -136,7 +136,7 @@ public class EmployerInterface {
         carPanel = new VBox(DX_PANEL_SPACE);
         carPanel.getChildren().addAll(carTitle, errorMsgDeletion, tableCar, deleteButton);
         reservationPanel = new VBox(DX_PANEL_SPACE);
-        reservationPanel.getChildren().addAll(reservationTitle, tableReservation,licencePlateFilter,filterReservation);
+        reservationPanel.getChildren().addAll(reservationTitle, tableReservation,licensePlateFilter,filterReservation);
         dxPanel = new VBox(8);
         dxPanel.getChildren().addAll(tableChoose, carPanel);
         box = new AnchorPane();
@@ -194,7 +194,7 @@ public class EmployerInterface {
     	tableReservation.ListReservationUpdate(rh.showReservations("ALL"));
     	
     	if(firstOpen) {
-    		filterReservation.getItems().addAll(rh.retrieveAllLicencePlates());
+    		filterReservation.getItems().addAll(rh.retrieveAllLicensePlates());
     		firstOpen = false;
     	}
     	
@@ -297,7 +297,7 @@ public class EmployerInterface {
                 if(outcome.equals("Success!")) {
                 	errorMsgInsertion.setFill(Color.GREEN);
                 	//Insert the new car also in the list used for the reservations filter
-                	filterReservation.getItems().add(car.getLicencePlate()); 
+                	filterReservation.getItems().add(car.getLicensePlate()); 
                     clearAll();
                 } else 
                 	errorMsgInsertion.setFill(Color.RED);

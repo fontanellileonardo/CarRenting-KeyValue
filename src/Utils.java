@@ -1,6 +1,7 @@
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 public class Utils {
 	
@@ -17,7 +18,7 @@ public class Utils {
 	}
 	
 	public static java.sql.Date localDateToSqlDate(LocalDate localDate) { 
-		java.util.Date date = java.util.Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		java.util.Date date = java.util.Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());	
 		java.sql.Date sqlDate = new java.sql.Date(date.getTime());
 		return sqlDate;
 	}

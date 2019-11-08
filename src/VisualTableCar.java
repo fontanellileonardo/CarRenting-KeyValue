@@ -27,8 +27,8 @@ public class VisualTableCar extends TableView<Car> {
         	
         
         else {
-        	 TableColumn columnLicensePlate = new TableColumn("LICENCE PLATE");
-             columnLicensePlate.setCellValueFactory(new PropertyValueFactory<>("licencePlate"));
+        	 TableColumn columnLicensePlate = new TableColumn("LICENSE PLATE");
+             columnLicensePlate.setCellValueFactory(new PropertyValueFactory<>("licensePlate"));
              TableColumn columnLocation = new TableColumn("LOCATION");
              columnLocation.setCellValueFactory(new PropertyValueFactory<>("location"));
              TableColumn columnRemoved = new TableColumn("REMOVED");
