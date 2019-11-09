@@ -8,7 +8,7 @@ import javafx.scene.control.cell.*;
 public class VisualTableFeedback extends TableView<Feedback> {
     private ObservableList<Feedback> feedbackList;
     
-     public VisualTableFeedback(boolean customer){
+     public VisualTableFeedback(boolean employer){
     	 TableColumn columnNickname = new TableColumn("NICK NAME");
          columnNickname.setCellValueFactory(new PropertyValueFactory<>("nickName"));	
          TableColumn columnDate = new TableColumn("DATE");
@@ -17,9 +17,9 @@ public class VisualTableFeedback extends TableView<Feedback> {
          columnMark.setCellValueFactory(new PropertyValueFactory<>("mark"));
          TableColumn columnComment = new TableColumn("COMMENT");
          columnComment.setCellValueFactory(new PropertyValueFactory<>("comment"));
-    	 if(customer) {
-    		 TableColumn columnFiscalCode = new TableColumn("NICK NAME");
-             columnFiscalCode.setCellValueFactory(new PropertyValueFactory<>("nickName"));
+    	 if(employer) {
+    		 TableColumn columnFiscalCode = new TableColumn("FISCAL CODE");
+             columnFiscalCode.setCellValueFactory(new PropertyValueFactory<>("fiscalCode"));
              getColumns().addAll(columnFiscalCode,columnNickname, columnDate, columnMark, columnComment);
     	 } else {
     		 getColumns().addAll(columnNickname, columnDate, columnMark, columnComment);

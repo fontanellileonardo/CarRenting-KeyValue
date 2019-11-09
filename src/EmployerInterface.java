@@ -115,7 +115,7 @@ public class EmployerInterface {
         
         		
 //    	------ TABLES ------
-        tableFeedback = new VisualTableFeedback(false);
+        tableFeedback = new VisualTableFeedback(true);
         tableUser = new VisualTableUser(); 
         tableCar = new VisualTableCar(false);
         tableReservation = new VisualTableReservation(false);

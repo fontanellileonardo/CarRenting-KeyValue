@@ -82,7 +82,7 @@ public class CustomerInterface {
 //		------ TABLES ------
         tableReservation = new VisualTableReservation(true);
         tableCar = new VisualTableCar(true);
-        tableFeedback = new VisualTableFeedback(true);
+        tableFeedback = new VisualTableFeedback(false);
 // 		------ BUTTONS ------
         reservationListButton = new Button("SHOW RESERVATIONS");
         reserve = new Button("RESERVE");

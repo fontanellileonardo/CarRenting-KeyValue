@@ -76,4 +76,8 @@ public class Feedback {
 	public SimpleStringProperty nickNameProperty() {
 		return user.get().nickNameProperty();
 	}
+	
+	public SimpleStringProperty fiscalCodeProperty() {
+		return user.get().fiscalCodeProperty();
+	}
 }
