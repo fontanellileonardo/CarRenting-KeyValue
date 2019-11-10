@@ -12,12 +12,20 @@ public class VisualTableReservation extends TableView<Reservation>{
      public VisualTableReservation(boolean customer){
     	 TableColumn columnLicensePlate = new TableColumn("LICENSE PLATE");
 		 columnLicensePlate.setCellValueFactory(new PropertyValueFactory<>("licensePlate"));
+    	 TableColumn columnVendor = new TableColumn("VENDOR");
+    	 columnVendor.setCellValueFactory(new PropertyValueFactory<>("vendor"));
 		 TableColumn columnPickUpDate = new TableColumn("PICKUP DATE");
 		 columnPickUpDate.setCellValueFactory(new PropertyValueFactory<>("pickUpDate"));
 		 TableColumn columnDeliveryDate = new TableColumn("DELIVERY DATE");
 		 columnDeliveryDate.setCellValueFactory(new PropertyValueFactory<>("deliveryDate"));
+		 TableColumn columnSeatNumber = new TableColumn("SEAT NUMBER");
+		 columnSeatNumber.setCellValueFactory(new PropertyValueFactory<>("seatNumber"));
+		 TableColumn columnPrice = new TableColumn("DAY PRICE");
+		 columnPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+	     TableColumn columnKM = new TableColumn("KM");
+	     columnKM.setCellValueFactory(new PropertyValueFactory<>("kilometers"));
     	 if(customer) {
-    		 getColumns().addAll(columnLicensePlate, columnPickUpDate, columnDeliveryDate);
+    		 getColumns().addAll(columnVendor, columnPickUpDate, columnDeliveryDate, columnSeatNumber, columnKM, columnPrice);
     	 } else {
     		 TableColumn columnFiscalCode = new TableColumn("FISCAL CODE");
  	         columnFiscalCode.setCellValueFactory(new PropertyValueFactory<>("fiscalCode"));

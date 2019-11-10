@@ -70,5 +70,21 @@ public class Car {
     public SimpleStringProperty licensePlateProperty() {
     	return this.licensePlate;
     }
+    
+    public SimpleStringProperty vendorProperty() {
+    	return this.vendor;
+    }
+    
+    public SimpleIntegerProperty seatNumberProperty() {
+    	return this.seatNumber;
+    }
+    
+    public SimpleDoubleProperty priceProperty() {
+    	return this.price;
+    }
+    
+    public SimpleDoubleProperty kilometersProperty() {
+    	return this.kilometers;
+    }
 }
 

@@ -78,4 +78,20 @@ public class Reservation {
 	public SimpleStringProperty licensePlateProperty() {
 		return car.licensePlateProperty();
 	}
+	
+	public SimpleStringProperty vendorProperty() {
+		return car.vendorProperty();
+	}
+	
+	public SimpleIntegerProperty seatNumberProperty() {
+		return car.seatNumberProperty();
+	}
+	
+	public SimpleDoubleProperty priceProperty() {
+		return car.priceProperty();
+	}
+	
+	public SimpleDoubleProperty kilometersProperty() {
+		return car.kilometersProperty();
+	}
 }
