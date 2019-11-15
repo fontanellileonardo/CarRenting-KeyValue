@@ -9,6 +9,9 @@ public class Feedback extends FeedbackKV{
 		this.user = new SimpleObjectProperty<> (user); 
 	}
 	
+	public Feedback(FeedbackKV feedKV, User user) {
+		this(feedKV.getMark(), feedKV.getComment(), feedKV.getDate(), user);
+	}
 	public Feedback() {
 		super();
 		user = new SimpleObjectProperty<User> ();
@@ -23,10 +26,14 @@ public class Feedback extends FeedbackKV{
 	}	
 	
 	public SimpleStringProperty nickNameProperty() {
+		if(user == null)
+			return new SimpleStringProperty("UNKNOWN");
 		return user.get().nickNameProperty();
 	}
 	
 	public SimpleStringProperty fiscalCodeProperty() {
+		if (user == null)
+			return new SimpleStringProperty("UNKNOWN");
 		return user.get().fiscalCodeProperty();
 	}
 	

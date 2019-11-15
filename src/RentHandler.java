@@ -133,15 +133,21 @@ public class RentHandler {
     }
 
     public List<Feedback> showFeedbacks() {
-        System.out.println("Feedbacks updated");
-        List<Feedback> feedbacks = JPAHandleDB.selectAllFeedbacks();
-        return feedbacks;
+        return showFeedbacks(Utils.MAX_MARK);
     }
     
-    public List<Feedback> showFeedbacks(int mark) {
+    public List<Feedback> showFeedbacks(Integer mark) {
         System.out.println("Feedbacks updated");
-        List<Feedback> feedbacks = JPAHandleDB.selectAllFeedbacks(mark);
-        return feedbacks;
+        HashMap<String, Object> feedbacks = RiakHandleDB.selectAllFeedbacks(mark);
+        List<Feedback> result = new ArrayList<Feedback>();
+        User user;
+        Feedback f;
+        for(int i = 0; i < feedbacks.size()/2; i++) {
+    		user = (User) JPAHandleDB.read(User.class, feedbacks.get("FiscalCode:"+i));
+    		f = new Feedback((FeedbackKV) feedbacks.get("Feedback:"+i), user);
+    		result.add(f);
+    	}
+        return result;
     }
     
     public List<User> showCustomers(){
@@ -231,9 +237,9 @@ public class RentHandler {
     }
     
     public boolean addFeedback(User user, String comment, String mark) {
-    	int intMark = Integer.parseInt(mark);
-    	Feedback feedback = new Feedback(intMark, comment,Utils.getCurrentSqlDate(), user);
-    	int result = JPAHandleDB.create(feedback);
+    	Integer intMark = Integer.parseInt(mark);
+    	FeedbackKV feedback = new FeedbackKV(intMark, comment, Utils.getCurrentSqlDate());
+    	int result = RiakHandleDB.create(feedback, user.getFiscalCode());
     	if (result == 0) {
     		return true;
     	} else {
