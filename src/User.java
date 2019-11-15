@@ -12,13 +12,11 @@ public class User {
     private final SimpleBooleanProperty customer;
     private final SimpleStringProperty email;
     private final SimpleStringProperty password;
-    private List<Feedback> feedbacks;
     private List<Reservation> reservations;
     
     public User() {
     	fiscalCode = new SimpleStringProperty("");
     	nickName = new SimpleStringProperty("");
-    	feedbacks = new ArrayList<>();
     	reservations = new ArrayList<>();
         name = new SimpleStringProperty("");
         surname = new SimpleStringProperty("");
@@ -31,7 +29,6 @@ public class User {
     {
     	fiscalCode = new SimpleStringProperty(cf);
     	nickName = new SimpleStringProperty(nm);
-    	feedbacks = new ArrayList<>();
     	reservations = new ArrayList<>();
         name = new SimpleStringProperty(n);
         surname = new SimpleStringProperty(c);
@@ -48,7 +45,6 @@ public class User {
     public void setEmail(String e) { email.set(e); } 
     public void setCustomer(boolean c) { customer.set(c); }
     public void setPassword(String p) { password.set(p); }
-    public void setFeedbacks(List<Feedback> feed) {feedbacks = feed;}
     public void setReservations(List<Reservation> res) {reservations = res;}
     
     @Id
@@ -73,12 +69,6 @@ public class User {
     @Column(name = "Password")
     public String getPassword() { return password.get(); }
         
-    @OneToMany(
-    			mappedBy = "user",
-    			fetch = FetchType.LAZY,
-    			cascade = {}
-    		)
-    public List<Feedback> getFeedbacks() { return feedbacks;}
     @OneToMany(
 			mappedBy = "user",
 			fetch = FetchType.LAZY,

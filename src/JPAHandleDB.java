@@ -9,7 +9,7 @@ public class JPAHandleDB {
 	private static EntityManager entityManager;
 	private static String findUser = "SELECT u FROM User u WHERE u.email= :email AND u.password= :password AND u.customer= :customer ";
 	private static String selectAllCustomers = "SELECT u FROM User u WHERE u.customer = true";
-	private static String selectAllFeedbacks = "SELECT f FROM Feedback f WHERE f.mark <= :minMark";
+//	private static String selectAllFeedbacks = "SELECT f FROM Feedback f WHERE f.mark <= :minMark";
 	private static String selectActiveReservation = "SELECT r FROM Reservation r WHERE r.user = :user AND r.pickUpDate > :actualDate";
 	private static String findAvailableCars = "SELECT c FROM Car c WHERE c.location = :location AND c.seatNumber = :seatNumber AND c.removed = false AND c.licensePlate NOT IN "
 												+ "(SELECT r.car FROM Reservation r WHERE (r.pickUpDate BETWEEN :pickUpDate AND :deliveryDate) "
@@ -220,6 +220,7 @@ public class JPAHandleDB {
 		return result;
 	}
 	
+	/*
 	public static List<Feedback> selectAllFeedbacks() {
 		int maxMark = 5;
 		return selectAllFeedbacks(maxMark);
@@ -239,7 +240,7 @@ public class JPAHandleDB {
 			entityManager.close();
 		}
 		return result;
-	}
+	}*/
 	
 	public static List<Car> findAvailableCars(Date arrival, Date departure, String loc, int seats){
 		List<Car> result = null;
