@@ -1,4 +1,7 @@
 import java.time.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.*;
@@ -198,7 +201,16 @@ public class CustomerInterface {
     	welcomeMsg.setText("Welcome "+user.getNickName());
     	currentTable = Utils.RESERVATION_TABLE;
     	tableReservation.ListReservationUpdate(rh.showReservations(user));
-    	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
+    	List<Feedback> feedbacks = new ArrayList<>();
+		feedbacks = rh.showFeedbacks();
+		if(feedbacks == null) {
+			userMsg.setFill(Color.RED);
+            userMsg.setText("Ooops! Feedbacks not available");
+		} else {
+			userMsg.setFill(Color.GREEN);
+			userMsg.setText("");
+			tableFeedback.ListFeedbackUpdate(feedbacks);
+		}
     	reserve.setDisable(true);
     	delete.setDisable(true);
         searchEventHandler(rh);

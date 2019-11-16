@@ -137,8 +137,11 @@ public class RentHandler {
     }
     
     public List<Feedback> showFeedbacks(Integer mark) {
-        System.out.println("Feedbacks updated");
         HashMap<String, Object> feedbacks = RiakHandleDB.selectAllFeedbacks(mark);
+        if(feedbacks == null) {
+        	System.out.println("Feedbacks not updated");
+        	return null;
+        }
         List<Feedback> result = new ArrayList<Feedback>();
         User user;
         Feedback f;
@@ -147,6 +150,7 @@ public class RentHandler {
     		f = new Feedback((FeedbackKV) feedbacks.get("Feedback:"+i), user);
     		result.add(f);
     	}
+        System.out.println("Feedbacks updated");
         return result;
     }
     
