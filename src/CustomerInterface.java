@@ -289,6 +289,7 @@ public class CustomerInterface {
         	// take the values from the fields
         	if(rh.addFeedback(user, commentField.getText(),markField.getValue().toString())) {
         		userMsg.setFill(Color.GREEN);
+        		userMsg.setText("Your comment has been successfully added");
         		tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
         	} else {
         		userMsg.setFill(Color.RED);
