@@ -3,6 +3,7 @@ import java.util.List;
 
 import javax.persistence.*;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.service.spi.ServiceException;
 
 public class JPAHandleDB {
 	private static EntityManagerFactory factory;
@@ -23,7 +24,11 @@ public class JPAHandleDB {
 	private static String selectCustomerReservations = "SELECT r FROM Reservation r WHERE r.user = :user";
 
 	static {
-		factory = Persistence.createEntityManagerFactory("CarRenting");
+		try {
+			factory = Persistence.createEntityManagerFactory("CarRenting");
+		} catch (ServiceException ex) {
+			System.err.println("Unable to establish a connection to MySQL database");
+		}
 	}
 	
 	/* Create new object. 
