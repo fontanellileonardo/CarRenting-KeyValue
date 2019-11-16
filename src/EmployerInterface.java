@@ -188,10 +188,8 @@ public class EmployerInterface {
     // listen the events 
     void empEventHandler(RentHandler rh, CarRenting carR){ 
     	// "initialization" phase
-    	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
-    	tableUser.UserListUpdate(rh.showCustomers());
-    	tableCar.carListUpdate(rh.showAllCars());
-    	tableReservation.ListReservationUpdate(rh.showReservations("ALL"));
+    	tableCar.carListUpdate(rh.showAllCars()); //Car table is the first one to be shown
+
     	
     	if(firstOpen) {
     		filterReservation.getItems().addAll(rh.retrieveAllLicensePlates());
@@ -229,6 +227,7 @@ public class EmployerInterface {
                 }
                 table = Utils.USER_TABLE;
                 dxPanel.getChildren().add(userPanel); 
+            	tableUser.UserListUpdate(rh.showCustomers());
         	}
         	
         	else if(tableChoose.getValue() == "Car Manager") {
@@ -259,6 +258,7 @@ public class EmployerInterface {
         		table = Utils.FEEDBACK_TABLE;
         		filterFeedback.setValue("5");
         		dxPanel.getChildren().addAll(feedbackPanel);
+        		tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
         	}
         	
         	else if(tableChoose.getValue() == "Reservation Table") {
@@ -275,6 +275,7 @@ public class EmployerInterface {
         		System.out.println("Resetto lista");
         		filterReservation.setValue("ALL");
         		dxPanel.getChildren().add(reservationPanel);
+            	tableReservation.ListReservationUpdate(rh.showReservations("ALL"));
         	}
         	
         });
