@@ -39,6 +39,8 @@ public class JPAHandleDB {
 	public static int create(Object o) {
 		System.out.println("Add a new object");
 		try {
+			if((factory == null) || (factory.isOpen() == false))
+				return 2;
 			entityManager = factory.createEntityManager();
 			entityManager.getTransaction().begin();
 			entityManager.persist(o);
@@ -60,7 +62,8 @@ public class JPAHandleDB {
 			System.err.println("Database Error");
 			return 2;
 		} finally {
-			entityManager.close();
+			if((factory != null) && (factory.isOpen() == true))
+				entityManager.close();
 		}
 		return 0;
 	}
@@ -69,12 +72,15 @@ public class JPAHandleDB {
 		System.out.println("Getting a new object");
 		Object o = null;
 		try {
+			if((factory == null) || (factory.isOpen() == false))
+				return null;
 			entityManager = factory.createEntityManager();
 			o = entityManager.find(entity, id);
 		} catch (Exception ex) {
 			System.err.println("Exception during read: " + ex.getMessage());
 		} finally {
-			entityManager.close();
+			if((factory != null) && (factory.isOpen() == true))
+				entityManager.close();
 		}
 		return o;
 	}
@@ -82,6 +88,8 @@ public class JPAHandleDB {
 	public static boolean update(Object o) {
 		System.out.println("Update an object");
 		try {
+			if((factory == null) || (factory.isOpen() == false))
+				return false;
 			entityManager = factory.createEntityManager();
 			entityManager.getTransaction().begin();
 			entityManager.merge(o);
@@ -90,7 +98,8 @@ public class JPAHandleDB {
 			System.err.println("Exception during update: " + ex.getMessage());
 			return false;
 		} finally {
-			entityManager.close();
+			if((factory != null) && (factory.isOpen() == true))
+				entityManager.close();
 		}
 		return true;
 	}
@@ -98,6 +107,8 @@ public class JPAHandleDB {
 	public static <T> boolean delete(Class<T> entity, Object id) {
 		System.out.println("Delete an object");
 		try {
+			if((factory == null) || (factory.isOpen() == false))
+				return false;
 			entityManager = factory.createEntityManager();
 			entityManager.getTransaction().begin();
 			Object o = entityManager.getReference(entity, id);
@@ -107,7 +118,8 @@ public class JPAHandleDB {
 			System.err.println("Exception during delete: " + ex.getMessage());
 			return false;
 		} finally {
-			entityManager.close();
+			if((factory != null) && (factory.isOpen() == true))
+				entityManager.close();
 		}
 		return true;
 	}
@@ -116,6 +128,8 @@ public class JPAHandleDB {
 		int result = 1;
 		User retrievedUser = null;
 		try {
+			if((factory == null) || (factory.isOpen() == false))
+				return 2;
 			entityManager = factory.createEntityManager();
 			TypedQuery<User> query = entityManager.createQuery(findUser, User.class);
 			query.setParameter("email", user.getEmail());
@@ -142,7 +156,8 @@ public class JPAHandleDB {
 			result = 2;
 			return result;
 		} finally {
-			entityManager.close();
+			if((factory != null) && (factory.isOpen() == true))
+				entityManager.close();
 		}
 		return result;
 	}
@@ -150,6 +165,8 @@ public class JPAHandleDB {
 	public static List<String> showLicensePlates() {
 		List<String> result = null;
 		try {
+			if((factory == null) || (factory.isOpen() == false))
+				return null;
 			entityManager = factory.createEntityManager();
 			TypedQuery<String> query = entityManager.createQuery(selectAllLicensePlates, String.class);
 			result = query.getResultList();
@@ -157,7 +174,8 @@ public class JPAHandleDB {
 			System.err.println("Exception during cars selection: " + ex.getMessage());
 			return null;
 		} finally {
-			entityManager.close();
+			if((factory != null) && (factory.isOpen() == true))
+				entityManager.close();
 		}
 		return result;
 	}
@@ -165,6 +183,8 @@ public class JPAHandleDB {
 	public static List<User> selectAllCustomers() {
 		List<User> result = null;
 		try {
+			if((factory == null) || (factory.isOpen() == false))
+				return null;
 			entityManager = factory.createEntityManager();
 			TypedQuery<User> query = entityManager.createQuery(selectAllCustomers, User.class);
 			result = query.getResultList();
@@ -172,7 +192,8 @@ public class JPAHandleDB {
 			System.err.println("Exception during customers selection: " + ex.getMessage());
 			return null;
 		} finally {
-			entityManager.close();
+			if((factory != null) && (factory.isOpen() == true))
+				entityManager.close();
 		}
 		return result;
 	}
@@ -180,6 +201,8 @@ public class JPAHandleDB {
 	public static List<Reservation> selectReservations() {
 		List<Reservation> result = null;
 		try {
+			if((factory == null) || (factory.isOpen() == false))
+				return null;
 			entityManager = factory.createEntityManager();
 			TypedQuery<Reservation> query = entityManager.createQuery(selectAllReservations, Reservation.class);
 			result = query.getResultList();
@@ -187,7 +210,8 @@ public class JPAHandleDB {
 			System.err.println("Exception during reservations selection: " + ex.getMessage());
 			return null;
 		} finally {
-			entityManager.close();
+			if((factory != null) && (factory.isOpen() == true))
+				entityManager.close();
 		}
 		return result;
 	}
@@ -195,6 +219,8 @@ public class JPAHandleDB {
 	public static List<Reservation> selectReservations(String licensePlate) {
 		List<Reservation> result = null;
 		try {
+			if((factory == null) || (factory.isOpen() == false))
+				return null;
 			Car selectedCar = (Car) read(Car.class, licensePlate);
 			entityManager = factory.createEntityManager();
 			TypedQuery<Reservation> query = entityManager.createQuery(selectCarReservations, Reservation.class);
@@ -204,7 +230,8 @@ public class JPAHandleDB {
 			System.err.println("Exception during reservations selection: " + ex.getMessage());
 			return null;
 		} finally {
-			entityManager.close();
+			if((factory != null) && (factory.isOpen() == true))
+				entityManager.close();
 		}
 		return result;
 	}
@@ -212,6 +239,8 @@ public class JPAHandleDB {
 	public static List<Reservation> selectReservations(User user) {
 		List<Reservation> result = null;
 		try {
+			if((factory == null) || (factory.isOpen() == false))
+				return null;
 			entityManager = factory.createEntityManager();
 			TypedQuery<Reservation> query = entityManager.createQuery(selectCustomerReservations, Reservation.class);
 			query.setParameter("user", user);
@@ -220,7 +249,8 @@ public class JPAHandleDB {
 			System.err.println("Exception during reservations selection: " + ex.getMessage());
 			return null;
 		} finally {
-			entityManager.close();
+			if((factory != null) && (factory.isOpen() == true))
+				entityManager.close();
 		}
 		return result;
 	}
@@ -250,6 +280,8 @@ public class JPAHandleDB {
 	public static List<Car> findAvailableCars(Date arrival, Date departure, String loc, int seats){
 		List<Car> result = null;
 		try {
+			if((factory == null) || (factory.isOpen() == false))
+				return null;
 			entityManager = factory.createEntityManager();
 			TypedQuery<Car> query = entityManager.createQuery(findAvailableCars, Car.class);
 			query.setParameter("location", loc);
@@ -266,7 +298,8 @@ public class JPAHandleDB {
 			return null;
 		}
 		finally {
-			entityManager.close();
+			if((factory != null) && (factory.isOpen() == true))
+				entityManager.close();
 		}
 		return result;
 	}
@@ -274,6 +307,8 @@ public class JPAHandleDB {
 	public static int selectActiveReservation(Reservation r) {
 		List<Reservation> result = null;
 		try {
+			if((factory == null) || (factory.isOpen() == false))
+				return 2;
 			entityManager = factory.createEntityManager();
 			TypedQuery<Reservation> query = entityManager.createQuery(selectActiveReservation, Reservation.class);
 			query.setParameter("user", r.getUser()); 
@@ -285,7 +320,8 @@ public class JPAHandleDB {
 			return 2;
 		}
 		finally {
-			entityManager.close();
+			if((factory != null) && (factory.isOpen() == true))
+				entityManager.close();
 		}
 		if(result.isEmpty())
 			return 0;
@@ -312,6 +348,8 @@ public class JPAHandleDB {
 	public static List<Car> selectAllCars() {
 		List<Car> result = null;
 		try {
+			if((factory == null) || (factory.isOpen() == false))
+				return null;
 			entityManager = factory.createEntityManager();
 			TypedQuery<Car> query = entityManager.createQuery(selectAllCars, Car.class);
 			result = query.getResultList();
@@ -319,7 +357,8 @@ public class JPAHandleDB {
 			System.err.println("Exception during cars selection: " + ex.getMessage());
 			return null;
 		} finally {
-			entityManager.close();
+			if((factory != null) && (factory.isOpen() == true))
+				entityManager.close();
 		}
 		return result;
 	}
@@ -329,6 +368,8 @@ public class JPAHandleDB {
 	public static List <Reservation> selectReservations(Car car) {
 		List <Reservation> reservations = null;
 		try {
+			if((factory == null) || (factory.isOpen() == false))
+				return null;
 			entityManager = factory.createEntityManager();
 			TypedQuery<Reservation> query = entityManager.createQuery(selectCarReservations, Reservation.class);
 			query.setParameter("car", car);
@@ -337,7 +378,8 @@ public class JPAHandleDB {
 			System.err.println("Exception during reservations selection: " + ex.getMessage());
 			return null;
 		} finally {
-			entityManager.close();
+			if((factory != null) && (factory.isOpen() == true))
+				entityManager.close();
 		}
 		return reservations;
 	}
@@ -346,6 +388,8 @@ public class JPAHandleDB {
 	public static int existsCarActiveReservations(Car car) {
 		int result = 2;
 		try {
+			if((factory == null) || (factory.isOpen() == false))
+				return 2;
 			entityManager = factory.createEntityManager();
 			TypedQuery<Reservation> query = entityManager.createQuery(selectCarActiveReservations, Reservation.class);
 			query.setParameter("car", car);
@@ -359,7 +403,8 @@ public class JPAHandleDB {
 			System.err.println("Exception during car active reservations selection: " + ex.getMessage());
 			return 2;
 		} finally {
-			entityManager.close();
+			if((factory != null) && (factory.isOpen() == true))
+				entityManager.close();
 		}
 		return result;
 	}
@@ -379,6 +424,7 @@ public class JPAHandleDB {
 	}
 		
 	public static void finish() {
-		factory.close();
+		if((factory != null) && (factory.isOpen() == true))
+			factory.close();
 	}
 }
