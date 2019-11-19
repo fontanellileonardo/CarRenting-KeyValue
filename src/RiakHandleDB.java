@@ -31,7 +31,6 @@ public class RiakHandleDB {
     private static RiakCluster cluster;
     private static RiakClient client;
     private static Namespace carRentingBucket;
-    private static Namespace indexBucket;
     private static Namespace counterBucket;
     private static Location counterLoc;
     private static CounterUpdate cu;
@@ -42,7 +41,6 @@ public class RiakHandleDB {
 		cluster = DBConnection.getInstance().cluster;
 		client = new RiakClient(cluster);
 		carRentingBucket = new Namespace("CarRenting");
-		indexBucket = new Namespace("IndexBucket");
 		counterBucket = new Namespace("Counters", "Counters");
 		counterLoc = new Location(counterBucket,"counterKey");
 		cu = new CounterUpdate(1);
@@ -113,8 +111,8 @@ public class RiakHandleDB {
     			return 2;
     		String key = "feedb:" + counter + ":" + fiscalCode;
     		if(create(key+":mark",feedback.getMark().toString(),feedback.getMark()) && 
-    				create(key+":comment",feedback.getComment(),feedback.getMark()) &&
-    				create(key+":date",feedback.getDate().toString(),feedback.getMark())) {
+    				create(key+":comment",feedback.getComment()) &&
+    				create(key+":date",feedback.getDate().toString())) {
     			return 0;
     		} else 
     			return 2;
@@ -193,15 +191,15 @@ public class RiakHandleDB {
 		String key;
 		FeedbackKV fetchedFeedback;
     	try {
-	    	biq = new IntIndexQuery.Builder(indexBucket, "Mark", Utils.MIN_MARK, (long)mark).build();
+	    	biq = new IntIndexQuery.Builder(carRentingBucket, "Mark", Utils.MIN_MARK, (long)mark).build();
 			response = client.execute(biq);
 			entries  = response.getEntries();
 			int i =0;
-			for (BinIndexQuery.Response.Entry entry : entries) {	// key with :mark
+			for (IntIndexQuery.Response.Entry entry : entries) {	// key with :mark
 				System.out.println("banana in");
 				key = entry.getRiakObjectLocation().getKey().toString();
 				String[] splitKey = key.split(":");
-				key = splitKey[0]+splitKey[1]+splitKey[2];	// key without :mark    
+				key = splitKey[0]+ ":" + splitKey[1] + ":" + splitKey[2];	// key without :mark    
 		        fetchedFeedback = readFeedbackKV(key);
 		        results.put("FiscalCode:"+i, splitKey[2]);
 		        results.put("Feedback:"+i, fetchedFeedback);
