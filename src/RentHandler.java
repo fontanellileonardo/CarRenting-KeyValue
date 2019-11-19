@@ -149,10 +149,12 @@ public class RentHandler {
         List<Feedback> result = new ArrayList<Feedback>();
         User user;
         Feedback f;
+        //System.out.println("size: "+feedbacks.size());
         for(int i = 0; i < feedbacks.size()/2; i++) {
     		user = (User) JPAHandleDB.read(User.class, feedbacks.get("FiscalCode:"+i));
     		f = new Feedback((FeedbackKV) feedbacks.get("Feedback:"+i), user);
     		result.add(f);
+    		//System.out.println("Feedback: "+f.getMark()+" "+f.getComment()+" "+f.getDate());
     	}
         System.out.println("Feedbacks updated");
         return result;

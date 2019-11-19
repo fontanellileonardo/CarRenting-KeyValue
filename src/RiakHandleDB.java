@@ -1,4 +1,5 @@
 import java.net.UnknownHostException;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,23 +36,6 @@ public class RiakHandleDB {
     private static Location counterLoc;
     private static CounterUpdate cu;
     private static UpdateCounter updateCounter;
-	
-    /*
-	static {
-		
-		cluster = setUpCluster();
-		client = new RiakClient(cluster);
-		carRentingBucket = new Namespace("CarRenting");
-		indexBucket = new Namespace("IndexBucket");
-		counterBucket = new Namespace("Counters", "Counters");
-		counterLoc = new Location(counterBucket,"counterKey");
-		// [DEBUG] Vedere se va bene
-		cu = new CounterUpdate(1);
-		updateCounter = new UpdateCounter.Builder(counterLoc,cu).build();
-		// Fine
-		
-	}
-	*/
     
     // Open the connection with the DB
 	public static void openConnection() {
@@ -64,24 +48,7 @@ public class RiakHandleDB {
 		cu = new CounterUpdate(1);
 		updateCounter = new UpdateCounter.Builder(counterLoc,cu).build();
 	}
-	/*
-    private static RiakCluster setUpCluster() {
-        // This example will use only one node listening on localhost:10017
-        RiakNode node = new RiakNode.Builder()
-                .withRemoteAddress("127.0.0.1")
-                .withRemotePort(8087)
-                .build();
 
-        // This cluster object takes our one node as an argument
-        RiakCluster cluster = new RiakCluster.Builder(node)
-                .build();
-
-        // The cluster must be started to work, otherwise you will see errors
-        cluster.start();
-
-        return cluster;
-    }
-    */
     private static long getCounter() {
     	FetchCounter fetch = new FetchCounter.Builder(counterLoc).build();
     	try {
@@ -98,6 +65,66 @@ public class RiakHandleDB {
     	return -1;
     }
     
+ // Insert a new value in the KV with its index
+    private static Boolean create(String key, String value, long mark) {
+    	RiakObject feedInd = new RiakObject().setContentType("text/plain").setValue(BinaryValue.create(value));
+		Location feedIndLocation = new Location(carRentingBucket, key);
+		feedInd.getIndexes().getIndex(LongIntIndex.named("Mark")).add(mark);
+		StoreValue storeOp = new StoreValue.Builder(feedInd).withLocation(feedIndLocation).build();
+		try {
+			client.execute(storeOp);
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+    }
+    
+    // Create a new value in the KV
+    private static Boolean create(String key, String value) {
+    	RiakObject feedInd = new RiakObject().setContentType("text/plain").setValue(BinaryValue.create(value));
+		Location feedIndLocation = new Location(carRentingBucket, key);
+		StoreValue storeOp = new StoreValue.Builder(feedInd).withLocation(feedIndLocation).build();
+		try {
+			client.execute(storeOp);
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+    }
+    
+    // Create a Feedback obj in the KV DB
+    public static int create(FeedbackKV feedback,String fiscalCode) {
+    	try {
+    		client.execute(updateCounter);
+    		long counter = getCounter();
+    		if (counter == -1 )
+    			return 2;
+    		String key = "feedb:" + counter + ":" + fiscalCode;
+    		if(create(key+":mark",feedback.getMark().toString(),feedback.getMark()) && 
+    				create(key+":comment",feedback.getComment(),feedback.getMark()) &&
+    				create(key+":date",feedback.getDate().toString(),feedback.getMark())) {
+    			return 0;
+    		} else 
+    			return 2;
+    	} catch (Exception ex) {
+    		System.err.println(ex.getMessage());
+    		return 2;
+    	}
+    }
+    
+  /*
  // Create the index associated with the Feedback
     private static Boolean createIndex(long mark, String key) {
     	RiakObject feedInd = new RiakObject().setContentType("text/plain").setValue(BinaryValue.create("-"));
@@ -134,11 +161,33 @@ public class RiakHandleDB {
     	}
     	return 0;
     }
+    */
+    // The HashMap is structured as: <FiscalCode:0,fiscalCode_value>,<Feedback:0,feddbackKV_obj>
+    /*
+     * Implementare public FeedbackKV readFeedback(String key) che restituisce l'oggetto feedbackKV
+     */
+    private static String readAttribute(String key) throws UnresolvedConflictException,ExecutionException,InterruptedException{
+    	FetchValue fetchValue; 
+		RiakObject riakObj = null;
+		
+		fetchValue = new FetchValue.Builder(new Location(carRentingBucket, key)).build();     
+		riakObj = client.execute(fetchValue).getValue(RiakObject.class);
+        return riakObj.getValue().toString();
+    }
+    
+    private static FeedbackKV readFeedbackKV(String key) throws UnresolvedConflictException,ExecutionException,InterruptedException{
+    	FeedbackKV feedbackKV = new FeedbackKV();
+    	feedbackKV.setMark(Integer.parseInt(readAttribute(key+":mark")));
+    	feedbackKV.setDate(Date.valueOf(readAttribute(key+":date")));
+    	feedbackKV.setComment(readAttribute(key+":comment"));
+    	System.out.println("Feedback: "+feedbackKV.getMark()+" "+feedbackKV.getDate()+" "+feedbackKV.getComment());
+    	return feedbackKV;
+    }
     
     public static HashMap<String, Object> selectAllFeedbacks(Integer mark){
+    	
     	IntIndexQuery biq;
     	IntIndexQuery.Response response;
-		FetchValue fetchFeedback; 
 		List<Entry<Long>> entries;
 		HashMap<String, Object> results = new HashMap<String, Object>();
 		String key;
@@ -148,15 +197,18 @@ public class RiakHandleDB {
 			response = client.execute(biq);
 			entries  = response.getEntries();
 			int i =0;
-			for (IntIndexQuery.Response.Entry entry : entries) {
+			for (BinIndexQuery.Response.Entry entry : entries) {	// key with :mark
+				System.out.println("banana in");
 				key = entry.getRiakObjectLocation().getKey().toString();
 				String[] splitKey = key.split(":");
-				fetchFeedback = new FetchValue.Builder(new Location(carRentingBucket, entry.getRiakObjectLocation().getKey())).build();     
-		        fetchedFeedback = client.execute(fetchFeedback).getValue(FeedbackKV.class);
+				key = splitKey[0]+splitKey[1]+splitKey[2];	// key without :mark    
+		        fetchedFeedback = readFeedbackKV(key);
 		        results.put("FiscalCode:"+i, splitKey[2]);
 		        results.put("Feedback:"+i, fetchedFeedback);
 		        i++;
 			}
+			System.out.println("size: "+results.size());
+			
 		} catch (UnresolvedConflictException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -176,9 +228,9 @@ public class RiakHandleDB {
     public static void finish() {
     	cluster.shutdown();
     }
-  /*  
+    /*
     public static void main(String[]args) {
-    	
+    	openConnection();
     	/*
     	DeleteValue deleteOp1 = new DeleteValue.Builder(new Location(indexBucket, "feedback:01:CODFISC1")).build();
     	DeleteValue deleteOp2 = new DeleteValue.Builder(new Location(indexBucket, "feedback:02:CODFISC2")).build();
@@ -188,10 +240,11 @@ public class RiakHandleDB {
     	} catch (Exception e) {
     		System.err.println(e.getMessage());
     	}
-    	/*
+    	
     	for(int i = 0; i < 5; i++) {
     		System.out.println("RETURN CREATE: " + create(new FeedbackKV(i+1,"",Utils.getCurrentSqlDate()),"COD FISCALE"));
     	}
+    	/*
     	HashMap<String, Object> result = selectAllFeedbacks(5);
     	System.out.println(result.size());
     	for(int i = 0; i < result.size()/2; i++) {
@@ -199,7 +252,8 @@ public class RiakHandleDB {
     		System.out.println("VOTO: " + ((FeedbackKV) result.get("Feedback:"+i)).getMark());
     		System.out.println("DATA: " + ((FeedbackKV) result.get("Feedback:"+i)).getDate());
     	}
+    	
     	finish();
-    }*/
-
+    }
+	*/
 }
