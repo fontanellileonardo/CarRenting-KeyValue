@@ -42,8 +42,7 @@ public class CarRenting extends Application {
         this.stage.setScene(sceneStart);
         //this.stage.setScene(sceneEmployer);
         this.stage.setOnCloseRequest((WindowEvent we) -> {
-        	JPAHandleDB.finish(); 
-        	RiakHandleDB.finish(); 
+        	rentHandler.closeConnections();
         });
         this.stage.show();
     }

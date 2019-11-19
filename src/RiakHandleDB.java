@@ -36,24 +36,36 @@ public class RiakHandleDB {
     private static CounterUpdate cu;
     private static UpdateCounter updateCounter;
 	
+    /*
 	static {
-		try {
-			cluster = setUpCluster();
-			client = new RiakClient(cluster);
-			carRentingBucket = new Namespace("CarRenting");
-			indexBucket = new Namespace("IndexBucket");
-			counterBucket = new Namespace("Counters", "Counters");
-			counterLoc = new Location(counterBucket,"counterKey");
-			// [DEBUG] Vedere se va bene
-			cu = new CounterUpdate(1);
-			updateCounter = new UpdateCounter.Builder(counterLoc,cu).build();
-			// Fine
-		} catch(UnknownHostException ex) {
-			System.err.println(ex.getMessage());
-		}
+		
+		cluster = setUpCluster();
+		client = new RiakClient(cluster);
+		carRentingBucket = new Namespace("CarRenting");
+		indexBucket = new Namespace("IndexBucket");
+		counterBucket = new Namespace("Counters", "Counters");
+		counterLoc = new Location(counterBucket,"counterKey");
+		// [DEBUG] Vedere se va bene
+		cu = new CounterUpdate(1);
+		updateCounter = new UpdateCounter.Builder(counterLoc,cu).build();
+		// Fine
+		
 	}
-	
-    private static RiakCluster setUpCluster() throws UnknownHostException {
+	*/
+    
+    // Open the connection with the DB
+	public static void openConnection() {
+		cluster = DBConnection.getInstance().cluster;
+		client = new RiakClient(cluster);
+		carRentingBucket = new Namespace("CarRenting");
+		indexBucket = new Namespace("IndexBucket");
+		counterBucket = new Namespace("Counters", "Counters");
+		counterLoc = new Location(counterBucket,"counterKey");
+		cu = new CounterUpdate(1);
+		updateCounter = new UpdateCounter.Builder(counterLoc,cu).build();
+	}
+	/*
+    private static RiakCluster setUpCluster() {
         // This example will use only one node listening on localhost:10017
         RiakNode node = new RiakNode.Builder()
                 .withRemoteAddress("127.0.0.1")
@@ -69,7 +81,7 @@ public class RiakHandleDB {
 
         return cluster;
     }
-    
+    */
     private static long getCounter() {
     	FetchCounter fetch = new FetchCounter.Builder(counterLoc).build();
     	try {

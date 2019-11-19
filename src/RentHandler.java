@@ -4,7 +4,11 @@ import java.util.*;
 
 
 public class RentHandler {
-    
+	
+	public RentHandler() {
+		RiakHandleDB.openConnection();
+		JPAHandleDB.openConnection();
+	}
     //register method
     public String register(User regUser) {
     	int ret;
@@ -249,5 +253,10 @@ public class RentHandler {
     	} else {
     		return false;
     	}
+    }
+    
+    public void closeConnections() {
+        JPAHandleDB.finish();
+        RiakHandleDB.finish(); 
     }
 }
