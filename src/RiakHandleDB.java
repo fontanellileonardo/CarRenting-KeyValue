@@ -170,7 +170,9 @@ public class RiakHandleDB {
 		
 		fetchValue = new FetchValue.Builder(new Location(carRentingBucket, key)).build();     
 		riakObj = client.execute(fetchValue).getValue(RiakObject.class);
-        return riakObj.getValue().toString();
+		if(riakObj != null)
+			return riakObj.getValue().toString();
+		return null;
     }
     
     private static FeedbackKV readFeedbackKV(String key) throws UnresolvedConflictException,ExecutionException,InterruptedException{
