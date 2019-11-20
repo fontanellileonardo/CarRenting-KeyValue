@@ -24,7 +24,6 @@ public class VisualTableUser extends TableView<User>{
     }
 	
     public void setTableUserStyle() { //da sistemare
-        //setFixedCellSize(40);
         setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         setPrefWidth(90);
         setMaxHeight(480);

@@ -28,11 +28,7 @@ public class SearchPanel{
     private final Button search;
 //	------ BOXES ------
     private final GridPane box;
-    //private final HBox box, labels, periodBar;
 
-
-    
-    
     final Callback<DatePicker, DateCell> deliveryCellFactory = new Callback<DatePicker, DateCell>() {
         public DateCell call(final DatePicker datePicker) {
             return new DateCell() {
@@ -90,29 +86,17 @@ public class SearchPanel{
         search = new Button("SEARCH");
 //    	------ BOX ------
         box = new GridPane();
-        //labels = new HBox(LABEL_SPACING);
-        //labels = new HBox();
-        //periodBar = new HBox(PERIOD_BAR_SPACING);   
-        //labels.getChildren().addAll(periodTitle, pickUpLocation, seatsTitle);
-        //periodBar.getChildren().addAll(from, pickUpDate, to, deliveryDate);
-        //box.getChildren().addAll(periodBar, placeField, seatsNumber, search);
         box.add(periodTitle,0,0,4,1);	box.add(pickUpLocation,4,0);
         box.add(seatsTitle, 5, 0);
         box.add(from, 0, 1);		box.add(pickUpDate, 1, 1);
         box.add(to, 2, 1); 			box.add(deliveryDate, 3, 1);
         box.add(placeField, 4, 1); 	box.add(seatsNumber, 5, 1);
         box.add(search, 6, 1);
-        //box.setGridLinesVisible(true);
         
     }
     
     public void setSearchPanelStyle(String font, double fontSize) {
-        //labels.setLayoutX(185);
-        //labels.setLayoutY(85);
-        //box.setLayoutX(2000);
-        //box.setLayoutY(110);
         periodTitle.setFont(Font.font(font, fontSize)); 
-        //periodTitle.setLayoutX(40);
         from.setFont(Font.font(font, fontSize)); 
         to.setFont(Font.font(font, fontSize)); 
         pickUpDate.setPrefWidth(110); 
@@ -120,22 +104,16 @@ public class SearchPanel{
         pickUpLocation.setFont(Font.font(font, fontSize));
         seatsTitle.setFont(Font.font(font, fontSize));
         placeField.setPrefWidth(105);
-        //labels.setMargin(seatsTitle,new Insets(0,0,0,95));
         box.setAlignment(Pos.CENTER);
         box.setVgap(8);
         box.setHgap(5);
         box.setHalignment(periodTitle, HPos.CENTER);
-        //box.setHalignment(seatsNumber, HPos.CENTER);
         box.setMargin(seatsNumber,new Insets(0,60,0,0));
         box.setMargin(placeField,new Insets(0,30,0,0));
-        //box.setHalignment(seatsNumber, HPos.LEFT);
         box.setMargin(deliveryDate,new Insets(0,30,0,0));
-        //labels.setAlignment(Pos.CENTER);
-        //search.setFont(Font.font(font, fontSize + 5));
     }
     
     public GridPane getBox() { return box; }
-    //public HBox getLabels() { return labels; }
     public DatePicker getPickUpDate() { return pickUpDate; }
     public DatePicker getDeliveryDate() { return deliveryDate; }
     public ComboBox getPlaceField() {return placeField;}

@@ -40,7 +40,6 @@ public class CarRenting extends Application {
         
         this.stage.setTitle("Car Renting");
         this.stage.setScene(sceneStart);
-        //this.stage.setScene(sceneEmployer);
         this.stage.setOnCloseRequest((WindowEvent we) -> {
         	rentHandler.closeConnections();
         });

@@ -37,7 +37,6 @@ public class CustomerInterface {
     // Message for the user. Green -> ok, Red -> an error occurs
     private final Text userMsg;
 //	------ TEXT FIELDS ------ 
-    private final Text welcomeMsg;
     private final TextArea commentField;
 //	------ COMBO BOXES ------
     private final ComboBox markField;
@@ -73,7 +72,6 @@ public class CustomerInterface {
         commentTitle = new Label("Comment");
         markTitle = new Label("Mark");
 //    	------ TEXT FIELDS ------ 
-        welcomeMsg = new Text();
         commentField = new TextArea();
         commentField.setWrapText(true);
 //    	------ COMBO BOXES ------
@@ -95,7 +93,7 @@ public class CustomerInterface {
 //		------ BOXES ------
         searchPanel = new SearchPanel();
         topButtonBox = new HBox(20);
-        topButtonBox.getChildren().addAll(welcomeMsg,reservationListButton,logOut);
+        topButtonBox.getChildren().addAll(reservationListButton,logOut);
         buttonBox = new HBox(40);
         buttonBox.getChildren().addAll(reserve,delete);
         
@@ -198,7 +196,6 @@ public class CustomerInterface {
     public void appEventHandler(User user, RentHandler rh, CarRenting carR) {
     	
     	// "initialization" phase
-    	welcomeMsg.setText("Welcome "+user.getNickName());
     	currentTable = Utils.RESERVATION_TABLE;
     	tableReservation.ListReservationUpdate(rh.showReservations(user));
     	List<Feedback> feedbacks = new ArrayList<>();
