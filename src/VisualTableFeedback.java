@@ -37,8 +37,10 @@ public class VisualTableFeedback extends TableView<Feedback> {
     }
     
     public void ListFeedbackUpdate(List<Feedback> feedbacks){
-    	feedbackList.clear();
-    	feedbackList.addAll(feedbacks);
+    	if(feedbacks!=null) {
+        	feedbackList.clear();
+        	feedbackList.addAll(feedbacks);
+    	}
     }
     
     public ObservableList<Feedback> getFeedback() {return feedbackList;}

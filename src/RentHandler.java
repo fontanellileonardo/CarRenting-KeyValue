@@ -4,7 +4,11 @@ import java.util.*;
 
 
 public class RentHandler {
-    
+	
+	public RentHandler() {
+		RiakHandleDB.openConnection();
+		JPAHandleDB.openConnection();
+	}
     //register method
     public String register(User regUser) {
     	int ret;
@@ -137,16 +141,22 @@ public class RentHandler {
     }
     
     public List<Feedback> showFeedbacks(Integer mark) {
-        System.out.println("Feedbacks updated");
         HashMap<String, Object> feedbacks = RiakHandleDB.selectAllFeedbacks(mark);
+        if(feedbacks == null) {
+        	System.out.println("Feedbacks not updated");
+        	return null;
+        }
         List<Feedback> result = new ArrayList<Feedback>();
         User user;
         Feedback f;
+        //System.out.println("size: "+feedbacks.size());
         for(int i = 0; i < feedbacks.size()/2; i++) {
     		user = (User) JPAHandleDB.read(User.class, feedbacks.get("FiscalCode:"+i));
     		f = new Feedback((FeedbackKV) feedbacks.get("Feedback:"+i), user);
     		result.add(f);
+    		//System.out.println("Feedback: "+f.getMark()+" "+f.getComment()+" "+f.getDate());
     	}
+        System.out.println("Feedbacks updated");
         return result;
     }
     
@@ -245,5 +255,10 @@ public class RentHandler {
     	} else {
     		return false;
     	}
+    }
+    
+    public void closeConnections() {
+        JPAHandleDB.finish();
+        RiakHandleDB.finish(); 
     }
 }

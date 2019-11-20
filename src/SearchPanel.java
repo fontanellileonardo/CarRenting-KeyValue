@@ -39,7 +39,7 @@ public class SearchPanel{
                 public void updateItem(LocalDate item, boolean empty) {
                     super.updateItem(item, empty);
 
-                    if (item.compareTo(pickUpDate.getValue().plusDays(1)) < 0) {
+                    if (item.compareTo(pickUpDate.getValue()) < 0) {
                         // Tomorrow is too soon.
                         setDisable(true);
                     }
@@ -73,7 +73,7 @@ public class SearchPanel{
 //    	------ DATE PICKERS ------
         pickUpDate = new DatePicker(LocalDate.now().plusDays(1));
         pickUpDate.setDayCellFactory(pickUpCellFactory);
-        deliveryDate = new DatePicker(LocalDate.now().plusDays(2));
+        deliveryDate = new DatePicker(LocalDate.now().plusDays(1));
         deliveryDate.setDayCellFactory(deliveryCellFactory);
 //    	------ COMBO BOXES ------
         ObservableList<String> loc = 

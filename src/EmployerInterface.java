@@ -1,5 +1,7 @@
 import javafx.collections.*;
 import java.lang.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.mysql.cj.util.*;
 
@@ -24,6 +26,7 @@ public class EmployerInterface {
     private final Label title;
     private final Text errorMsgInsertion;
     private final Text errorMsgDeletion;
+    private final Text errorMsgFeedback;
     private final Label insertTitle;
     final Label licensePlate,vendor,seatNumber,location,kilometers,price;
     private final Label feedbackTitle;
@@ -69,6 +72,7 @@ public class EmployerInterface {
         title = new Label("Employer Management");
         errorMsgInsertion = new Text();
         errorMsgDeletion = new Text();
+        errorMsgFeedback = new Text();
         insertTitle = new Label("Insert a new car");
         licensePlate = new Label("License Plate:");
         vendor = new Label("Vendor:");
@@ -130,7 +134,7 @@ public class EmployerInterface {
                 fieldLocation,kilometers, fieldKm, price, 
                 fieldPrice, insertButton, deleteButton);
         feedbackPanel = new VBox(DX_PANEL_SPACE);
-        feedbackPanel.getChildren().addAll(feedbackTitle, tableFeedback,selectMarkTitle,filterFeedback);
+        feedbackPanel.getChildren().addAll(feedbackTitle, errorMsgFeedback, tableFeedback,selectMarkTitle,filterFeedback);
         userPanel = new VBox(DX_PANEL_SPACE); 
         userPanel.getChildren().addAll(userTitle, tableUser);
         carPanel = new VBox(DX_PANEL_SPACE);
@@ -153,6 +157,8 @@ public class EmployerInterface {
         errorMsgInsertion.setFill(Color.RED);
         errorMsgDeletion.setFont(Font.font("Calibri", 16));
         errorMsgDeletion.setFill(Color.RED);
+        errorMsgFeedback.setFont(Font.font("Calibri", 16));
+        errorMsgFeedback.setFill(Color.RED);
 //    	------ TABLES ------
         tableFeedback.setTableFeedbackStyle();
         tableUser.setTableUserStyle(); //tabella User
@@ -188,10 +194,8 @@ public class EmployerInterface {
     // listen the events 
     void empEventHandler(RentHandler rh, CarRenting carR){ 
     	// "initialization" phase
-    	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks());
-    	tableUser.UserListUpdate(rh.showCustomers());
-    	tableCar.carListUpdate(rh.showAllCars());
-    	tableReservation.ListReservationUpdate(rh.showReservations("ALL"));
+    	tableCar.carListUpdate(rh.showAllCars()); //Car table is the first one to be shown
+
     	
     	if(firstOpen) {
     		filterReservation.getItems().addAll(rh.retrieveAllLicensePlates());
@@ -229,6 +233,7 @@ public class EmployerInterface {
                 }
                 table = Utils.USER_TABLE;
                 dxPanel.getChildren().add(userPanel); 
+            	tableUser.UserListUpdate(rh.showCustomers());
         	}
         	
         	else if(tableChoose.getValue() == "Car Manager") {
@@ -259,6 +264,14 @@ public class EmployerInterface {
         		table = Utils.FEEDBACK_TABLE;
         		filterFeedback.setValue("5");
         		dxPanel.getChildren().addAll(feedbackPanel);
+        		List<Feedback> feedbacks = new ArrayList<>();
+        		feedbacks = rh.showFeedbacks();
+        		if(feedbacks == null) {
+        			errorMsgFeedback.setText("Ooops! Feedbacks not available");
+        		} else {
+        			errorMsgFeedback.setText("");
+        			tableFeedback.ListFeedbackUpdate(feedbacks);
+        		}
         	}
         	
         	else if(tableChoose.getValue() == "Reservation Table") {
@@ -275,6 +288,7 @@ public class EmployerInterface {
         		System.out.println("Resetto lista");
         		filterReservation.setValue("ALL");
         		dxPanel.getChildren().add(reservationPanel);
+            	tableReservation.ListReservationUpdate(rh.showReservations("ALL"));
         	}
         	
         });
@@ -332,7 +346,14 @@ public class EmployerInterface {
         });
         
         filterFeedback.setOnAction((ActionEvent ev)-> {
-        	tableFeedback.ListFeedbackUpdate(rh.showFeedbacks(Integer.parseInt(filterFeedback.getValue().toString())));
+        	List<Feedback> feedbacks = new ArrayList<>();
+    		feedbacks = rh.showFeedbacks(Integer.parseInt(filterFeedback.getValue().toString()));
+    		if(feedbacks == null) {
+    			errorMsgFeedback.setText("Ooops! Feedbacks not available");
+    		} else {
+    			errorMsgFeedback.setText("");
+    			tableFeedback.ListFeedbackUpdate(feedbacks);
+    		}
         });
         
         filterReservation.setOnAction((ActionEvent ev) -> { 
