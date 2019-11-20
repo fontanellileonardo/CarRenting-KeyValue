@@ -85,6 +85,8 @@ public class RiakHandleDB {
     
     // Create a new value in the KV
     private static Boolean create(String key, String value) {
+    	if(value.equals(""))
+    		value = " ";
     	RiakObject feedInd = new RiakObject().setContentType("text/plain").setValue(BinaryValue.create(value));
 		Location feedIndLocation = new Location(carRentingBucket, key);
 		StoreValue storeOp = new StoreValue.Builder(feedInd).withLocation(feedIndLocation).build();
@@ -180,7 +182,6 @@ public class RiakHandleDB {
     	feedbackKV.setMark(Integer.parseInt(readAttribute(key+":mark")));
     	feedbackKV.setDate(Date.valueOf(readAttribute(key+":date")));
     	feedbackKV.setComment(readAttribute(key+":comment"));
-    	System.out.println("Feedback: "+feedbackKV.getMark()+" "+feedbackKV.getDate()+" "+feedbackKV.getComment());
     	return feedbackKV;
     }
     
@@ -198,7 +199,6 @@ public class RiakHandleDB {
 			entries  = response.getEntries();
 			int i =0;
 			for (IntIndexQuery.Response.Entry entry : entries) {	// key with :mark
-				System.out.println("banana in");
 				key = entry.getRiakObjectLocation().getKey().toString();
 				String[] splitKey = key.split(":");
 				key = splitKey[0]+ ":" + splitKey[1] + ":" + splitKey[2];	// key without :mark    
@@ -207,7 +207,6 @@ public class RiakHandleDB {
 		        results.put("Feedback:"+i, fetchedFeedback);
 		        i++;
 			}
-			System.out.println("size: "+results.size());
 			
 		} catch (UnresolvedConflictException e) {
 			// TODO Auto-generated catch block
@@ -221,12 +220,13 @@ public class RiakHandleDB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
-		}	 
+		}
     	return results;
     }
     
     public static void finish() {
-    	cluster.shutdown();
+    	if(cluster != null)
+    		cluster.shutdown();
     }
     /*
     public static void main(String[]args) {
