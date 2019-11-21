@@ -208,7 +208,11 @@ public class EmployerInterface {
         logOutButton.setOnAction((ActionEvent e)-> {
             errorMsgInsertion.setText("");
             errorMsgDeletion.setText("");
-            clearAll(); 
+            if(table != Utils.CAR_MANAGER) {
+                dxPanel.getChildren().remove(1); 
+                dxPanel.getChildren().addAll(carPanel);
+            }  
+            clearAll();
           
     		table = Utils.CAR_MANAGER;
     		tableChoose.setValue("Car Manager");
@@ -216,6 +220,7 @@ public class EmployerInterface {
             carR.setScene("logout");
         });
         
+        // ComboBox event handler. Change the table on the dxPanel
         tableChoose.setOnAction((ActionEvent ev)-> { 
         	if(tableChoose.getValue() == "User Table") {
                 if(table == Utils.CAR_MANAGER) {	
@@ -316,7 +321,8 @@ public class EmployerInterface {
             	outcome = "You have to insert all the fields correctly";
             	System.out.println("Insert car form is not correct");
             }
-            tableCar.carListUpdate(rh.showAllCars());
+            if(table == Utils.CAR_MANAGER)
+                tableCar.carListUpdate(rh.showAllCars());
             errorMsgInsertion.setText(outcome);
         });
         
@@ -360,10 +366,6 @@ public class EmployerInterface {
     
     // reset the fields in the Employer Interface
     public void clearAll() {
-    	//remove the table present at the logout moment. Every type of panel related to a specific 
-        //TableView is always at index 1 in the list of nodes assigned to dxPanel
-        dxPanel.getChildren().remove(1); 
-        dxPanel.getChildren().addAll(carPanel);
         fieldLicensePlate.clear();
         fieldVendor.clear();
         fieldLocation.setValue("Firenze");
