@@ -146,24 +146,27 @@ public class RentHandler {
     }
     
     // Get all the feedbacks according to their mark (if mark = 3 -> all feedback with mark = 1,2, and 3)
-    // The HashMap is structured as: <FiscalCode:0,fiscalCode_value>,<Feedback:0,feddbackKV_obj>
     public List<Feedback> showFeedbacks(Integer mark) {
-        HashMap<String, Object> feedbacks = RiakHandleDB.selectAllFeedbacks(mark);
-        if(feedbacks == null) {
+        List<Feedback> result = new ArrayList<Feedback>();
+        result = RiakHandleDB.selectAllFeedbacks(mark);
+        if(result == null) {
         	System.out.println("Feedbacks not updated");
         	return null;
         }
-        List<Feedback> result = new ArrayList<Feedback>();
-        User user;
-        Feedback f;
-        // For each feedback takes the corresponding user and convert the FeedbackKV into Feedback
-        for(int i = 0; i < feedbacks.size()/2; i++) {
-    		user = (User) JPAHandleDB.read(User.class, feedbacks.get("FiscalCode:"+i));
-    		f = new Feedback((FeedbackKV) feedbacks.get("Feedback:"+i), user);
-    		result.add(f);
-    	}
         System.out.println("Feedbacks updated");
         return result;
+    }
+    
+    // Add a new Feedback
+    public boolean addFeedback(User user, String comment, String mark) {
+    	Integer intMark = Integer.parseInt(mark);
+    	Feedback feedback = new Feedback(intMark, comment, Utils.getCurrentSqlDate(), user.getNickName(), user.getFiscalCode());
+    	int result = RiakHandleDB.create(feedback, user.getFiscalCode());
+    	if (result == 0) {
+    		return true;
+    	} else {
+    		return false;
+    	}
     }
     
     // Get all the customers
@@ -253,18 +256,6 @@ public class RentHandler {
                     outcome = "OOps! Something went wrong!:(";
                     return outcome;
             }                
-    }
-    
-    // Add a new FeedbackKV
-    public boolean addFeedback(User user, String comment, String mark) {
-    	Integer intMark = Integer.parseInt(mark);
-    	FeedbackKV feedback = new FeedbackKV(intMark, comment, Utils.getCurrentSqlDate());
-    	int result = RiakHandleDB.create(feedback, user.getFiscalCode());
-    	if (result == 0) {
-    		return true;
-    	} else {
-    		return false;
-    	}
     }
     
     // Close the connection with the DB

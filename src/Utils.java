@@ -28,11 +28,4 @@ public class Utils {
 		return sqlDate;
 	}
 	
-	public static List<Feedback> convertFeedbackKV(List<FeedbackKV> feedKV, List<User> user){
-		List<Feedback> result = new ArrayList<Feedback>();
-		for(int i = 0; i < feedKV.size(); i++) {
-			result.add(new Feedback(feedKV.get(i), user.get(i)));
-		}
-		return result;
-	}
 }

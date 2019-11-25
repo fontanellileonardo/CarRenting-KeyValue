@@ -1,4 +1,5 @@
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -99,8 +100,8 @@ public class RiakHandleDB {
 		return true;
     }
     
-    // Create the FeedbackKV's attributes in the KV DB
-    public static int create(FeedbackKV feedback,String fiscalCode) {
+    // Create the Feedback's attributes in the KV DB
+    public static int create(Feedback feedback,String fiscalCode) {
     	try {
     		client.execute(updateCounter);
     		long counter = getCounter();
@@ -110,7 +111,8 @@ public class RiakHandleDB {
     		// Create mark and its index, comment and date
     		if(create(key+":mark",feedback.getMark().toString(),feedback.getMark()) && 
     				create(key+":comment",feedback.getComment()) &&
-    				create(key+":date",feedback.getDate().toString())) {
+    				create(key+":date",feedback.getDate().toString()) && 
+    				create(key+":nickName",feedback.getNickName())) {
     			return 0;
     		} else 
     			return 2;
@@ -120,7 +122,7 @@ public class RiakHandleDB {
     	}
     }
 
-    // Read the FeedbackKV's attribute from DB
+    // Read the Feedback's attribute from DB
     private static String readAttribute(String key) throws UnresolvedConflictException,ExecutionException,InterruptedException{
     	FetchValue fetchValue; 
 		RiakObject riakObj = null;
@@ -132,39 +134,37 @@ public class RiakHandleDB {
 		return null;
     }
     
-    // Retrieve the FeedbackKV
-    private static FeedbackKV readFeedbackKV(String key) throws UnresolvedConflictException,ExecutionException,InterruptedException{
-    	FeedbackKV feedbackKV = new FeedbackKV();
-    	feedbackKV.setMark(Integer.parseInt(readAttribute(key+":mark")));
-    	feedbackKV.setDate(Date.valueOf(readAttribute(key+":date")));
-    	feedbackKV.setComment(readAttribute(key+":comment"));
-    	return feedbackKV;
+    // Retrieve the Feedback
+    private static Feedback readFeedback(String key) throws UnresolvedConflictException,ExecutionException,InterruptedException{
+    	Feedback feedback = new Feedback();
+    	feedback.setMark(Integer.parseInt(readAttribute(key+":mark")));
+    	feedback.setDate(Date.valueOf(readAttribute(key+":date")));
+    	feedback.setComment(readAttribute(key+":comment"));
+    	feedback.setNickName(readAttribute(key+":nickName"));
+    	return feedback;
     }
     
     // Get all the feedback according to their mark (if mark = 3 -> all feedback with mark = 1,2, and 3)
-    // The HashMap is structured as: <FiscalCode:0,fiscalCode_value>,<Feedback:0,feddbackKV_obj>
-    public static HashMap<String, Object> selectAllFeedbacks(Integer mark){
+    public static List<Feedback> selectAllFeedbacks(Integer mark){
     	
     	IntIndexQuery biq;
     	IntIndexQuery.Response response;
 		List<Entry<Long>> entries;
-		HashMap<String, Object> results = new HashMap<String, Object>();
 		String key;
-		FeedbackKV fetchedFeedback;
+		Feedback feedback;
+		List<Feedback> fetchedFeedback = new ArrayList<Feedback>();
     	try {
 	    	biq = new IntIndexQuery.Builder(carRentingBucket, "Mark", Utils.MIN_MARK, (long)mark).build();
 			response = client.execute(biq);
 			// Get all the keys from the index
 			entries  = response.getEntries();
-			int i =0;
-			for (IntIndexQuery.Response.Entry entry : entries) {	// key with ":mark"
-				key = entry.getRiakObjectLocation().getKey().toString();
+			for (IntIndexQuery.Response.Entry entry : entries) {	
+				key = entry.getRiakObjectLocation().getKey().toString();	// key with ":mark"
 				String[] splitKey = key.split(":");
-				key = splitKey[0]+ ":" + splitKey[1] + ":" + splitKey[2];	// key without ":mark"   
-		        fetchedFeedback = readFeedbackKV(key);
-		        results.put("FiscalCode:"+i, splitKey[2]);
-		        results.put("Feedback:"+i, fetchedFeedback);
-		        i++;
+				key = splitKey[0]+ ":" + splitKey[1] + ":" + splitKey[2];	// key without ":mark"
+				feedback = readFeedback(key);
+				feedback.setFiscalCode(splitKey[2]);
+		        fetchedFeedback.add(feedback);
 			}
 			
 		} catch (UnresolvedConflictException e) {
@@ -180,7 +180,7 @@ public class RiakHandleDB {
 			e.printStackTrace();
 			return null;
 		}
-    	return results;
+    	return fetchedFeedback;
     }
     
     // Close the connection with the DB
