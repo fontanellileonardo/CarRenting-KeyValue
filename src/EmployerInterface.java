@@ -208,10 +208,8 @@ public class EmployerInterface {
         logOutButton.setOnAction((ActionEvent e)-> {
             errorMsgInsertion.setText("");
             errorMsgDeletion.setText("");
-            if(table != Utils.CAR_MANAGER) {
-                dxPanel.getChildren().remove(1); 
-                dxPanel.getChildren().addAll(carPanel);
-            }  
+            if(table != Utils.CAR_MANAGER)
+                dxPanel.getChildren().remove(1);   
             clearAll();
           
     		table = Utils.CAR_MANAGER;
