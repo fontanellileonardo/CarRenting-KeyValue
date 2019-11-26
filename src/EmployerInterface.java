@@ -312,7 +312,10 @@ public class EmployerInterface {
                 	//Insert the new car also in the list used for the reservations filter
                 	filterReservation.getItems().add(car.getLicensePlate()); 
                     clearAll();
-                } else 
+                } 
+                if(outcome.contentEquals("Updated!")) 
+            		errorMsgInsertion.setFill(Color.GREEN);
+                else 
                 	errorMsgInsertion.setFill(Color.RED);
             } else {
             	errorMsgInsertion.setFill(Color.RED);
@@ -369,8 +372,7 @@ public class EmployerInterface {
         fieldLocation.setValue("Firenze");
         fieldSeats.setValue("4");
         fieldKm.clear();
-        fieldPrice.clear();
-        
+        fieldPrice.clear(); 
     }
     
     public AnchorPane getBox() {return box;}

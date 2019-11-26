@@ -95,7 +95,7 @@ public class RentHandler {
                             	control.setPrice(car.getPrice());
                             	boolean result = JPAHandleDB.update(control);
                             	if(result)
-                            		outcome = "Success!";
+                            		outcome = "Updated!";
                             	else
                             		outcome = "Database Error";
                             }
