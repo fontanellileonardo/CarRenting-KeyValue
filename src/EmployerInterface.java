@@ -307,11 +307,16 @@ public class EmployerInterface {
             int seats = Integer.parseInt(fieldSeats.getValue().toString());
             // Check if all the fields are correct
             String outcome = "";
-            if(fieldLicensePlate.getText().equals("") == false && fieldVendor.getText().equals("") == false &&
-            		fieldKm.getText().matches("^\\d+\\.?[0-9]*$") == true && 
-            		fieldPrice.getText().matches("^\\d+\\.?[0-9]*$") == true ) {
-            	Car car = new Car(fieldVendor.getText(),seats,loc,Double.parseDouble(fieldKm.getText()),
-            			Double.parseDouble(fieldPrice.getText()),fieldLicensePlate.getText(), false);
+            String licensePl = fieldLicensePlate.getText().trim();
+            String vendor = fieldVendor.getText().trim();
+            String km = fieldKm.getText().trim();
+            String price = fieldPrice.getText().trim();
+            
+            if(licensePl.equals("") == false && vendor.equals("") == false &&
+            		km.matches("^\\d+\\.?[0-9]*$") == true && 
+            		price.matches("^\\d+\\.?[0-9]*$") == true ) {
+            	Car car = new Car(vendor ,seats,loc,Double.parseDouble(km),
+            			Double.parseDouble(price), licensePl, false);
             	// try to insert new car in the DB
             	outcome = rh.insertCar(car);
                 if(outcome.equals("Success!")) {
