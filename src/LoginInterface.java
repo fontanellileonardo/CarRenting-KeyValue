@@ -191,11 +191,11 @@ public class LoginInterface {
                     regUser = new User(r_fieldFiscalCode.getText().trim(), r_fieldNickName.getText().trim(), r_fieldName.getText().trim(), r_fieldSurname.getText().trim(), true,
                                     r_fieldEmail.getText().trim(),cryptPwd(r_fieldPwd.getText()));
                     System.out.println("Campi form: "+" fc:"+r_fieldFiscalCode.getText().trim()+" nickn: "+r_fieldNickName.getText().trim()+" name:"+r_fieldName.getText().trim()+" surname: "+r_fieldSurname.getText().trim()
-                                    +" email: "+r_fieldEmail.getText().trim()+" pwd: "+cryptPwd(r_fieldPwd.getText().trim()));
+                                    +" email: "+r_fieldEmail.getText().trim()+" pwd: "+cryptPwd(r_fieldPwd.getText()));
                     break;
                 case "Employer":
                     regUser = new User(r_fieldFiscalCode.getText().trim(), r_fieldNickName.getText().trim(), r_fieldName.getText().trim(),r_fieldSurname.getText().trim(), false,
-                                    r_fieldEmail.getText().trim(),cryptPwd(r_fieldPwd.getText().trim()));
+                                    r_fieldEmail.getText().trim(),cryptPwd(r_fieldPwd.getText()));
                     break;
             }
             // try to insert the user in the DB
